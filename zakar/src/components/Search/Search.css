@@ -1,0 +1,20 @@
+.SearchInput {
+    color: black;
+    margin: auto;
+    display: block;
+    border: none;
+    border-bottom: 1px solid #777;
+    width: 90%;
+    height: 32px;
+    font-size: 28px;
+    margin-bottom: 40px;
+}
+
+@media (min-width: 415px) {
+    .SearchInput {
+        width: 25%;
+    }
+}
+
+.SearchResultContainer {
+}

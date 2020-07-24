@@ -1,0 +1,9 @@
+.SearchResult {
+    padding: 10px;
+    text-align: left;
+}
+
+.SearchResult a {
+    color: black;
+    text-decoration: none;
+}
