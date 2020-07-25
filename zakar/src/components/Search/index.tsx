@@ -1,13 +1,12 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import SearchResult from 'components/Search/SearchResult';
+import { PREFIX, BIBLE_ID } from 'utils/const';
 import './Search.css'
 
 const Search = (): ReactElement => {
   const [searchResult, setSearchResult] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [error, setError] = useState('');
-  const PREFIX = 'https://api.scripture.api.bible/v1';
-  const BIBLE_ID= 'de4e12af7f28f599-01';
 
   useEffect(() => {
       setError('');
