@@ -6,27 +6,27 @@ import { LocationState } from 'react-app-env';
 
 const BookChapters = (): ReactElement => {
   const { bookId } = useParams();
-  const { state }  = useLocation<LocationState>();
-  const [bookChapters, setBookChapters]   = useState<any[]>([]);
-  const [error, setError]             = useState<string>('');
+  const { state } = useLocation<LocationState>();
+  const [bookChapters, setBookChapters] = useState<any[]>([]);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
-      setError('');
-      fetch(`${PREFIX}/bibles/${BIBLE_ID}/books/${bookId}/chapters`, {
-          headers: {
-              'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`
-          }
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.error) {
-            setError(data.message);
-          } else {
-            setBookChapters(data.data);
-          }
+    setError('');
+    fetch(`${PREFIX}/bibles/${BIBLE_ID}/books/${bookId}/chapters`, {
+      headers: {
+        'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.message);
+        } else {
+          setBookChapters(data.data);
+        }
       })
       .catch((error) => {
-          console.error(error);
+        console.error(error);
       });
   }, []);
 
@@ -37,18 +37,20 @@ const BookChapters = (): ReactElement => {
       <h2>{state.book}</h2>
       <h2>Chapters:</h2>
       <div className="BookChaptersContainer">
-        {bookChapters.slice(1).map(chapter => {
+        {bookChapters.slice(1).map((chapter) => {
           return (
-            <Link key={chapter.id} className="Chapter" to={{
-              pathname: `/book/${bookId}/chapter/${chapter.id}`,
-              state: {
-                ...state,
-                chapter: chapter.number,
-              }
-            }}>
-              <h3>
-                {chapter.number}
-              </h3>
+            <Link
+              key={chapter.id}
+              className="Chapter"
+              to={{
+                pathname: `/book/${bookId}/chapter/${chapter.id}`,
+                state: {
+                  ...state,
+                  chapter: chapter.number,
+                },
+              }}
+            >
+              <h3>{chapter.number}</h3>
             </Link>
           );
         })}

@@ -9,20 +9,11 @@ interface Props {
 }
 
 const SearchResult = (props: Props): ReactElement => {
-  const {text, content, id, reference} = props;
+  const { text, content, id, reference } = props;
   return (
     <div className="SearchResult">
-      {
-        text && 
-        (
-          <a href='localhost:3030'>{text}</a> 
-        )
-      }
-      {
-        content && (
-          <div dangerouslySetInnerHTML={{__html: content}} />
-        )
-      }
+      {text && <a href="localhost:3030">{text}</a>}
+      {content && <div dangerouslySetInnerHTML={{ __html: content }} />}
       <h5>
         {reference}({id})
       </h5>

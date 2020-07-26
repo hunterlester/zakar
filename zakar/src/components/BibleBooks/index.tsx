@@ -4,26 +4,26 @@ import './BibleBooks.css';
 import { Link } from 'react-router-dom';
 
 const BibleBooks = (): ReactElement => {
-  const [bibleBooks, setBibleBooks]   = useState<any[]>([]);
-  const [error, setError]             = useState<string>('');
+  const [bibleBooks, setBibleBooks] = useState<any[]>([]);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
-      setError('');
-      fetch(`${PREFIX}/bibles/${BIBLE_ID}/books`, {
-          headers: {
-              'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`
-          }
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.error) {
-            setError(data.message);
-          } else {
-            setBibleBooks(data.data);
-          }
+    setError('');
+    fetch(`${PREFIX}/bibles/${BIBLE_ID}/books`, {
+      headers: {
+        'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.message);
+        } else {
+          setBibleBooks(data.data);
+        }
       })
       .catch((error) => {
-          console.error(error);
+        console.error(error);
       });
   }, []);
 
@@ -31,20 +31,20 @@ const BibleBooks = (): ReactElement => {
 
   return (
     <div className="BibleBooksContainer">
-      {bibleBooks.map(book => {
+      {bibleBooks.map((book) => {
         return (
-          <Link key={book.id} className="Book" to={{
-            pathname: `/book/${book.id}`,
-            state: {
-              book: book.name,
-            },
-          }}>
-            <h3>
-              {book.name}
-            </h3>
-            <h6>
-              {book.nameLong}
-            </h6>
+          <Link
+            key={book.id}
+            className="Book"
+            to={{
+              pathname: `/book/${book.id}`,
+              state: {
+                book: book.name,
+              },
+            }}
+          >
+            <h3>{book.name}</h3>
+            <h6>{book.nameLong}</h6>
           </Link>
         );
       })}
