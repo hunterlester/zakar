@@ -1,6 +1,7 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { PREFIX, BIBLE_ID } from 'utils/const';
 import './BibleBooks.css';
+import { Link } from 'react-router-dom';
 
 const BibleBooks = (): ReactElement => {
   const [bibleBooks, setBibleBooks]   = useState<any[]>([]);
@@ -26,13 +27,25 @@ const BibleBooks = (): ReactElement => {
       });
   }, []);
 
+  console.log('Books: ', bibleBooks);
+
   return (
     <div className="BibleBooksContainer">
       {bibleBooks.map(book => {
         return (
-          <h3 className="Book">
-            {book.name}
-          </h3>
+          <Link key={book.id} className="Book" to={{
+            pathname: `/book/${book.id}`,
+            state: {
+              book: book.name,
+            },
+          }}>
+            <h3>
+              {book.name}
+            </h3>
+            <h6>
+              {book.nameLong}
+            </h6>
+          </Link>
         );
       })}
     </div>

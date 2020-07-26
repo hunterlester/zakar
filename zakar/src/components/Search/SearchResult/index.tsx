@@ -2,15 +2,28 @@ import React, { ReactElement } from 'react';
 import './SearchResult.css';
 
 interface Props {
-  text: string;
+  text?: string;
+  content?: string;
 }
 
 const SearchResult = (props: Props): ReactElement => {
-  const {text} = props;
+  const {text, content} = props;
   return (
-      <div className="SearchResult">
-        <a href='localhost:3030'>{text}</a> 
-      </div>
+    <>
+      {
+        text && 
+        (
+          <div className="SearchResult">
+            <a href='localhost:3030'>{text}</a> 
+          </div>
+        )
+      }
+      {
+        content && (
+          <div dangerouslySetInnerHTML={{__html: content}} />
+        )
+      }
+    </>
   );
 };
 

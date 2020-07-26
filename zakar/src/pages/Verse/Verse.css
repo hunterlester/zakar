@@ -1,0 +1,12 @@
+.VerseContainer {
+    text-align: center;
+}
+
+.p {
+    font-size: 18px;
+}
+
+.p .v {
+    font-size: 20px;;
+    padding-right: 1%;
+}

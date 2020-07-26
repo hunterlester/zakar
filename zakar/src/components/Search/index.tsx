@@ -21,7 +21,11 @@ const Search = (): ReactElement => {
             if (data.error) {
               setError(data.message);
             } else {
-              setSearchResult(data.data.verses);
+              if (data.data.verses) {
+                setSearchResult(data.data.verses);
+              } else if (data.data.passages) {
+                setSearchResult(data.data.passages);
+              }
             }
         })
         .catch((error) => {
@@ -36,7 +40,7 @@ const Search = (): ReactElement => {
          {!!error && <div>{error}</div>}
          <div className="SearchResultContainer">
            {searchResult.map(result => {
-               return (<SearchResult key={result.id} text={result.text} />);
+               return (<SearchResult key={result.id} text={result.text} content={result.content} />);
            })}
          </div>
       </>

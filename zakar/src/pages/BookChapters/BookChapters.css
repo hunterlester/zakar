@@ -1,9 +1,11 @@
-.BibleBooksContainer {
+.BookChaptersContainer {
     display: inline-grid;
     grid-template-columns: 1fr 1fr;
+    text-align: center;
 }
 
-.Book {
+
+.Chapter {
     text-decoration: none;
     color: #000;
 }
