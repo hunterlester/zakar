@@ -34,13 +34,15 @@ const Search = (): ReactElement => {
       }
   }, [searchValue]);
 
+  console.log(searchResult);
+
   return (
       <>
-         <input className='SearchInput' value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+         <input autoFocus={true} placeholder="gen 1:3, gen 1:1-3, gen.1.1,gen.1.9, jesus, john" className='SearchInput' value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
          {!!error && <div>{error}</div>}
          <div className="SearchResultContainer">
            {searchResult.map(result => {
-               return (<SearchResult key={result.id} text={result.text} content={result.content} />);
+               return (<SearchResult key={result.id} text={result.text} content={result.content} id={result.id} reference={result.reference} />);
            })}
          </div>
       </>

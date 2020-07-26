@@ -1,3 +1,5 @@
-.HomeContainer {
-    text-align: center;
+@media (min-width: 415px) {
+    .HomeContainer {
+        text-align: center;
+    }
 }

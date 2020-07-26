@@ -4,18 +4,18 @@ import './SearchResult.css';
 interface Props {
   text?: string;
   content?: string;
+  id: string;
+  reference: string;
 }
 
 const SearchResult = (props: Props): ReactElement => {
-  const {text, content} = props;
+  const {text, content, id, reference} = props;
   return (
-    <>
+    <div className="SearchResult">
       {
         text && 
         (
-          <div className="SearchResult">
-            <a href='localhost:3030'>{text}</a> 
-          </div>
+          <a href='localhost:3030'>{text}</a> 
         )
       }
       {
@@ -23,7 +23,10 @@ const SearchResult = (props: Props): ReactElement => {
           <div dangerouslySetInnerHTML={{__html: content}} />
         )
       }
-    </>
+      <h5>
+        {reference}({id})
+      </h5>
+    </div>
   );
 };
 
