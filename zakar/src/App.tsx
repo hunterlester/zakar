@@ -10,7 +10,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 function App(): ReactElement {
   return (
     <Router>
-      <div>
+      <div className="App">
         <ul>
           <li>
             <Link to="/">Home</Link>
@@ -20,7 +20,6 @@ function App(): ReactElement {
           </li>
         </ul>
 
-        <hr />
         <Switch>
           <Route exact path="/">
             <Home />
