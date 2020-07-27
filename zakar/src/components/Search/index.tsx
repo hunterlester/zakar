@@ -40,7 +40,7 @@ const Search = (): ReactElement => {
     <>
       <input
         autoFocus={true}
-        placeholder="gen 1:3, gen 1:1-3, gen.1.1,gen.1.9, jesus, john"
+        placeholder="gen 1, gen 1:3, gen 1:1-3, jacob"
         className="SearchInput"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}

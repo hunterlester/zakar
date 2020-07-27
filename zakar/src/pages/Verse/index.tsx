@@ -5,7 +5,7 @@ import './Verse.css';
 
 const Verse = (): ReactElement => {
   const { verseId } = useParams();
-  const [verse, setVerse] = useState<string>('');
+  const [verseData, setVerseData] = useState<any>('');
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
@@ -20,7 +20,13 @@ const Verse = (): ReactElement => {
         if (data.error) {
           setError(data.message);
         } else {
-          setVerse(data.data.content);
+          const _BAPI = window._BAPI || {};
+          if (typeof _BAPI.t != undefined) {
+            console.log('-- Calling BAPI.t with fums ID: ', data.meta.fumsId);
+            _BAPI.t(data.meta.fumsId);
+          }
+          console.log('Verse data: ', data);
+          setVerseData(data.data);
         }
       })
       .catch((error) => {
@@ -28,7 +34,12 @@ const Verse = (): ReactElement => {
       });
   }, []);
 
-  return <div className="VerseContainer" dangerouslySetInnerHTML={{ __html: verse }} />;
+  return (
+    <>
+      <div className="VerseContainer" dangerouslySetInnerHTML={{ __html: verseData.content }} />
+      <div className="VerseCopyright">{verseData.copyright}</div>
+    </>
+  );
 };
 
 export default Verse;

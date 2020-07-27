@@ -4,3 +4,9 @@ export interface LocationState {
   book?: string;
   chapter?: string;
 }
+
+declare global {
+  interface Window {
+    _BAPI: any;
+  }
+}
