@@ -3,7 +3,8 @@ import Search from 'components/Search';
 import './Home.css';
 import BibleBooks from 'components/BibleBooks';
 
-const Home = (): ReactElement => {
+const Home = (props: any): ReactElement => {
+  console.log(props.location);
   return (
     <div className="HomeContainer">
       <h1>Find your verse.</h1>
