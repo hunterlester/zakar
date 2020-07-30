@@ -4,7 +4,8 @@
 
 .SearchResult a {
     color: black;
-    text-decoration: none;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 .SearchResult h5 {

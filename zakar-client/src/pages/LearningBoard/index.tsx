@@ -1,28 +1,30 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { PREFIX, BIBLE_ID } from 'utils/const';
+import { useHistory } from 'react-router-dom';
+import axios, { AxiosResponse } from 'axios';
 
 const LearningBoard = (): ReactElement => {
   const [verseArray, setVerseArray] = useState<any[]>([]);
   const [error, setError] = useState<string>('');
+  const history = useHistory();
 
   const fetchVerse = (verseId: string): Promise<any> => {
-    return fetch(`${PREFIX}/bibles/${BIBLE_ID}/verses/${verseId}`, {
+    return axios.get(`${PREFIX}/bibles/${BIBLE_ID}/verses/${verseId}`, {
       headers: {
         'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          throw data.message;
+      .then((data: AxiosResponse) => {
+        if (data.data.error) {
+          throw data.data.message;
         } else {
           const _BAPI = window._BAPI || {};
           if (typeof _BAPI.t != undefined) {
-            console.log('-- Calling BAPI.t with fums ID: ', data.meta.fumsId);
-            _BAPI.t(data.meta.fumsId);
+            console.log('-- Calling BAPI.t with fums ID: ', data.data.meta.fumsId);
+            _BAPI.t(data.data.meta.fumsId);
           }
           console.log('Verse data: ', data);
-          return data.data;
+          return data.data.data;
         }
       })
       .catch((error) => {
@@ -46,6 +48,8 @@ const LearningBoard = (): ReactElement => {
           setError(error);
         }
       });
+    } else {
+      history.replace('/');
     }
   }, []);
 
@@ -78,7 +82,7 @@ const LearningBoard = (): ReactElement => {
           onClick={async () => {
             try {
               const verses = JSON.parse(`${localStorage.getItem('verses')}`);
-              verses.push(verseArray[0].next.id);
+              verses.push(verseArray[verseArray.length - 1].next.id);
               localStorage.setItem('verses', JSON.stringify(verses));
               const verseData = await fetchVerse(verseArray[verseArray.length - 1].next.id);
               setVerseArray((prevArray) => [...prevArray, verseData]);

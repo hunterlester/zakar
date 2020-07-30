@@ -2,29 +2,35 @@ import React, { ReactElement, useState, useEffect } from 'react';
 import { PREFIX, BIBLE_ID } from 'utils/const';
 import './BibleBooks.css';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const BibleBooks = (): ReactElement => {
   const [bibleBooks, setBibleBooks] = useState<any[]>([]);
   const [error, setError] = useState<string>('');
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
 
   useEffect(() => {
     setError('');
-    fetch(`${PREFIX}/bibles/${BIBLE_ID}/books`, {
+    axios.get(`${PREFIX}/bibles/${BIBLE_ID}/books`, {
+      cancelToken: source.token,
       headers: {
         'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
       },
     })
-      .then((response) => response.json())
       .then((data) => {
-        if (data.error) {
-          setError(data.message);
+        if (data.data.error) {
+          setError(data.data.message);
         } else {
-          setBibleBooks(data.data);
+          setBibleBooks(data.data.data);
         }
       })
       .catch((error) => {
         console.error(error);
       });
+      return () => {
+        source.cancel('Operation canceled by unmounted component');
+      };
   }, []);
 
   console.log('Books: ', bibleBooks);

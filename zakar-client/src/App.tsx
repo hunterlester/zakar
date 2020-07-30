@@ -4,11 +4,10 @@ import Home from 'pages/Home';
 import Verse from 'pages/Verse';
 import BookChapters from 'pages/BookChapters';
 import Verses from 'pages/Verses';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import LearningBoard from 'pages/LearningBoard';
 
 function App(): ReactElement {
-  const verses = JSON.parse(`${localStorage.getItem('verses')}`);
   return (
     <Router>
       <div className="App">
@@ -20,7 +19,7 @@ function App(): ReactElement {
 
         <Switch>
           <Route exact path="/">
-            {!!verses ? <Redirect to="/learning-board" /> : <Home />}
+            <Home />
           </Route>
           <Route exact path="/book/:bookId">
             <BookChapters />

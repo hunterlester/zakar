@@ -21,7 +21,11 @@ const SearchResult = (props: Props): ReactElement => {
   return (
     <div className="SearchResult">
       {text && <a onClick={() => verseHandler(id)}>{text}</a>}
-      {content && <div dangerouslySetInnerHTML={{ __html: content }} />}
+      {content &&
+        <a onClick={() => verseHandler(id)}>
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+        </a>
+      }
       <h5>
         {reference}({id})
       </h5>
