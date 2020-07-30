@@ -12,12 +12,13 @@ const BibleBooks = (): ReactElement => {
 
   useEffect(() => {
     setError('');
-    axios.get(`${PREFIX}/bibles/${BIBLE_ID}/books`, {
-      cancelToken: source.token,
-      headers: {
-        'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
-      },
-    })
+    axios
+      .get(`${PREFIX}/bibles/${BIBLE_ID}/books`, {
+        cancelToken: source.token,
+        headers: {
+          'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
+        },
+      })
       .then((data) => {
         if (data.data.error) {
           setError(data.data.message);
@@ -28,9 +29,9 @@ const BibleBooks = (): ReactElement => {
       .catch((error) => {
         console.error(error);
       });
-      return () => {
-        source.cancel('Operation canceled by unmounted component');
-      };
+    return () => {
+      source.cancel('Operation canceled by unmounted component');
+    };
   }, []);
 
   console.log('Books: ', bibleBooks);

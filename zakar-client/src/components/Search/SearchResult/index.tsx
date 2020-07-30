@@ -14,18 +14,19 @@ const SearchResult = (props: Props): ReactElement => {
   const history = useHistory();
 
   const verseHandler = (verseId: string) => {
-    localStorage.setItem('verses', `["${verseId}"]`);
+    const verseArray = verseId.split('-');
+    localStorage.setItem('verses', JSON.stringify(verseArray));
     history.push('/learning-board');
   };
 
   return (
     <div className="SearchResult">
       {text && <a onClick={() => verseHandler(id)}>{text}</a>}
-      {content &&
+      {content && (
         <a onClick={() => verseHandler(id)}>
           <div dangerouslySetInnerHTML={{ __html: content }} />
         </a>
-      }
+      )}
       <h5>
         {reference}({id})
       </h5>

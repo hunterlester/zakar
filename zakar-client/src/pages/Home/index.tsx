@@ -20,9 +20,7 @@ const Home = (props: any): ReactElement => {
       <h1>Find your verse.</h1>
       <Search />
       <button onClick={() => setShouldRenderBooks(true)}>Browse Bible Books</button>
-      {shouldRenderBooks &&
-        <BibleBooks />
-      }
+      {shouldRenderBooks && <BibleBooks />}
     </div>
   );
 };
