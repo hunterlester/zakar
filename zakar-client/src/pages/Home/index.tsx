@@ -19,7 +19,11 @@ const Home = (props: any): ReactElement => {
     <div className="HomeContainer">
       <h1>Find your verse.</h1>
       <Search />
-      <button onClick={() => setShouldRenderBooks(true)}>Browse Bible Books</button>
+      {!shouldRenderBooks && (
+        <button className="Button" onClick={() => setShouldRenderBooks(true)}>
+          Browse Bible Books
+        </button>
+      )}
       {shouldRenderBooks && <BibleBooks />}
     </div>
   );

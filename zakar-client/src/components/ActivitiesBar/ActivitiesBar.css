@@ -1,0 +1,13 @@
+.ActivitiesBar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;;
+}
+
+.ActivityItem {
+    padding: 1%;
+    margin: 1%;
+    border: 1px solid silver;
+    background-color: white;
+    cursor: pointer;
+}

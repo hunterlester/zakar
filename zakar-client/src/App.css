@@ -2,3 +2,19 @@
   width: 95vw;
   margin: auto;
 }
+
+.Button {
+  background-color: white;
+  border: 1px solid silver;
+  display: block;
+  margin: auto;
+}
+
+.p {
+    font-size: 18px;
+}
+
+.p .v {
+  vertical-align: super;
+  font-size: smaller;
+}

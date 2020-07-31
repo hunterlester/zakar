@@ -1,0 +1,8 @@
+.VerseHighlight {
+  border: 1px solid silver;
+  font-size: 2em;
+}
+
+span {
+    padding: 1%;
+}

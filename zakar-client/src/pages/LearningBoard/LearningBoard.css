@@ -1,24 +1,3 @@
-.VerseContainer {
-    text-align: center;
-}
-
-.VerseCopyright {
-    position: absolute;
-    bottom: 0;
-    width: 389px;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-weight: lighter;
-}
-
-.p {
-    font-size: 18px;
-}
-
-.p .v {
-  vertical-align: super;
-  font-size: smaller;
+.ActivityBlock {
+  margin-top: 50px;
 }
