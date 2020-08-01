@@ -27,6 +27,7 @@ const Builder = (): ReactElement => {
       fetchVerse(verseId)
         .then((verseData) => {
           console.log('Map verse data: ', verseData);
+          localStorage.setItem('verseData', JSON.stringify(verseData));
           setVerseArray((prevArray: string[]) => [...prevArray, verseData]);
           gatherText();
         })
