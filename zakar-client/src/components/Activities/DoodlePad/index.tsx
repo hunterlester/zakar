@@ -102,7 +102,7 @@ class DoodlePad extends React.PureComponent<{}, State> {
     }
   }
 
-  componentDidUpdate(_props: Props, prevState: State) {
+  componentDidUpdate(_props: {}, prevState: State) {
     if (this.state.colorTarget === 'pen') {
       this.pickr.setColor(this.state.penColor);
     } else {

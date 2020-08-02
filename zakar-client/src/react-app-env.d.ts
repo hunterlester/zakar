@@ -8,5 +8,6 @@ export interface LocationState {
 declare global {
   interface Window {
     _BAPI: any;
+    MediaRecorder: any;
   }
 }

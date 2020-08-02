@@ -1,0 +1,13 @@
+.RecordingButton {
+  border: 1px solid black;
+  background-color: white;
+  padding: 1%;
+  margin: auto;
+  display: block;
+  cursor: pointer;
+}
+
+.TranscriptWord {
+  text-align: center;
+  margin-top: 50px;
+}
