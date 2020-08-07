@@ -2,20 +2,18 @@ import React, { ReactElement } from 'react';
 import './Verse.css';
 
 interface Props {
-  verses: any[];
+  verseString: string;
 }
 
 const Verse = (props: Props): ReactElement => {
-  const { verses } = props;
+  const { verseString } = props;
 
   return (
     <>
       <div className="VerseContainer">
-        {verses.map((verse) => {
-          return <div key={verse.id} dangerouslySetInnerHTML={{ __html: verse.content }} />;
-        })}
+        { /* <div>{verseString}</div> */ }
+        <div dangerouslySetInnerHTML={{ __html: verseString }} />
       </div>
-      {!!verses.length && <div className="VerseCopyright">{verses[0].copyright}</div>}
     </>
   );
 };

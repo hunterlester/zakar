@@ -7,7 +7,7 @@ const Home = (): ReactElement => {
   const history = useHistory();
 
   useEffect(() => {
-    const verses = JSON.parse(`${localStorage.getItem('versesID')}`);
+    const verses = localStorage.getItem('verseID');
     if (!!verses) {
       history.replace('/learning-board');
     }

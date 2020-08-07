@@ -5,11 +5,11 @@ import Verse from 'components/Verse';
 import { ActivityProps } from 'react-app-env';
 
 interface Props {
-  setVerseArray: Dispatch<React.SetStateAction<any[]>>;
+  setVerse: Dispatch<React.SetStateAction<string>>;
 }
 
 const Builder = (props: ActivityProps & Props): ReactElement => {
-  const { verses, setVerseArray } = props;
+  const { verseString, setVerse} = props;
 
   return (
     <>
@@ -17,14 +17,12 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
         className="LearningBoardButton"
         onClick={async () => {
           try {
-            let verses = JSON.parse(`${localStorage.getItem('versesID')}`);
-            let verseData = await fetchVerse(verses[0]);
-            verses = [verseData.previous.id, ...verses];
-            localStorage.setItem('versesID', JSON.stringify(verses));
+            const prevVerseId = localStorage.getItem('prev_verse');
+            const verseEnd = localStorage.getItem('verse_end');
 
-            verseData = await fetchVerse(verseData.previous.id);
+            const verseData = await fetchVerse(`${prevVerseId}-${verseEnd}`);
             if (verseData) {
-              setVerseArray((prevArray: string[]) => [verseData, ...prevArray]);
+              setVerse((verseData.passages[0]));
             }
           } catch (error) {
             // TODO: log error
@@ -35,20 +33,18 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
         Add Previous Verse
       </button>
 
-      <Verse verses={verses} />
+      <Verse verseString={verseString} />
 
       <button
         className="LearningBoardButton"
         onClick={async () => {
           try {
-            let verses = JSON.parse(`${localStorage.getItem('versesID')}`);
-            let verseData = await fetchVerse(verses[verses.length - 1]);
-            verses = [...verses, verseData.next.id];
-            localStorage.setItem('versesID', JSON.stringify(verses));
+            const verseStart = localStorage.getItem('verse_start');
+            const nextVerseId = localStorage.getItem('next_verse');
 
-            verseData = await fetchVerse(verseData.next.id);
+            const verseData = await fetchVerse(`${verseStart}-${nextVerseId}`);
             if (verseData) {
-              setVerseArray((prevArray) => [...prevArray, verseData]);
+              setVerse((verseData.passages[0]));
             }
           } catch (error) {
             // TODO: log error
@@ -58,7 +54,7 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
       >
         Add Next Verse
       </button>
-      {verses.length && <div className="VerseCopyright">{verses[0].copyright}</div>}
+      { /* verses.length && <div className="VerseCopyright">{verses[0].copyright}</div> */}
     </>
   );
 };

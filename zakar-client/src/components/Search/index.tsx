@@ -1,7 +1,8 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import SearchResult from 'components/Search/SearchResult';
-import { PREFIX, BIBLE_ID } from 'utils/const';
+import { ESV_PREFIX } from 'utils/const';
 import './Search.css';
+import axios, { AxiosResponse } from 'axios';
 
 const Search = (): ReactElement => {
   const [searchResult, setSearchResult] = useState<any[]>([]);
@@ -11,26 +12,19 @@ const Search = (): ReactElement => {
   useEffect(() => {
     setError('');
     if (!!searchValue) {
-      fetch(`${PREFIX}/bibles/${BIBLE_ID}/search?query=${searchValue}`, {
+      axios
+      .get(`${ESV_PREFIX}/search/?q=${searchValue}`, {
         headers: {
-          'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
+          'Authorization': `Token ${process.env.REACT_APP_ESV_API_KEY}`,
         },
       })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            setError(data.message);
-          } else {
-            if (data.data.verses) {
-              setSearchResult(data.data.verses);
-            } else if (data.data.passages) {
-              setSearchResult(data.data.passages);
-            }
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      .then((response: AxiosResponse) => {
+        setSearchResult(response.data.results);
+      })
+      .catch((error) => {
+        setError(error);
+        console.error(error);
+      });
     }
   }, [searchValue]);
 
@@ -47,13 +41,11 @@ const Search = (): ReactElement => {
       />
       {!!error && <div>{error}</div>}
       <div className="SearchResultContainer">
-        {searchResult.map((result) => {
+        {searchResult.map((result, i) => {
           return (
             <SearchResult
-              key={result.id}
-              text={result.text}
+              key={`${result.reference}-${i}`}
               content={result.content}
-              id={result.id}
               reference={result.reference}
             />
           );

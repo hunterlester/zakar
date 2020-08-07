@@ -10,7 +10,7 @@ const Recite = (props: ActivityProps): ReactElement => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcriptWords, setTranscriptWords] = useState<string>('');
   const stopButtonEl: Ref<HTMLButtonElement> = useRef(document.createElement('button'));
-  const { verses } = props;
+  const { verseString } = props;
 
   const startHandler = () => {
     const handleSuccess = (stream: any) => {
@@ -70,7 +70,7 @@ const Recite = (props: ActivityProps): ReactElement => {
 
   return (
     <div>
-      <Verse verses={verses} />
+      <Verse verseString={verseString} />
       {isRecording && (
         <button className="RecordingButton" ref={stopButtonEl}>
           Stop

@@ -4,11 +4,11 @@ import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
 
 const Typing = (props: ActivityProps): ReactElement => {
-  const { verses } = props;
+  const { verseString } = props;
   return (
     <div>
       TYPING
-      <Verse verses={verses} />
+      <Verse verseString={verseString} />
     </div>
   );
 };

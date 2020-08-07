@@ -111,10 +111,10 @@ class DoodlePad extends React.PureComponent<ActivityProps, State> {
   }
 
   render() {
-    const { verses } = this.props;
+    const { verseString } = this.props;
     return (
       <>
-        <Verse verses={verses} />
+        <Verse verseString={verseString} />
         <div className="ColorPickerContainer">
           <select
             value={this.state.colorTarget}

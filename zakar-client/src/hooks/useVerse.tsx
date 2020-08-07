@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { fetchVerse } from 'utils/helpers';
 
-export default (state: any[]) => {
-  const [verseArray, setVerseArray] = useState<any[]>(state);
+export default (state: string) => {
+  const [verse, setVerse] = useState<string>(state);
   const [error, setError] = useState<string>('');
 
   const gatherText = () => {
@@ -14,20 +14,14 @@ export default (state: any[]) => {
 
   useEffect(() => {
     setError('');
-    const verses = JSON.parse(`${localStorage.getItem('versesID')}`);
-    console.log('Local storage verse: ', verses);
+    const verseId = localStorage.getItem('verseID');
 
-    if (!!verses && Array.isArray(verses)) {
-      let verseId = `${verses[0]}-${verses[verses.length - 1]}`;
-      if (verses.length === 1) {
-        verseId = `${verses[0]}`;
-      }
+    if (!!verseId) {
       console.log('VERSE ID TO FETCH: ', verseId);
       fetchVerse(verseId)
         .then((verseData) => {
           console.log('Map verse data: ', verseData);
-          localStorage.setItem('verseData', JSON.stringify(verseData));
-          setVerseArray((prevArray: string[]) => [...prevArray, verseData]);
+          setVerse(verseData.passages[0]);
         })
         .catch((error) => {
           setError(error);
@@ -37,7 +31,7 @@ export default (state: any[]) => {
 
   useEffect(() => {
     gatherText();
-  }, [verseArray]);
+  }, [verse]);
 
-  return [verseArray, setVerseArray] as const;
+  return [verse, setVerse] as const;
 };

@@ -1,25 +1,24 @@
 import axios, { AxiosResponse } from 'axios';
-import { PREFIX, BIBLE_ID } from 'utils/const';
+import { ESV_PREFIX } from 'utils/const';
 
 export const fetchVerse = (verseId: string): Promise<any> => {
+  console.log('FETCH VERSE ID: ', verseId);
   return axios
-    .get(`${PREFIX}/bibles/${BIBLE_ID}/verses/${verseId}`, {
+    .get(`${ESV_PREFIX}/html/?q=${verseId}&include-headings=false&include-copyright=false&include-short-copyright=true&include-audio-link=false&include-passage-references=true&include-footnotes=false`, {
       headers: {
-        'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
+        'Authorization': `Token ${process.env.REACT_APP_ESV_API_KEY}`,
       },
     })
-    .then((data: AxiosResponse) => {
-      if (data.data.error) {
-        throw data.data.message;
-      } else {
-        const _BAPI = window._BAPI || {};
-        if (typeof _BAPI.t != undefined) {
-          console.log('-- Calling BAPI.t with fums ID: ', data.data.meta.fumsId);
-          _BAPI.t(data.data.meta.fumsId);
-        }
-        console.log(' -- -- Verse data: ', data.data);
-        return data.data.data;
-      }
+    .then((response: AxiosResponse) => {
+        console.log(' -- -- Verse data: ', response.data);
+        const verseData = response.data;
+        localStorage.setItem('verse_start', verseData.parsed[0][0]);
+        localStorage.setItem('verse_end', verseData.parsed[0][verseData.parsed[0].length - 1]);
+        localStorage.setItem('verseID', verseData.canonical);
+        localStorage.setItem('next_verse', verseData.passage_meta[0].next_verse);
+        localStorage.setItem('prev_verse', verseData.passage_meta[0].prev_verse);
+        console.log("LOCAL STORAGE: ", localStorage);
+        return verseData;
     })
     .catch((error) => {
       console.error(error);
