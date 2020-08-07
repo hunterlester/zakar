@@ -1,14 +1,15 @@
-import React, { ReactElement, useEffect, useRef, useState, Ref } from 'react';
+import React from 'react';
 import SignaturePad from 'signature_pad';
 import Pickr from '@simonwep/pickr';
 import '@simonwep/pickr/dist/themes/classic.min.css';
 import './DoodlePad.css';
+import { ActivityProps } from 'react-app-env';
+import Verse from 'components/Verse';
 
 interface State {
   colorTarget: string;
   backgroundColor: string;
   penColor: string;
-  verseData: any;
 }
 
 const initPickr = () => {
@@ -48,14 +49,13 @@ const initPickr = () => {
   return pickr;
 };
 
-class DoodlePad extends React.PureComponent<{}, State> {
-  constructor(props: {}) {
+class DoodlePad extends React.PureComponent<ActivityProps, State> {
+  constructor(props: ActivityProps) {
     super(props);
     this.state = {
       colorTarget: 'pen',
       backgroundColor: 'rgba(255, 255, 255, 1)',
       penColor: 'rgba(0, 0, 0, 1)',
-      verseData: {},
     };
   }
 
@@ -95,14 +95,9 @@ class DoodlePad extends React.PureComponent<{}, State> {
 
     window.addEventListener('resize', this.resizeCanvas);
     this.resizeCanvas();
-
-    const verseData = JSON.parse(`${localStorage.getItem('verseData')}`);
-    if (verseData) {
-      this.setState({ ...this.state, verseData });
-    }
   }
 
-  componentDidUpdate(_props: {}, prevState: State) {
+  componentDidUpdate(_props: {}, _prevState: State) {
     if (this.state.colorTarget === 'pen') {
       this.pickr.setColor(this.state.penColor);
     } else {
@@ -116,9 +111,10 @@ class DoodlePad extends React.PureComponent<{}, State> {
   }
 
   render() {
+    const { verses } = this.props;
     return (
       <>
-        {this.state.verseData && <div dangerouslySetInnerHTML={{ __html: this.state.verseData.content }} />}
+        <Verse verses={verses} />
         <div className="ColorPickerContainer">
           <select
             value={this.state.colorTarget}

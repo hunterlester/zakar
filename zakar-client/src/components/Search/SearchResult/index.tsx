@@ -15,7 +15,7 @@ const SearchResult = (props: Props): ReactElement => {
 
   const verseHandler = (verseId: string) => {
     const verseArray = verseId.split('-');
-    localStorage.setItem('verses', JSON.stringify(verseArray));
+    localStorage.setItem('versesID', JSON.stringify(verseArray));
     history.push('/learning-board');
   };
 
