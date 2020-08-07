@@ -13,18 +13,18 @@ const Search = (): ReactElement => {
     setError('');
     if (!!searchValue) {
       axios
-      .get(`${ESV_PREFIX}/search/?q=${searchValue}`, {
-        headers: {
-          'Authorization': `Token ${process.env.REACT_APP_ESV_API_KEY}`,
-        },
-      })
-      .then((response: AxiosResponse) => {
-        setSearchResult(response.data.results);
-      })
-      .catch((error) => {
-        setError(error);
-        console.error(error);
-      });
+        .get(`${ESV_PREFIX}/search/?q=${searchValue}`, {
+          headers: {
+            Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
+          },
+        })
+        .then((response: AxiosResponse) => {
+          setSearchResult(response.data.results);
+        })
+        .catch((error) => {
+          setError(error);
+          console.error(error);
+        });
     }
   }, [searchValue]);
 
@@ -43,11 +43,7 @@ const Search = (): ReactElement => {
       <div className="SearchResultContainer">
         {searchResult.map((result, i) => {
           return (
-            <SearchResult
-              key={`${result.reference}-${i}`}
-              content={result.content}
-              reference={result.reference}
-            />
+            <SearchResult key={`${result.reference}-${i}`} content={result.content} reference={result.reference} />
           );
         })}
       </div>

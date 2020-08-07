@@ -1,8 +1,22 @@
-@media (min-width: 415px) {
-    .HomeContainer {
-    }
-}
 
 h1 {
     text-align: center;
+}
+
+.VerseCopyright {
+    position: absolute;
+    bottom: 0;
+    width: 95vw;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-weight: lighter;
+}
+
+@media (min-width: 415px) {
+    .VerseCopyright {
+        width: 95vw;
+    }
 }

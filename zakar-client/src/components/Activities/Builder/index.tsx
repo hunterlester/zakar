@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Builder = (props: ActivityProps & Props): ReactElement => {
-  const { verseString, setVerse} = props;
+  const { verseString, setVerse } = props;
 
   return (
     <>
@@ -22,7 +22,7 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
 
             const verseData = await fetchVerse(`${prevVerseId}-${verseEnd}`);
             if (verseData) {
-              setVerse((verseData.passages[0]));
+              setVerse(verseData.passages[0]);
             }
           } catch (error) {
             // TODO: log error
@@ -44,7 +44,7 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
 
             const verseData = await fetchVerse(`${verseStart}-${nextVerseId}`);
             if (verseData) {
-              setVerse((verseData.passages[0]));
+              setVerse(verseData.passages[0]);
             }
           } catch (error) {
             // TODO: log error
@@ -54,7 +54,6 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
       >
         Add Next Verse
       </button>
-      { /* verses.length && <div className="VerseCopyright">{verses[0].copyright}</div> */}
     </>
   );
 };

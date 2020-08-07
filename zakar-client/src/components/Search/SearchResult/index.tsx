@@ -21,9 +21,7 @@ const SearchResult = (props: Props): ReactElement => {
       <a onClick={() => verseHandler(reference)}>
         <div dangerouslySetInnerHTML={{ __html: content }} />
       </a>
-      <h5>
-        {reference}
-      </h5>
+      <h5>{reference}</h5>
     </div>
   );
 };

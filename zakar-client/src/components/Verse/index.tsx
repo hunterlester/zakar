@@ -11,7 +11,7 @@ const Verse = (props: Props): ReactElement => {
   return (
     <>
       <div className="VerseContainer">
-        { /* <div>{verseString}</div> */ }
+        {/* <div>{verseString}</div> */}
         <div dangerouslySetInnerHTML={{ __html: verseString }} />
       </div>
     </>
