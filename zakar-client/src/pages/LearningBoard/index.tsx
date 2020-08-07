@@ -9,6 +9,7 @@ import FocusedScroll from 'components/Activities/FocusedScroll';
 import Typing from 'components/Activities/Typing';
 import Builder from 'components/Activities/Builder';
 import useVerse from 'hooks/useVerse';
+import Listening from 'components/Activities/Listening';
 
 const LearningBoard = (): ReactElement => {
   const [activityState, setActivityState] = useState<Activities>(Activities.Builder);
@@ -27,6 +28,8 @@ const LearningBoard = (): ReactElement => {
         return <FocusedScroll verseString={verseString} />;
       case Activities.Typing:
         return <Typing verseString={verseString} />;
+      case Activities.Listening:
+        return <Listening verseString={verseString} />;
       default:
         return;
     }

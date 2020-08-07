@@ -9,6 +9,7 @@ export enum Activities {
   DoodlePad,
   Recite,
   Typing,
+  Listening,
 }
 
 export const ESV_COPYRIGHT = `Scripture quotations are from the ESV® Bible
@@ -16,3 +17,10 @@ export const ESV_COPYRIGHT = `Scripture quotations are from the ESV® Bible
 a publishing ministry of Good News Publishers. Used by permission. All rights reserved.
 You may not copy or download more than 500 consecutive verses of the ESV Bible or more
 than one half of any book of the ESV Bible.`;
+
+export enum RequestFormat {
+  TEXT = 'text',
+  HTML = 'html',
+  AUDIO = 'audio',
+  SEARCH = 'search',
+}

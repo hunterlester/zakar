@@ -1,17 +1,28 @@
 import axios, { AxiosResponse } from 'axios';
-import { ESV_PREFIX } from 'utils/const';
+import { ESV_PREFIX, RequestFormat } from 'utils/const';
 
-export const fetchVerse = (verseId: string): Promise<any> => {
-  console.log('FETCH VERSE ID: ', verseId);
+interface Args {
+  verseID: string;
+  format: RequestFormat;
+  params?: {
+    'include-headings'?: boolean;
+    'include-copyright'?: boolean;
+    'include-short-copyright'?: boolean;
+    'include-audio-link'?: boolean;
+    'include-passage-references'?: boolean;
+    'include-footnotes'?: boolean;
+  };
+}
+
+export const fetchVerse = (args: Args): Promise<any> => {
+  console.log('FETCH VERSE ID: ', args.verseID);
   return axios
-    .get(
-      `${ESV_PREFIX}/html/?q=${verseId}&include-headings=false&include-copyright=false&include-short-copyright=true&include-audio-link=false&include-passage-references=true&include-footnotes=false`,
-      {
-        headers: {
-          Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
-        },
+    .get(`${ESV_PREFIX}/${args.format}/?q=${args.verseID}`, {
+      params: args.params,
+      headers: {
+        Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
       },
-    )
+    })
     .then((response: AxiosResponse) => {
       console.log(' -- -- Verse data: ', response.data);
       const verseData = response.data;

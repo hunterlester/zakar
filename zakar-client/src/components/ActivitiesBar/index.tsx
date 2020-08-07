@@ -29,12 +29,17 @@ const ActivitiesBar = (props: Props): ReactElement => {
     setActivityState(Activities.Typing);
   };
 
+  const setActivityListening = (): void => {
+    setActivityState(Activities.Listening);
+  };
+
   const activityArray = [
     setActivityNone,
     setActivityFocusedScroll,
     setActivityDoodlePad,
     setActivityRecite,
     setActivityTyping,
+    setActivityListening,
   ];
 
   return (
