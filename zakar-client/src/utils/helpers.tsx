@@ -1,25 +1,38 @@
 import axios, { AxiosResponse } from 'axios';
-import { PREFIX, BIBLE_ID } from 'utils/const';
+import { ESV_PREFIX, RequestFormat } from 'utils/const';
 
-export const fetchVerse = (verseId: string): Promise<any> => {
+interface Args {
+  verseID: string;
+  format: RequestFormat;
+  params?: {
+    'include-headings'?: boolean;
+    'include-copyright'?: boolean;
+    'include-short-copyright'?: boolean;
+    'include-audio-link'?: boolean;
+    'include-passage-references'?: boolean;
+    'include-footnotes'?: boolean;
+  };
+}
+
+export const fetchVerse = (args: Args): Promise<any> => {
+  console.log('FETCH VERSE ID: ', args.verseID);
   return axios
-    .get(`${PREFIX}/bibles/${BIBLE_ID}/verses/${verseId}`, {
+    .get(`${ESV_PREFIX}/${args.format}/?q=${args.verseID}`, {
+      params: args.params,
       headers: {
-        'api-key': `${process.env.REACT_APP_BIBLE_API_KEY}`,
+        Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
       },
     })
-    .then((data: AxiosResponse) => {
-      if (data.data.error) {
-        throw data.data.message;
-      } else {
-        const _BAPI = window._BAPI || {};
-        if (typeof _BAPI.t != undefined) {
-          console.log('-- Calling BAPI.t with fums ID: ', data.data.meta.fumsId);
-          _BAPI.t(data.data.meta.fumsId);
-        }
-        console.log(' -- -- Verse data: ', data.data);
-        return data.data.data;
-      }
+    .then((response: AxiosResponse) => {
+      console.log(' -- -- Verse data: ', response.data);
+      const verseData = response.data;
+      localStorage.setItem('verse_start', verseData.parsed[0][0]);
+      localStorage.setItem('verse_end', verseData.parsed[0][verseData.parsed[0].length - 1]);
+      localStorage.setItem('verseID', verseData.canonical);
+      localStorage.setItem('next_verse', verseData.passage_meta[0].next_verse);
+      localStorage.setItem('prev_verse', verseData.passage_meta[0].prev_verse);
+      console.log('LOCAL STORAGE: ', localStorage);
+      return verseData;
     })
     .catch((error) => {
       console.error(error);

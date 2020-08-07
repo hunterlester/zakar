@@ -3,33 +3,25 @@ import './SearchResult.css';
 import { useHistory } from 'react-router-dom';
 
 interface Props {
-  text?: string;
-  content?: string;
-  id: string;
+  content: string;
   reference: string;
 }
 
 const SearchResult = (props: Props): ReactElement => {
-  const { text, content, id, reference } = props;
+  const { content, reference } = props;
   const history = useHistory();
 
   const verseHandler = (verseId: string) => {
-    const verseArray = verseId.split('-');
-    localStorage.setItem('versesID', JSON.stringify(verseArray));
+    localStorage.setItem('verseID', verseId);
     history.push('/learning-board');
   };
 
   return (
     <div className="SearchResult">
-      {text && <a onClick={() => verseHandler(id)}>{text}</a>}
-      {content && (
-        <a onClick={() => verseHandler(id)}>
-          <div dangerouslySetInnerHTML={{ __html: content }} />
-        </a>
-      )}
-      <h5>
-        {reference}({id})
-      </h5>
+      <a onClick={() => verseHandler(reference)}>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
+      </a>
+      <h5>{reference}</h5>
     </div>
   );
 };
