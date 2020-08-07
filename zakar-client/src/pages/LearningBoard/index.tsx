@@ -8,30 +8,32 @@ import Recite from 'components/Activities/Recite';
 import FocusedScroll from 'components/Activities/FocusedScroll';
 import Typing from 'components/Activities/Typing';
 import Builder from 'components/Activities/Builder';
+import useVerse from 'hooks/useVerse';
 
 const LearningBoard = (): ReactElement => {
   const [activityState, setActivityState] = useState<Activities>(Activities.Builder);
   const history = useHistory();
+  const [verseArray, setVerseArray] = useVerse([]);
 
   const activitySwitch = (activityState: Activities) => {
     switch (activityState) {
       case Activities.Builder:
-        return <Builder />;
+        return <Builder verses={verseArray} setVerseArray={setVerseArray} />;
       case Activities.DoodlePad:
-        return <DoodlePad />;
+        return <DoodlePad verses={verseArray} />;
       case Activities.Recite:
-        return <Recite />;
+        return <Recite verses={verseArray} />;
       case Activities.FocusedScroll:
-        return <FocusedScroll />;
+        return <FocusedScroll verses={verseArray} />;
       case Activities.Typing:
-        return <Typing />;
+        return <Typing verses={verseArray} />;
       default:
         return;
     }
   };
 
   useEffect(() => {
-    const verses = JSON.parse(`${localStorage.getItem('verses')}`);
+    const verses = JSON.parse(`${localStorage.getItem('versesID')}`);
 
     if (!verses) {
       history.replace('/');

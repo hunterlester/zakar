@@ -3,11 +3,11 @@ import Search from 'components/Search';
 import './Home.css';
 import { useHistory } from 'react-router-dom';
 
-const Home = (props: any): ReactElement => {
+const Home = (): ReactElement => {
   const history = useHistory();
 
   useEffect(() => {
-    const verses = JSON.parse(`${localStorage.getItem('verses')}`);
+    const verses = JSON.parse(`${localStorage.getItem('versesID')}`);
     if (!!verses) {
       history.replace('/learning-board');
     }

@@ -1,13 +1,16 @@
 import React, { ReactElement, Ref, useRef, useState } from 'react';
 import axios from 'axios';
 import './Recite.css';
+import { ActivityProps } from 'react-app-env';
+import Verse from 'components/Verse';
 
 // Reference: https://developers.google.com/web/fundamentals/media/recording-audio
 
-const Recite = (): ReactElement => {
+const Recite = (props: ActivityProps): ReactElement => {
   const [isRecording, setIsRecording] = useState(false);
   const [transcriptWords, setTranscriptWords] = useState<string>('');
   const stopButtonEl: Ref<HTMLButtonElement> = useRef(document.createElement('button'));
+  const { verses } = props;
 
   const startHandler = () => {
     const handleSuccess = (stream: any) => {
@@ -67,6 +70,7 @@ const Recite = (): ReactElement => {
 
   return (
     <div>
+      <Verse verses={verses} />
       {isRecording && (
         <button className="RecordingButton" ref={stopButtonEl}>
           Stop

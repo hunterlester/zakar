@@ -11,3 +11,7 @@ declare global {
     MediaRecorder: any;
   }
 }
+
+export interface ActivityProps {
+  verses: any[];
+}

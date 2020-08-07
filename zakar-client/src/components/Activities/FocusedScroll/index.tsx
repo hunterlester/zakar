@@ -1,7 +1,8 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import './FocusedScroll.css';
+import { ActivityProps } from 'react-app-env';
 
-const FocusedScroll = (): ReactElement => {
+const FocusedScroll = (props: ActivityProps): ReactElement => {
   const [verseText, setVerseText] = useState<string>('');
   const [verseIndex, setVerseIndex] = useState(0);
 
@@ -36,7 +37,7 @@ const FocusedScroll = (): ReactElement => {
     <div>
       {verseText.split(' ').map((word, i) => {
         return (
-          <span className={i === verseIndex ? 'VerseHighlight' : ''} key={word + i}>
+          <span className={i === verseIndex ? 'VerseHighlight' : 'NonVerseHighlight'} key={word + i}>
             {word}
           </span>
         );

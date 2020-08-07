@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import './App.css';
 import Home from 'pages/Home';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import LearningBoard from 'pages/LearningBoard';
 
 function App(): ReactElement {
