@@ -2,7 +2,7 @@ import React from 'react';
 import SignaturePad from 'signature_pad';
 import Pickr from '@simonwep/pickr';
 import '@simonwep/pickr/dist/themes/classic.min.css';
-import './DoodlePad.css';
+import './Doodle.css';
 import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
 
@@ -49,7 +49,7 @@ const initPickr = () => {
   return pickr;
 };
 
-class DoodlePad extends React.PureComponent<ActivityProps, State> {
+class Doodle extends React.PureComponent<ActivityProps, State> {
   constructor(props: ActivityProps) {
     super(props);
     this.state = {
@@ -134,4 +134,4 @@ class DoodlePad extends React.PureComponent<ActivityProps, State> {
   }
 }
 
-export default DoodlePad;
+export default Doodle;

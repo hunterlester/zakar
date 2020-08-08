@@ -11,15 +11,15 @@ const ActivitiesBar = (props: Props): ReactElement => {
   const { setActivityState, activityState } = props;
 
   const setActivityNone = (): void => {
-    setActivityState(Activities.Builder);
+    setActivityState(Activities.Build);
   };
 
   const setActivityFocusedScroll = (): void => {
-    setActivityState(Activities.FocusedScroll);
+    setActivityState(Activities.Read);
   };
 
   const setActivityDoodlePad = (): void => {
-    setActivityState(Activities.DoodlePad);
+    setActivityState(Activities.Doodle);
   };
 
   const setActivityRecite = (): void => {
@@ -27,11 +27,11 @@ const ActivitiesBar = (props: Props): ReactElement => {
   };
 
   const setActivityTyping = (): void => {
-    setActivityState(Activities.Typing);
+    setActivityState(Activities.Type);
   };
 
   const setActivityListening = (): void => {
-    setActivityState(Activities.Listening);
+    setActivityState(Activities.Listen);
   };
 
   const activityArray = [

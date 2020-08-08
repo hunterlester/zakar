@@ -4,12 +4,12 @@ export const ESV_PREFIX = 'https://api.esv.org/v3/passage';
 export const BIBLE_ID = 'de4e12af7f28f599-02'; // KJV minus apocrypha
 
 export enum Activities {
-  Builder,
-  FocusedScroll,
-  DoodlePad,
+  Build,
+  Read,
+  Doodle,
   Recite,
-  Typing,
-  Listening,
+  Type,
+  Listen,
 }
 
 export const ESV_COPYRIGHT = `Scripture quotations are from the ESV® Bible

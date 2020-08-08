@@ -1,9 +1,9 @@
 import React, { ReactElement } from 'react';
-import './Listening.css';
+import './Listen.css';
 import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
 
-const Listening = (props: ActivityProps): ReactElement => {
+const Listen = (props: ActivityProps): ReactElement => {
   const { verseString } = props;
 
   return (
@@ -17,4 +17,4 @@ const Listening = (props: ActivityProps): ReactElement => {
   );
 };
 
-export default Listening;
+export default Listen;

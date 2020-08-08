@@ -3,33 +3,33 @@ import { Activities } from 'utils/const';
 import { useHistory } from 'react-router-dom';
 import ActivitiesBar from 'components/ActivitiesBar';
 import './LearningBoard.css';
-import DoodlePad from 'components/Activities/DoodlePad';
+import Doodle from 'components/Activities/Doodle';
 import Recite from 'components/Activities/Recite';
-import FocusedScroll from 'components/Activities/FocusedScroll';
-import Typing from 'components/Activities/Typing';
-import Builder from 'components/Activities/Builder';
+import Read from 'components/Activities/Read';
+import Type from 'components/Activities/Type';
+import Build from 'components/Activities/Build';
 import useVerse from 'hooks/useVerse';
-import Listening from 'components/Activities/Listening';
+import Listen from 'components/Activities/Listen';
 
 const LearningBoard = (): ReactElement => {
-  const [activityState, setActivityState] = useState<Activities>(Activities.Builder);
+  const [activityState, setActivityState] = useState<Activities>(Activities.Build);
   const history = useHistory();
   const [verseString, setVerse] = useVerse('');
 
   const activitySwitch = (activityState: Activities) => {
     switch (activityState) {
-      case Activities.Builder:
-        return <Builder verseString={verseString} setVerse={setVerse} />;
-      case Activities.DoodlePad:
-        return <DoodlePad verseString={verseString} />;
+      case Activities.Build:
+        return <Build verseString={verseString} setVerse={setVerse} />;
+      case Activities.Doodle:
+        return <Doodle verseString={verseString} />;
       case Activities.Recite:
         return <Recite verseString={verseString} />;
-      case Activities.FocusedScroll:
-        return <FocusedScroll />;
-      case Activities.Typing:
-        return <Typing verseString={verseString} />;
-      case Activities.Listening:
-        return <Listening verseString={verseString} />;
+      case Activities.Read:
+        return <Read />;
+      case Activities.Type:
+        return <Type verseString={verseString} />;
+      case Activities.Listen:
+        return <Listen verseString={verseString} />;
       default:
         return;
     }

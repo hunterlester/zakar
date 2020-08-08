@@ -12,14 +12,36 @@ const Search = (): ReactElement => {
   useEffect(() => {
     setError('');
     if (!!searchValue) {
+      const isPassageEndpoint = /([a-z])+(\s*\d)/.test(searchValue);
+      const params = {
+        'include-headings': false,
+        'include-copyright': false,
+        'include-short-copyright': true,
+        'include-audio-link': false,
+        'include-passage-references': true,
+        'include-footnotes': false,
+      };
+
       axios
-        .get(`${ESV_PREFIX}/search/?q=${searchValue}`, {
+        .get(`${ESV_PREFIX}/${isPassageEndpoint ? 'html' : 'search'}/?q=${searchValue}`, {
           headers: {
             Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
           },
+          params,
         })
         .then((response: AxiosResponse) => {
-          setSearchResult(response.data.results);
+          let results;
+          if (isPassageEndpoint) {
+            results = [
+              {
+                reference: response.data.canonical,
+                content: response.data.passages,
+              },
+            ];
+          } else {
+            results = response.data.results;
+          }
+          setSearchResult(results);
         })
         .catch((error) => {
           setError(error);
@@ -34,7 +56,7 @@ const Search = (): ReactElement => {
     <>
       <input
         autoFocus={true}
-        placeholder="gen 1, gen 1:3, gen 1:1-3, jacob"
+        placeholder="Try: gen1, gen1.3, gen1.3, gen1.3-7, jacob, job, jesus"
         className="SearchInput"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}

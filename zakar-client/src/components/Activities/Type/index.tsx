@@ -1,9 +1,9 @@
 import React, { ReactElement } from 'react';
-import './Typing.css';
+import './Type.css';
 import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
 
-const Typing = (props: ActivityProps): ReactElement => {
+const Type = (props: ActivityProps): ReactElement => {
   const { verseString } = props;
   return (
     <div>
@@ -13,4 +13,4 @@ const Typing = (props: ActivityProps): ReactElement => {
   );
 };
 
-export default Typing;
+export default Type;

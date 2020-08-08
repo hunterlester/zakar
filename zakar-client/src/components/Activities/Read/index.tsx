@@ -1,7 +1,7 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import './FocusedScroll.css';
+import './Read.css';
 
-const FocusedScroll = (): ReactElement => {
+const Read = (): ReactElement => {
   const [verseText, setVerseText] = useState<string>('');
   const [verseIndex, setVerseIndex] = useState(0);
 
@@ -64,4 +64,4 @@ const FocusedScroll = (): ReactElement => {
   );
 };
 
-export default FocusedScroll;
+export default Read;

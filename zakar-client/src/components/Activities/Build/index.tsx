@@ -1,6 +1,6 @@
 import React, { ReactElement, Dispatch } from 'react';
 import { fetchVerse } from 'utils/helpers';
-import './Builder.css';
+import './Build.css';
 import Verse from 'components/Verse';
 import { ActivityProps } from 'react-app-env';
 import { RequestFormat } from 'utils/const';
@@ -9,7 +9,7 @@ interface Props {
   setVerse: Dispatch<React.SetStateAction<string>>;
 }
 
-const Builder = (props: ActivityProps & Props): ReactElement => {
+const Build = (props: ActivityProps & Props): ReactElement => {
   const { verseString, setVerse } = props;
   const prevVerseId = localStorage.getItem('prev_verse');
   const nextVerseId = localStorage.getItem('next_verse');
@@ -141,4 +141,4 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
   );
 };
 
-export default Builder;
+export default Build;
