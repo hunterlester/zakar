@@ -11,16 +11,49 @@ interface Props {
 
 const Builder = (props: ActivityProps & Props): ReactElement => {
   const { verseString, setVerse } = props;
+  const prevVerseId = localStorage.getItem('prev_verse');
+  const nextVerseId = localStorage.getItem('next_verse');
+  const verseStart = localStorage.getItem('verse_start');
+  const verseEnd = localStorage.getItem('verse_end');
 
   return (
     <>
+      <Verse verseString={verseString} />
+
+      <button
+        className="LearningBoardButton"
+        disabled={Number(verseEnd) - Number(verseStart) < 1}
+        onClick={async () => {
+          try {
+            const fetchArgs = {
+              verseID: `${Number(verseStart) + 1}-${verseEnd}`,
+              format: RequestFormat.HTML,
+              params: {
+                'include-headings': false,
+                'include-copyright': false,
+                'include-short-copyright': true,
+                'include-audio-link': false,
+                'include-passage-references': true,
+                'include-footnotes': false,
+              },
+            };
+            const verseData = await fetchVerse(fetchArgs);
+            if (verseData) {
+              setVerse(verseData.passages[0]);
+            }
+          } catch (error) {
+            // TODO: log error
+            console.error(error);
+          }
+        }}
+      >
+        Remove First Verse
+      </button>
+
       <button
         className="LearningBoardButton"
         onClick={async () => {
           try {
-            const prevVerseId = localStorage.getItem('prev_verse');
-            const verseEnd = localStorage.getItem('verse_end');
-
             const fetchArgs = {
               verseID: `${prevVerseId}-${verseEnd}`,
               format: RequestFormat.HTML,
@@ -46,15 +79,10 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
         Add Previous Verse
       </button>
 
-      <Verse verseString={verseString} />
-
       <button
         className="LearningBoardButton"
         onClick={async () => {
           try {
-            const verseStart = localStorage.getItem('verse_start');
-            const nextVerseId = localStorage.getItem('next_verse');
-
             const fetchArgs = {
               verseID: `${verseStart}-${nextVerseId}`,
               format: RequestFormat.HTML,
@@ -78,6 +106,36 @@ const Builder = (props: ActivityProps & Props): ReactElement => {
         }}
       >
         Add Next Verse
+      </button>
+
+      <button
+        className="LearningBoardButton"
+        disabled={Number(verseEnd) - Number(verseStart) < 1}
+        onClick={async () => {
+          try {
+            const fetchArgs = {
+              verseID: `${verseStart}-${Number(verseEnd) - 1}`,
+              format: RequestFormat.HTML,
+              params: {
+                'include-headings': false,
+                'include-copyright': false,
+                'include-short-copyright': true,
+                'include-audio-link': false,
+                'include-passage-references': true,
+                'include-footnotes': false,
+              },
+            };
+            const verseData = await fetchVerse(fetchArgs);
+            if (verseData) {
+              setVerse(verseData.passages[0]);
+            }
+          } catch (error) {
+            // TODO: log error
+            console.error(error);
+          }
+        }}
+      >
+        Remove Last Verse
       </button>
     </>
   );

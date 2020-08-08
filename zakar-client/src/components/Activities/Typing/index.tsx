@@ -7,8 +7,8 @@ const Typing = (props: ActivityProps): ReactElement => {
   const { verseString } = props;
   return (
     <div>
-      TYPING
       <Verse verseString={verseString} />
+      <textarea autoFocus={true} className="TypingInput" />
     </div>
   );
 };

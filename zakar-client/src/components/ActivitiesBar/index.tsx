@@ -4,10 +4,11 @@ import './ActivitiesBar.css';
 
 interface Props {
   setActivityState: Function;
+  activityState: Activities;
 }
 
 const ActivitiesBar = (props: Props): ReactElement => {
-  const { setActivityState } = props;
+  const { setActivityState, activityState } = props;
 
   const setActivityNone = (): void => {
     setActivityState(Activities.Builder);
@@ -48,7 +49,11 @@ const ActivitiesBar = (props: Props): ReactElement => {
         if (!Number.isInteger(Number(activity)) && activity) {
           const index: any = Activities[activity];
           return (
-            <button key={activity} onClick={activityArray[index]} className={`ActivityItem ${activity}`}>
+            <button
+              key={activity}
+              onClick={activityArray[index]}
+              className={`ActivityItem ${activity} ${activityState === index ? 'Active' : ''}`}
+            >
               {activity}
             </button>
           );

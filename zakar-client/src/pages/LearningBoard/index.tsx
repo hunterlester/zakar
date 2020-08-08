@@ -25,7 +25,7 @@ const LearningBoard = (): ReactElement => {
       case Activities.Recite:
         return <Recite verseString={verseString} />;
       case Activities.FocusedScroll:
-        return <FocusedScroll verseString={verseString} />;
+        return <FocusedScroll />;
       case Activities.Typing:
         return <Typing verseString={verseString} />;
       case Activities.Listening:
@@ -47,7 +47,7 @@ const LearningBoard = (): ReactElement => {
 
   return (
     <>
-      <ActivitiesBar setActivityState={setActivityState} />
+      <ActivitiesBar activityState={activityState} setActivityState={setActivityState} />
       <div className="ActivityBlock">{activitySwitch(activityState)}</div>
     </>
   );

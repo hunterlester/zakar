@@ -1,8 +1,7 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import './FocusedScroll.css';
-import { ActivityProps } from 'react-app-env';
 
-const FocusedScroll = (props: ActivityProps): ReactElement => {
+const FocusedScroll = (): ReactElement => {
   const [verseText, setVerseText] = useState<string>('');
   const [verseIndex, setVerseIndex] = useState(0);
 
@@ -22,8 +21,20 @@ const FocusedScroll = (props: ActivityProps): ReactElement => {
     }
 
     if (e.key === 'ArrowRight') {
-      if (verseIndex < verseTextLength - 2) setVerseIndex(verseIndex + 1);
+      if (verseIndex < verseTextLength - 1) setVerseIndex(verseIndex + 1);
     }
+  };
+
+  const handleLeftScroll = (): void => {
+    if (verseIndex > 0) {
+      setVerseIndex(verseIndex - 1);
+    }
+  };
+
+  const handleRightScroll = (): void => {
+    console.log('SCROOL RIGHT');
+    const verseTextLength = verseText.split(' ').length;
+    if (verseIndex < verseTextLength - 1) setVerseIndex(verseIndex + 1);
   };
 
   useEffect(() => {
@@ -34,15 +45,22 @@ const FocusedScroll = (props: ActivityProps): ReactElement => {
   }, [verseIndex, verseText]);
 
   return (
-    <div>
-      {verseText.split(' ').map((word, i) => {
-        return (
-          <span className={i === verseIndex ? 'VerseHighlight' : 'NonVerseHighlight'} key={word + i}>
-            {word}
-          </span>
-        );
-      })}
-    </div>
+    <>
+      <h2 className="ReadingH2">{localStorage.getItem('verseID')}</h2>
+      <div className="ReadingContainer">
+        {verseText.split(' ').map((word, i) => {
+          return (
+            <span className={i === verseIndex ? 'VerseHighlight' : 'NonVerseHighlight'} key={word + i}>
+              {word}
+            </span>
+          );
+        })}
+      </div>
+      <div className="LeftRightButtonBlock">
+        <button onClick={handleLeftScroll}>&#8592;</button>
+        <button onClick={handleRightScroll}>&#8594;</button>
+      </div>
+    </>
   );
 };
 

@@ -1,6 +1,28 @@
+.LeftRightButtonBlock {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.LeftRightButtonBlock button {
+  display: block;
+}
+
+.ReadingContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ReadingH2 {
+  text-align: center;
+}
+
 .VerseHighlight {
-  border: 1px solid silver;
-  font-size: 2em;
+  border-bottom: 1px solid silver;
+  font-size: 1.25em;
+  align-self: center;
 }
 
 .NonVerseHighlight {

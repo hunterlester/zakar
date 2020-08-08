@@ -7,7 +7,7 @@ export default (state: string) => {
   const [error, setError] = useState<string>('');
 
   const gatherText = () => {
-    const text = document.querySelector('.VerseContainer');
+    const text = document.querySelector('.VerseContainer p');
     if (text && text.textContent) {
       localStorage.setItem('verseText', text.textContent);
     }
