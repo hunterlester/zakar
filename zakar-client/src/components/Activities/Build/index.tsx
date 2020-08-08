@@ -4,6 +4,7 @@ import './Build.css';
 import Verse from 'components/Verse';
 import { ActivityProps } from 'react-app-env';
 import { RequestFormat } from 'utils/const';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   setVerse: Dispatch<React.SetStateAction<string>>;
@@ -11,6 +12,7 @@ interface Props {
 
 const Build = (props: ActivityProps & Props): ReactElement => {
   const { verseString, setVerse } = props;
+  const history = useHistory();
   const prevVerseId = localStorage.getItem('prev_verse');
   const nextVerseId = localStorage.getItem('next_verse');
   const verseStart = localStorage.getItem('verse_start');
@@ -136,6 +138,17 @@ const Build = (props: ActivityProps & Props): ReactElement => {
         }}
       >
         Remove Last Verse
+      </button>
+
+      <button
+        key="clear-verse"
+        onClick={() => {
+          localStorage.clear();
+          history.push('/');
+        }}
+        className="ClearVerseButton"
+      >
+        Clear Verse
       </button>
     </>
   );

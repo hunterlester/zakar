@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Activities } from 'utils/const';
 import './ActivitiesBar.css';
-import { useHistory } from 'react-router-dom';
 
 interface Props {
   setActivityState: Function;
@@ -10,7 +9,6 @@ interface Props {
 
 const ActivitiesBar = (props: Props): ReactElement => {
   const { setActivityState, activityState } = props;
-  const history = useHistory();
 
   const setActivityNone = (): void => {
     setActivityState(Activities.Build);
@@ -61,16 +59,6 @@ const ActivitiesBar = (props: Props): ReactElement => {
           );
         }
       })}
-      <button
-        key="clear-verse"
-        onClick={() => {
-          localStorage.clear();
-          history.push('/');
-        }}
-        className="ClearVerseButton"
-      >
-        Clear Verse
-      </button>
     </div>
   );
 };

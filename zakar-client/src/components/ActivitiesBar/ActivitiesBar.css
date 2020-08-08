@@ -18,13 +18,3 @@
     border: 1px solid black;
     color: black;
 }
-
-.ClearVerseButton {
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid red;
-    background-color: white;
-    cursor: pointer;
-    display: block;
-    color: darkred;
-}
