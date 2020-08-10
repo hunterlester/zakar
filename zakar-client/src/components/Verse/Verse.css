@@ -1,5 +1,7 @@
 .VerseContainer {
     text-align: center;
+    width: 95vw;
+    margin: auto;
 }
 
 .p {
@@ -9,4 +11,10 @@
 .p .v {
   vertical-align: super;
   font-size: smaller;
+}
+
+@media (min-width: 500px) {
+  .VerseContainer {
+    width: 50vw;
+  }
 }

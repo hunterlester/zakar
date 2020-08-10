@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Activities } from 'utils/const';
 import './ActivitiesBar.css';
 
@@ -10,15 +10,31 @@ interface Props {
 const ActivitiesBar = (props: Props): ReactElement => {
   const { setActivityState, activityState } = props;
 
-  const setActivityNone = (): void => {
+  useEffect(() => {
+    const activities = localStorage.getItem('activities');
+    if (!activities) {
+      let activities = {};
+      {
+        Object.keys(Activities).forEach((activity: any) => {
+          if (!Number.isInteger(Number(activity)) && activity) {
+            const index: any = Activities[activity];
+            activities = { ...activities, [activity]: activity === 'Build' ? true : false };
+          }
+        });
+      }
+      localStorage.setItem('activities', JSON.stringify(activities));
+    }
+  }, []);
+
+  const setActivityBuild = (): void => {
     setActivityState(Activities.Build);
   };
 
-  const setActivityFocusedScroll = (): void => {
+  const setActivityRead = (): void => {
     setActivityState(Activities.Read);
   };
 
-  const setActivityDoodlePad = (): void => {
+  const setActivityDoodle = (): void => {
     setActivityState(Activities.Doodle);
   };
 
@@ -26,21 +42,21 @@ const ActivitiesBar = (props: Props): ReactElement => {
     setActivityState(Activities.Recite);
   };
 
-  const setActivityTyping = (): void => {
+  const setActivityType = (): void => {
     setActivityState(Activities.Type);
   };
 
-  const setActivityListening = (): void => {
+  const setActivityListen = (): void => {
     setActivityState(Activities.Listen);
   };
 
   const activityArray = [
-    setActivityNone,
-    setActivityFocusedScroll,
-    setActivityDoodlePad,
+    setActivityBuild,
+    setActivityRead,
+    setActivityDoodle,
     setActivityRecite,
-    setActivityTyping,
-    setActivityListening,
+    setActivityType,
+    setActivityListen,
   ];
 
   return (

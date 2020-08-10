@@ -38,6 +38,13 @@ const Read = (): ReactElement => {
   };
 
   useEffect(() => {
+    const verseTextLength = verseText.split(' ').length;
+    if (verseIndex === verseTextLength - 1) {
+      const activities = JSON.parse(`${localStorage.getItem('activities')}`);
+      activities['Read'] = true;
+      localStorage.setItem('activities', JSON.stringify(activities));
+    }
+
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
