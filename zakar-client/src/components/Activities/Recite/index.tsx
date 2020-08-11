@@ -1,5 +1,4 @@
-import React, { ReactElement, Ref, useRef, useState } from 'react';
-import axios from 'axios';
+import React, { ReactElement, useState, useEffect } from 'react';
 import './Recite.css';
 import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
@@ -7,80 +6,85 @@ import Verse from 'components/Verse';
 // Reference: https://developers.google.com/web/fundamentals/media/recording-audio
 
 const Recite = (props: ActivityProps): ReactElement => {
+  const [targetText, setTargetText] = useState<string>('');
   const [isRecording, setIsRecording] = useState(false);
   const [transcriptWords, setTranscriptWords] = useState<string>('');
-  const stopButtonEl: Ref<HTMLButtonElement> = useRef(document.createElement('button'));
   const { verseString } = props;
 
+  useEffect(() => {
+    let text = '';
+    const textNodes = document.querySelectorAll('.VerseContainer p');
+    textNodes.forEach((node) => {
+      if (node.textContent !== '(ESV)') {
+        // TODO: edge case only pulls text from last child
+        text += ` ${node.lastChild!.textContent}`;
+      }
+    });
+    if (!!text) {
+      const uriEncoded = encodeURI(text);
+      // Replaces non-breaking space with normal space
+      const nonBreakSpaceReplaced = uriEncoded.replace(/%C2%A0/g, '%20');
+      let decodedURIEncoded = decodeURI(nonBreakSpaceReplaced);
+      // TODO: go back to matching verse nums
+      decodedURIEncoded = decodedURIEncoded.replace(/,|\./g, '').toLowerCase().trim();
+      console.log(decodedURIEncoded);
+      setTargetText(decodedURIEncoded);
+    }
+  }, []);
+
   const startHandler = () => {
-    const handleSuccess = (stream: any) => {
-      const recordedChunks: any[] = [];
-      setIsRecording(true);
+    setIsRecording(true);
 
-      const options = { mimeType: 'audio/webm' };
-      const mediaRecorder = new window.MediaRecorder(stream, options);
+    // https://github.com/mdn/web-speech-api/blob/master/phrase-matcher/script.js
+    const SpeechRecognition = window.webkitSpeechRecognition;
+    const SpeechGrammarList = window.webkitSpeechGrammarList;
+    const SpeechRecognitionEvent = window.webkitSpeechRecognitionEvent;
 
-      mediaRecorder.addEventListener('dataavailable', (e: any) => {
-        console.log('e.data: ', e.data);
-        if (e.data.size > 0) {
-          recordedChunks.push(e.data);
-        }
+    const grammar = '#JSGF V1.0; grammar phrase; public <phrase> = ' + targetText + ';';
+    const recognition = new SpeechRecognition();
+    const speechRecognitionList = new SpeechGrammarList();
+    speechRecognitionList.addFromString(grammar, 1);
+    recognition.grammars = speechRecognitionList;
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-        stopButtonEl.current?.addEventListener('click', () => {
-          setIsRecording(false);
-          mediaRecorder.stop();
-        });
-      });
+    recognition.start();
 
-      mediaRecorder.addEventListener('stop', () => {
-        const url = 'https://brain.deepgram.com/v2/listen';
-        const username = `${process.env.REACT_APP_DEEPGRAM_KEY}`;
-        const password = `${process.env.REACT_APP_DEEPGRAM_KEY_SECRET}`;
-        const audio = new Blob(recordedChunks);
+    recognition.onresult = function (event: SpeechRecognitionEvent) {
+      console.log(event);
+      const speechResult = event.results[0][0].transcript.toLowerCase();
+      console.log('Speech result', encodeURI(speechResult));
+      console.log('Target text', encodeURI(targetText));
 
-        axios({
-          method: 'post',
-          url: url,
-          auth: {
-            username: username,
-            password: password,
-          },
-          headers: {
-            'Content-Type': 'audio/webm; codecs=opus',
-          },
-          params: {
-            model: 'general',
-          },
-          data: audio,
-        })
-          .then((response) => {
-            console.log(response.data);
-            setTranscriptWords(response.data.results.channels[0].alternatives[0].transcript);
-          })
-          .catch((error) => {
-            console.log('Error happened!: ' + error);
-          });
-      });
+      console.log('Confidence: ' + event.results[0][0].confidence);
 
-      mediaRecorder.start(1000);
+      setTranscriptWords(speechResult);
+
+      if (speechResult === targetText) {
+        console.log('they are equal!!!!!!!!!!!!!!!!!!');
+        const activities = JSON.parse(`${localStorage.getItem('activities')}`);
+        activities['Recite'] = true;
+        localStorage.setItem('activities', JSON.stringify(activities));
+      }
     };
 
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(handleSuccess);
+    recognition.onspeechend = function () {
+      setIsRecording(false);
+      recognition.stop();
+    };
+
+    recognition.onerror = function (event: SpeechRecognitionEvent) {
+      console.log('Speech error: ', event);
+    };
   };
 
   return (
     <div>
       <Verse verseString={verseString} />
-      {isRecording && (
-        <button className="RecordingButton" ref={stopButtonEl}>
-          Stop
-        </button>
-      )}
-      {!isRecording && (
-        <button className="RecordingButton" onClick={() => startHandler()}>
-          Start
-        </button>
-      )}
+      <button disabled={isRecording} className="RecordingButton" onClick={() => startHandler()}>
+        Start
+      </button>
       {transcriptWords && <p className="TranscriptWord">{transcriptWords}</p>}
     </div>
   );

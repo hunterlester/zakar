@@ -4,6 +4,9 @@ declare global {
   interface Window {
     _BAPI: any;
     MediaRecorder: any;
+    webkitSpeechRecognition: any;
+    webkitSpeechGrammarList: any;
+    webkitSpeechRecognitionEvent: any;
   }
 }
 
