@@ -16,8 +16,10 @@ const Recite = (props: ActivityProps): ReactElement => {
     const textNodes = document.querySelectorAll('.VerseContainer p');
     textNodes.forEach((node) => {
       if (node.textContent !== '(ESV)') {
-        // TODO: edge case only pulls text from last child
-        text += ` ${node.lastChild!.textContent}`;
+        node.querySelectorAll('.verse-num').forEach((verseNode) => {
+          verseNode.remove();
+        });
+        text += ` ${node.textContent}`;
       }
     });
     if (!!text) {
@@ -25,8 +27,10 @@ const Recite = (props: ActivityProps): ReactElement => {
       // Replaces non-breaking space with normal space
       const nonBreakSpaceReplaced = uriEncoded.replace(/%C2%A0/g, '%20');
       let decodedURIEncoded = decodeURI(nonBreakSpaceReplaced);
-      // TODO: go back to matching verse nums
-      decodedURIEncoded = decodedURIEncoded.replace(/,|\./g, '').toLowerCase().trim();
+      decodedURIEncoded = decodedURIEncoded
+        .replace(/,|\.|\u201c|\u201d|\!/g, '')
+        .toLowerCase()
+        .trim();
       console.log(decodedURIEncoded);
       setTargetText(decodedURIEncoded);
     }
