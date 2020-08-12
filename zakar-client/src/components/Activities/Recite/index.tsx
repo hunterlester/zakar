@@ -85,11 +85,18 @@ const Recite = (props: ActivityProps): ReactElement => {
 
   return (
     <div>
-      <Verse verseString={verseString} />
-      <button disabled={isRecording} className="RecordingButton" onClick={() => startHandler()}>
-        Start
-      </button>
-      {transcriptWords && <p className="TranscriptWord">{transcriptWords}</p>}
+      {!window.webkitSpeechRecognition &&
+        <p className="UserAgentMessage">Activity only supported on Google Chrome or Microsoft Edge.<br/> Change browser to unlock.</p>
+      }
+      {window.webkitSpeechRecognition &&
+        <>
+          <Verse verseString={verseString} />
+          <button disabled={isRecording} className="RecordingButton" onClick={() => startHandler()}>
+            Start
+          </button>
+          {transcriptWords && <p className="TranscriptWord">{transcriptWords}</p>}
+        </>
+      }
     </div>
   );
 };

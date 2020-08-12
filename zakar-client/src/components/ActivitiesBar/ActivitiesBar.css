@@ -18,3 +18,10 @@
     border: 1px solid black;
     color: black;
 }
+
+.ActivityItem:focus {
+    border: 1px solid black;
+    color: black;
+    outline-style: solid;
+    outline-width: 0px;
+}
