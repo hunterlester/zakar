@@ -28,10 +28,10 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
           'include-footnotes': false,
         },
       };
-      console.log('VERSE ID TO FETCH: ', verseID);
+      // console.log('VERSE ID TO FETCH: ', verseID);
       fetchVerse(fetchArgs)
         .then((verseData) => {
-          console.log('Map verse data: ', verseData);
+          // console.log('Map verse data: ', verseData);
           setVerse(verseData.passages[0]);
         })
         .catch((error) => {

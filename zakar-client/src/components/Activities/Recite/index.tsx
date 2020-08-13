@@ -31,7 +31,7 @@ const Recite = (props: ActivityProps): ReactElement => {
         .replace(/,|\.|\u201c|\u201d|\!/g, '')
         .toLowerCase()
         .trim();
-      console.log(decodedURIEncoded);
+      // console.log(decodedURIEncoded);
       setTargetText(decodedURIEncoded);
     }
   }, []);
@@ -56,17 +56,17 @@ const Recite = (props: ActivityProps): ReactElement => {
     recognition.start();
 
     recognition.onresult = function (event: SpeechRecognitionEvent) {
-      console.log(event);
+      // console.log(event);
       const speechResult = event.results[0][0].transcript.toLowerCase();
-      console.log('Speech result', encodeURI(speechResult));
-      console.log('Target text', encodeURI(targetText));
+      // console.log('Speech result', encodeURI(speechResult));
+      // console.log('Target text', encodeURI(targetText));
 
-      console.log('Confidence: ' + event.results[0][0].confidence);
+      // console.log('Confidence: ' + event.results[0][0].confidence);
 
       setTranscriptWords(speechResult);
 
       if (speechResult === targetText) {
-        console.log('they are equal!!!!!!!!!!!!!!!!!!');
+        // console.log('they are equal!!!!!!!!!!!!!!!!!!');
         const activities = JSON.parse(`${localStorage.getItem('activities')}`);
         activities['Recite'] = true;
         localStorage.setItem('activities', JSON.stringify(activities));

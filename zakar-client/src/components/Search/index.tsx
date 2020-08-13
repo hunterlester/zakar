@@ -55,7 +55,7 @@ const Search = (): ReactElement => {
     }
   }, [searchValue]);
 
-  console.log(searchResult);
+  // console.log(searchResult);
 
   return (
     <>

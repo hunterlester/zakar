@@ -19,7 +19,7 @@ interface PassageResponse {
 }
 
 export const fetchVerse = (args: Args): Promise<PassageResponse> => {
-  console.log('FETCH VERSE ID: ', args.verseID);
+  // console.log('FETCH VERSE ID: ', args.verseID);
   return axios
     .get(`${ESV_PREFIX}/${args.format}/?q=${args.verseID}`, {
       params: args.params,
@@ -28,14 +28,14 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
       },
     })
     .then((response: AxiosResponse) => {
-      console.log(' -- -- Verse data: ', response.data);
+      // console.log(' -- -- Verse data: ', response.data);
       const verseData = response.data;
       localStorage.setItem('verse_start', verseData.parsed[0][0]);
       localStorage.setItem('verse_end', verseData.parsed[0][verseData.parsed[0].length - 1]);
       localStorage.setItem('verseID', verseData.canonical);
       localStorage.setItem('next_verse', verseData.passage_meta[0].next_verse);
       localStorage.setItem('prev_verse', verseData.passage_meta[0].prev_verse);
-      console.log('LOCAL STORAGE: ', localStorage);
+      // console.log('LOCAL STORAGE: ', localStorage);
       return verseData;
     })
     .catch((error) => {

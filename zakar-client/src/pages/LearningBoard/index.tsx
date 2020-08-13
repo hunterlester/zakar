@@ -22,7 +22,7 @@ const LearningBoard = (): ReactElement => {
   const [verseString, setVerse] = useVerse('');
 
   const swipeEventHandler = (eventData: EventData) => {
-    console.log('SWIPE EVENT: ', eventData);
+    // console.log('SWIPE EVENT: ', eventData);
     const velocity = eventData.velocity;
     if (velocity < 0.7) {
       return;
@@ -81,7 +81,7 @@ const LearningBoard = (): ReactElement => {
     setActivitiesStates(activities);
   }, []);
 
-  console.log('ACTIVITY STATE: ', activityState);
+  // console.log('ACTIVITY STATE: ', activityState);
 
   return (
     <div {...handlers}>
