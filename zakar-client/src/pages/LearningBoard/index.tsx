@@ -9,11 +9,11 @@ import Type from 'components/Activities/Type';
 import Build from 'components/Activities/Build';
 import useVerse from 'hooks/useVerse';
 import Listen from 'components/Activities/Listen';
-import { useSwipeable } from 'react-swipeable';
+import { useSwipeable, EventData } from 'react-swipeable';
 import { ActivitiesStates } from 'react-app-env';
 
 const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`);
-const initState = initActivities || { Build: false, Read: false, Recite: false, Type: false, Listen: false};
+const initState = initActivities || { Build: false, Read: false, Recite: false, Type: false, Listen: false };
 
 const LearningBoard = (): ReactElement => {
   const [activitiesStates, setActivitiesStates] = useState<ActivitiesStates>(initState);
@@ -21,13 +21,14 @@ const LearningBoard = (): ReactElement => {
   const history = useHistory();
   const [verseString, setVerse] = useVerse('');
 
-  const swipeEventHandler = (eventData: any) => {
+  const swipeEventHandler = (eventData: EventData) => {
     console.log('SWIPE EVENT: ', eventData);
     const velocity = eventData.velocity;
     if (velocity < 0.7) {
       return;
     }
-    if (eventData.event.target.tagName === 'CANVAS' || eventData.event.target.tagName === 'TEXTAREA') {
+    const target: EventTarget | null = eventData.event.target;
+    if ((target as HTMLElement).tagName === 'CANVAS' || (target as HTMLElement).tagName === 'TEXTAREA') {
       return;
     }
     const enumLength = Object.keys(Activities).length / 2;
@@ -69,9 +70,8 @@ const LearningBoard = (): ReactElement => {
   useEffect(() => {
     let activities = JSON.parse(`${localStorage.getItem('activities')}`);
     if (!activities) {
-      Object.keys(Activities).forEach((activity: any) => {
+      Object.keys(Activities).forEach((activity: string) => {
         if (!Number.isInteger(Number(activity)) && activity) {
-          const index: any = Activities[activity];
           activities = { ...activities, [activity]: activity === 'Build' ? true : false };
         }
       });
@@ -85,7 +85,11 @@ const LearningBoard = (): ReactElement => {
 
   return (
     <div {...handlers}>
-      <ActivitiesBar activitiesStates={activitiesStates} activityState={activityState} setActivityState={setActivityState} />
+      <ActivitiesBar
+        activitiesStates={activitiesStates}
+        activityState={activityState}
+        setActivityState={setActivityState}
+      />
       <div className="ActivityBlock">{activitySwitch(activityState)}</div>
     </div>
   );

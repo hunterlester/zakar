@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import './Listen.css';
 import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';

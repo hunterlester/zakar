@@ -4,8 +4,13 @@ import { ESV_PREFIX } from 'utils/const';
 import './Search.css';
 import axios, { AxiosResponse } from 'axios';
 
+interface SearchResult {
+  content: string;
+  reference: string;
+}
+
 const Search = (): ReactElement => {
-  const [searchResult, setSearchResult] = useState<any[]>([]);
+  const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [error, setError] = useState('');
 

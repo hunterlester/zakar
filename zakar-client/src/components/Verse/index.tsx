@@ -7,11 +7,7 @@ const Verse = (props: ActivityProps): ReactElement => {
 
   return (
     <>
-      <div className="VerseContainer">
-        {verseString &&
-          <div dangerouslySetInnerHTML={{ __html: verseString }} />
-        }
-      </div>
+      <div className="VerseContainer">{verseString && <div dangerouslySetInnerHTML={{ __html: verseString }} />}</div>
     </>
   );
 };

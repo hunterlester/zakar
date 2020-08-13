@@ -14,7 +14,7 @@ const Read = (props: ActivityProps): ReactElement => {
     }
   }, []);
 
-  const handleKeyDown = (e: any): void => {
+  const handleKeyDown = (e: KeyboardEvent): void => {
     const verseTextLength = verseText.split(' ').length;
     if (e.key === 'ArrowLeft') {
       if (verseIndex > 0) {

@@ -1,10 +1,10 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, Dispatch, SetStateAction } from 'react';
 import { Activities } from 'utils/const';
 import './ActivitiesBar.css';
 import { ActivitiesStates } from 'react-app-env';
 
 interface Props {
-  setActivityState: Function;
+  setActivityState: Dispatch<SetStateAction<Activities>>;
   activityState: Activities;
   activitiesStates: ActivitiesStates;
 }
@@ -32,13 +32,7 @@ const ActivitiesBar = (props: Props): ReactElement => {
     setActivityState(Activities.Listen);
   };
 
-  const activityArray = [
-    setActivityBuild,
-    setActivityRead,
-    setActivityRecite,
-    setActivityType,
-    setActivityListen,
-  ];
+  const activityArray = [setActivityBuild, setActivityRead, setActivityRecite, setActivityType, setActivityListen];
 
   return (
     <div className="ActivitiesBar">
@@ -50,7 +44,9 @@ const ActivitiesBar = (props: Props): ReactElement => {
             <button
               key={activity}
               onClick={activityArray[index]}
-              className={`ActivityItem ${activity} ${activityState === index ? 'Active' : ''} ${BoolProgress ? 'GreenState' : ''}`}
+              className={`ActivityItem ${activity} ${activityState === index ? 'Active' : ''} ${
+                BoolProgress ? 'GreenState' : ''
+              }`}
             >
               {activity}
             </button>

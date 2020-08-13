@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { fetchVerse } from 'utils/helpers';
 import { RequestFormat } from 'utils/const';
 
-export default (state: string) => {
+export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
   const [verse, setVerse] = useState<string>(state);
-  const [error, setError] = useState<string>('');
 
   const gatherText = () => {
     const text = document.querySelector('.VerseContainer p');
@@ -14,7 +13,6 @@ export default (state: string) => {
   };
 
   useEffect(() => {
-    setError('');
     const verseID = localStorage.getItem('verseID');
 
     if (!!verseID) {
@@ -37,7 +35,7 @@ export default (state: string) => {
           setVerse(verseData.passages[0]);
         })
         .catch((error) => {
-          setError(error);
+          console.error(error);
         });
     }
   }, []);
@@ -46,5 +44,5 @@ export default (state: string) => {
     gatherText();
   }, [verse]);
 
-  return [verse, setVerse] as const;
+  return [verse, setVerse];
 };

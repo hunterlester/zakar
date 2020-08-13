@@ -14,7 +14,11 @@ interface Args {
   };
 }
 
-export const fetchVerse = (args: Args): Promise<any> => {
+interface PassageResponse {
+  passages: string[];
+}
+
+export const fetchVerse = (args: Args): Promise<PassageResponse> => {
   console.log('FETCH VERSE ID: ', args.verseID);
   return axios
     .get(`${ESV_PREFIX}/${args.format}/?q=${args.verseID}`, {

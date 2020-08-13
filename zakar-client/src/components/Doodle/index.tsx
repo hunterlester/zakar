@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import SignaturePad from 'signature_pad';
 import Pickr from '@simonwep/pickr';
 import '@simonwep/pickr/dist/themes/classic.min.css';
 import './Doodle.css';
 import { ActivityProps } from 'react-app-env';
-import Verse from 'components/Verse';
 
 interface State {
   colorTarget: string;
@@ -49,8 +48,8 @@ const initPickr = () => {
   return pickr;
 };
 
-class Doodle extends React.PureComponent<{}, State> {
-  constructor(props: {}) {
+class Doodle extends React.PureComponent<ActivityProps, State> {
+  constructor(props: ActivityProps) {
     super(props);
     this.state = {
       colorTarget: 'pen',
@@ -60,57 +59,72 @@ class Doodle extends React.PureComponent<{}, State> {
   }
 
   canvasEl = React.createRef<HTMLCanvasElement>();
-  signaturePad: any = {};
-  pickr: any = {};
+  signaturePad: SignaturePad | null = null;
+  pickr: Pickr | null = null;
 
-  resizeCanvas = () => {
-    const canvas = this.canvasEl.current!;
+  resizeCanvas = (): void => {
+    const canvas: HTMLCanvasElement | null = this.canvasEl.current;
     const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = canvas.offsetHeight * ratio;
-    canvas.getContext('2d')!.scale(ratio, ratio);
-    if (this.signaturePad.clear) {
+    if (canvas) {
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      const canvasContext = canvas.getContext('2d');
+      if (canvasContext) {
+        canvasContext.scale(ratio, ratio);
+      }
+    }
+    if (this.signaturePad && this.signaturePad.clear) {
       this.signaturePad.clear();
     }
   };
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.pickr = initPickr();
-    const canvas = this.canvasEl.current!;
-    this.signaturePad = new SignaturePad(canvas!);
-    this.signaturePad.on();
-    this.pickr.on('change', (color: any) => {
-      if (this.state.colorTarget === 'pen') {
-        this.signaturePad.penColor = color.toRGBA();
+    const canvas: HTMLCanvasElement | null = this.canvasEl.current;
+    if (canvas) {
+      this.signaturePad = new SignaturePad(canvas);
+      this.signaturePad.on();
+    }
+    this.pickr.on('change', (color: Pickr.HSVaColor) => {
+      if (this.signaturePad && this.state.colorTarget === 'pen') {
+        this.signaturePad.penColor = color.toRGBA().toString();
         this.setState({ ...this.state, penColor: color.toRGBA().toString() });
       } else {
         // TODO: this will wipe canvas on every change
-        const ctx = canvas.getContext('2d')!;
-        ctx.fillStyle = color.toRGBA();
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        this.setState({ ...this.state, backgroundColor: color.toRGBA().toString() });
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.fillStyle = color.toRGBA().toString();
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+          this.setState({ ...this.state, backgroundColor: color.toRGBA().toString() });
+        }
       }
-      this.pickr.applyColor();
+      if (this.pickr) {
+        this.pickr.applyColor();
+      }
     });
 
     window.addEventListener('resize', this.resizeCanvas);
     this.resizeCanvas();
   }
 
-  componentDidUpdate(_props: {}, _prevState: State) {
+  componentDidUpdate(): void {
     if (this.state.colorTarget === 'pen') {
-      this.pickr.setColor(this.state.penColor);
+      if (this.pickr) this.pickr.setColor(this.state.penColor);
     } else {
-      this.pickr.setColor(this.state.backgroundColor);
+      if (this.pickr) this.pickr.setColor(this.state.backgroundColor);
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     window.removeEventListener('resize', this.resizeCanvas);
-    this.signaturePad.off();
+    if (this.signaturePad) {
+      this.signaturePad.off();
+    }
   }
 
-  render() {
+  render(): ReactElement {
     return (
       <>
         <div className="ColorPickerContainer">
