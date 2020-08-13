@@ -9,7 +9,7 @@ const Recite = (props: ActivityProps): ReactElement => {
   const [targetText, setTargetText] = useState<string>('');
   const [isRecording, setIsRecording] = useState(false);
   const [transcriptWords, setTranscriptWords] = useState<string>('');
-  const { verseString } = props;
+  const { verseString, setActivitiesStates } = props;
 
   useEffect(() => {
     let text = '';
@@ -70,6 +70,7 @@ const Recite = (props: ActivityProps): ReactElement => {
         const activities = JSON.parse(`${localStorage.getItem('activities')}`);
         activities['Recite'] = true;
         localStorage.setItem('activities', JSON.stringify(activities));
+        setActivitiesStates(activities);
       }
     };
 

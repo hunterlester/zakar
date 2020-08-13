@@ -25,3 +25,7 @@
     outline-style: solid;
     outline-width: 0px;
 }
+
+.GreenState {
+    background-color: rgb(216, 241, 216);
+}

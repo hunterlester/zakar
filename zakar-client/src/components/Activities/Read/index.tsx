@@ -1,9 +1,11 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import './Read.css';
+import { ActivityProps } from 'react-app-env';
 
-const Read = (): ReactElement => {
+const Read = (props: ActivityProps): ReactElement => {
   const [verseText, setVerseText] = useState<string>('');
   const [verseIndex, setVerseIndex] = useState(0);
+  const { setActivitiesStates } = props;
 
   useEffect(() => {
     const verseText = localStorage.getItem('verseText');
@@ -39,10 +41,11 @@ const Read = (): ReactElement => {
 
   useEffect(() => {
     const verseTextLength = verseText.split(' ').length;
-    if (verseIndex === verseTextLength - 1) {
+    if (verseIndex > 0 && verseIndex === verseTextLength - 1) {
       const activities = JSON.parse(`${localStorage.getItem('activities')}`);
       activities['Read'] = true;
       localStorage.setItem('activities', JSON.stringify(activities));
+      setActivitiesStates(activities);
     }
 
     document.addEventListener('keydown', handleKeyDown);

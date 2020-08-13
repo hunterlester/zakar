@@ -6,7 +6,7 @@ import Verse from 'components/Verse';
 const Type = (props: ActivityProps): ReactElement => {
   const [targetText, setTargetText] = useState('');
   const [textInputValue, setTextInputValue] = useState('');
-  const { verseString } = props;
+  const { verseString, setActivitiesStates } = props;
 
   useEffect(() => {
     const text = document.querySelector('.VerseContainer p');
@@ -25,6 +25,7 @@ const Type = (props: ActivityProps): ReactElement => {
       const activities = JSON.parse(`${localStorage.getItem('activities')}`);
       activities['Type'] = true;
       localStorage.setItem('activities', JSON.stringify(activities));
+      setActivitiesStates(activities);
     }
   };
 

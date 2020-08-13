@@ -49,8 +49,8 @@ const initPickr = () => {
   return pickr;
 };
 
-class Doodle extends React.PureComponent<ActivityProps, State> {
-  constructor(props: ActivityProps) {
+class Doodle extends React.PureComponent<{}, State> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       colorTarget: 'pen',
@@ -111,10 +111,8 @@ class Doodle extends React.PureComponent<ActivityProps, State> {
   }
 
   render() {
-    const { verseString } = this.props;
     return (
       <>
-        <Verse verseString={verseString} />
         <div className="ColorPickerContainer">
           <select
             value={this.state.colorTarget}

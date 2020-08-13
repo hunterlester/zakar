@@ -3,7 +3,6 @@ import { Activities } from 'utils/const';
 import { useHistory } from 'react-router-dom';
 import ActivitiesBar from 'components/ActivitiesBar';
 import './LearningBoard.css';
-import Doodle from 'components/Activities/Doodle';
 import Recite from 'components/Activities/Recite';
 import Read from 'components/Activities/Read';
 import Type from 'components/Activities/Type';
@@ -11,8 +10,13 @@ import Build from 'components/Activities/Build';
 import useVerse from 'hooks/useVerse';
 import Listen from 'components/Activities/Listen';
 import { useSwipeable } from 'react-swipeable';
+import { ActivitiesStates } from 'react-app-env';
+
+const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`);
+const initState = initActivities || { Build: false, Read: false, Recite: false, Type: false, Listen: false};
 
 const LearningBoard = (): ReactElement => {
+  const [activitiesStates, setActivitiesStates] = useState<ActivitiesStates>(initState);
   const [activityState, setActivityState] = useState<Activities>(Activities.Build);
   const history = useHistory();
   const [verseString, setVerse] = useVerse('');
@@ -41,16 +45,14 @@ const LearningBoard = (): ReactElement => {
     switch (activityState) {
       case Activities.Build:
         return <Build verseString={verseString} setVerse={setVerse} />;
-      case Activities.Doodle:
-        return <Doodle verseString={verseString} />;
       case Activities.Recite:
-        return <Recite verseString={verseString} />;
+        return <Recite verseString={verseString} setActivitiesStates={setActivitiesStates} />;
       case Activities.Read:
-        return <Read />;
+        return <Read setActivitiesStates={setActivitiesStates} />;
       case Activities.Type:
-        return <Type verseString={verseString} />;
+        return <Type verseString={verseString} setActivitiesStates={setActivitiesStates} />;
       case Activities.Listen:
-        return <Listen verseString={verseString} />;
+        return <Listen verseString={verseString} setActivitiesStates={setActivitiesStates} />;
       default:
         return;
     }
@@ -64,11 +66,26 @@ const LearningBoard = (): ReactElement => {
     }
   }, []);
 
+  useEffect(() => {
+    let activities = JSON.parse(`${localStorage.getItem('activities')}`);
+    if (!activities) {
+      Object.keys(Activities).forEach((activity: any) => {
+        if (!Number.isInteger(Number(activity)) && activity) {
+          const index: any = Activities[activity];
+          activities = { ...activities, [activity]: activity === 'Build' ? true : false };
+        }
+      });
+
+      localStorage.setItem('activities', JSON.stringify(activities));
+    }
+    setActivitiesStates(activities);
+  }, []);
+
   console.log('ACTIVITY STATE: ', activityState);
 
   return (
     <div {...handlers}>
-      <ActivitiesBar activityState={activityState} setActivityState={setActivityState} />
+      <ActivitiesBar activitiesStates={activitiesStates} activityState={activityState} setActivityState={setActivityState} />
       <div className="ActivityBlock">{activitySwitch(activityState)}</div>
     </div>
   );
