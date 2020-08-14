@@ -6,8 +6,20 @@ canvas {
     display: block;
 }
 
+.pickr button {
+    border: 1px solid black;
+}
+
+.pickr:focus {
+    border: 1px solid black;
+}
+
 .ColorPickerContainer {
     display: flex;
     width: 95vw;
     margin: auto;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    align-items: center;
 }

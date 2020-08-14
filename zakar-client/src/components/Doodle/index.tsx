@@ -74,7 +74,9 @@ class Doodle extends React.PureComponent<ActivityProps, State> {
       }
     }
     if (this.signaturePad && this.signaturePad.clear) {
+      const data = this.signaturePad.toData();
       this.signaturePad.clear();
+      this.signaturePad.fromData(data);
     }
   };
 
@@ -83,7 +85,25 @@ class Doodle extends React.PureComponent<ActivityProps, State> {
     const canvas: HTMLCanvasElement | null = this.canvasEl.current;
     if (canvas) {
       this.signaturePad = new SignaturePad(canvas);
+      const doodleData = JSON.parse(`${localStorage.getItem('doodle')}`);
+      if (doodleData) {
+        // console.log('loading doodle data: ', doodleData);
+        this.signaturePad.fromData(doodleData);
+      }
       this.signaturePad.on();
+
+      canvas.addEventListener('mouseup', () => {
+        // console.log(this.signaturePad!.toData());
+        if (this.signaturePad) {
+          localStorage.setItem('doodle', JSON.stringify(this.signaturePad.toData()));
+        }
+      });
+
+      canvas.addEventListener('touchend', () => {
+        if (this.signaturePad) {
+          localStorage.setItem('doodle', JSON.stringify(this.signaturePad.toData()));
+        }
+      });
     }
     this.pickr.on('change', (color: Pickr.HSVaColor) => {
       if (this.signaturePad && this.state.colorTarget === 'pen') {
@@ -128,16 +148,27 @@ class Doodle extends React.PureComponent<ActivityProps, State> {
     return (
       <>
         <div className="ColorPickerContainer">
-          <select
-            value={this.state.colorTarget}
-            onChange={(e) => {
-              this.setState({ ...this.state, colorTarget: e.target.value });
+          {/* <select
+              value={this.state.colorTarget}
+              onChange={(e) => {
+                this.setState({ ...this.state, colorTarget: e.target.value });
+              }}
+            >
+              <option value="pen">Pen Color</option>
+              <option value="background">Background Color</option>
+            </select> */}
+          <div className="color-picker"></div>
+          <button
+            className="ActivityItem"
+            onClick={() => {
+              if (this.signaturePad) {
+                this.signaturePad.clear();
+              }
+              localStorage.removeItem('doodle');
             }}
           >
-            <option value="pen">Pen Color</option>
-            <option value="background">Background Color</option>
-          </select>
-          <div className="color-picker"></div>
+            Clear
+          </button>
         </div>
         <div className="pickrRoot"></div>
         <canvas ref={this.canvasEl}></canvas>
