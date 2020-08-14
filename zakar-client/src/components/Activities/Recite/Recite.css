@@ -16,3 +16,11 @@
   text-align: center;
   display: block;
 }
+
+.AccurateRecite {
+  background-color: rgb(216, 241, 216);
+}
+
+.InaccurateRecite {
+  background-color: rgb(255, 113, 113);
+}
