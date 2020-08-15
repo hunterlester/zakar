@@ -22,7 +22,7 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
         params: {
           'include-headings': false,
           'include-copyright': false,
-          'include-short-copyright': true,
+          'include-short-copyright': false,
           'include-audio-link': false,
           'include-passage-references': true,
           'include-footnotes': false,

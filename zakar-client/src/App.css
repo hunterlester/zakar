@@ -1,6 +1,7 @@
 .App {
-  /* width: 95vw;
-  margin: auto; */
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
 }
 
 .Button {
@@ -10,11 +11,50 @@
   margin: auto;
 }
 
+.ButtonContainer {
+  flex-grow: 1;
+}
+
+.ContentWrapper {
+}
+
+.Footer {
+  margin-top: 10px;
+  background-color: white;
+}
+
+.NavButton {
+  background-color: black;
+  color: white;
+  width: 100%;
+  outline: none;
+  border: none;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.Nav {
+  background-color: black;
+  margin: 0px;
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
 .p {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .p .v {
   vertical-align: super;
   font-size: smaller;
+}
+
+.VerseCopyright {
+    width: 95vw;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: .75em;
 }

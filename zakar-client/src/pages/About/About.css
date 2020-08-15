@@ -1,0 +1,17 @@
+.AboutContainer {
+    width: 50vw;
+    margin: auto;
+}
+
+.AboutContainer ul li {
+    margin: 10px 0px;
+}
+
+.AboutContainer ul {
+    padding-left: 17px;
+}
+
+.TextHighlight {
+    text-decoration: underline;
+    font-weight: 600;
+}
