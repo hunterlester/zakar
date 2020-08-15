@@ -93,6 +93,9 @@ class Recite extends React.PureComponent<ActivityProps, State> {
         node.querySelectorAll('.verse-num').forEach((verseNode) => {
           verseNode.remove();
         });
+        node.querySelectorAll('.chapter-num').forEach((verseNode) => {
+          verseNode.remove();
+        });
         text += ` ${node.textContent}`;
       }
     });

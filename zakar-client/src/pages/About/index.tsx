@@ -20,21 +20,21 @@ const About = (): ReactElement => {
         </li>
         <li>
           Your personal data, limited to email and/or phone number, may potentially be requested to help you sign-in or
-          to recover a lost account. If collected, this data will be stored in a strongly hashed and encrypted format,
-          in the case of a database breach.
+          to recover a lost account. If collected, this data will be stored in an encrypted format, in the case of a
+          database breach.
         </li>
         <li>Your data, or metadata, will not be collected and/or sold for any monetary purpose.</li>
         <li>
-          As such, although you have the option of creating an account, it&apos;s only purpose is for storing your
-          scriptural memorization progress and is <span className="TextHighlight">not</span> necessary for using the
-          memorization activities.
+          Although you have the option of creating an account, it&apos;s only purpose is for storing your scriptural
+          memorization progress and is <span className="TextHighlight">not</span> necessary for using the memorization
+          activities.
         </li>
       </ul>
 
       <h4>Support:</h4>
       <p>
         Please file any issues{' '}
-        <a target="_blank" rel="noreferrer" href="https://github.com/hunterlester/zakar/issues">
+        <a target="_blank" rel="noopener noreferrer" href="https://github.com/hunterlester/zakar/issues">
           here
         </a>
         .

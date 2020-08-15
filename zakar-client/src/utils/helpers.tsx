@@ -30,7 +30,7 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
       },
     })
     .then((response: AxiosResponse) => {
-      console.log(' -- -- Verse data: ', response.data);
+      // console.log(' -- -- Verse data: ', response.data);
       const verseData = response.data;
       localStorage.setItem('verseCanonical', verseData.canonical);
       localStorage.setItem('next_verse', verseData.passage_meta[0].next_verse);

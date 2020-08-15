@@ -98,10 +98,8 @@ const Build = (props: ActivityProps & Props): ReactElement => {
             const fetchArgs = {
               verseCanonical: `${verseIDArray[0]}-${verseIDArray[verseIDArray.length - 2]}`,
             };
-            console.log('fetchArgs: ', fetchArgs);
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
-              console.log(verseData);
               verseIDArray.pop();
               localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
               localStorage.setItem('verseString', verseData.passages[0]);

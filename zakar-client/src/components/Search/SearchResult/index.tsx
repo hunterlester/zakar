@@ -24,10 +24,10 @@ const SearchResult = (props: Props): ReactElement => {
 
   return (
     <div className="SearchResult">
-      <a onClick={() => verseHandler(reference)}>
-        <div dangerouslySetInnerHTML={{ __html: content }} />
-      </a>
       <h5>{reference}</h5>
+      <button className="SearchResultButton" onClick={() => verseHandler(reference)}>
+        {content}
+      </button>
     </div>
   );
 };
