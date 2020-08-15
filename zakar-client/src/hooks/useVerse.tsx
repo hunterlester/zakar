@@ -1,6 +1,5 @@
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { fetchVerse } from 'utils/helpers';
-import { RequestFormat } from 'utils/const';
 
 export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
   const [verse, setVerse] = useState<string>(state);
@@ -13,25 +12,28 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
   };
 
   useEffect(() => {
-    const verseID = localStorage.getItem('verseID');
+    const verseIDArray = JSON.parse(`${localStorage.getItem('verseIDArray')}`);
+    const verseString = localStorage.getItem('verseString');
 
-    if (!!verseID) {
+    if (!!verseString) {
+      console.log('VERSE ALREADY STORED, SO RETURNING');
+      setVerse(verseString);
+      return;
+    }
+
+    if (verseIDArray && verseIDArray.length) {
       const fetchArgs = {
-        verseID,
-        format: RequestFormat.HTML,
-        params: {
-          'include-headings': false,
-          'include-copyright': false,
-          'include-short-copyright': false,
-          'include-audio-link': false,
-          'include-passage-references': true,
-          'include-footnotes': false,
-        },
+        verseCanonical:
+          verseIDArray.length > 1 ? `${verseIDArray[0]}-${verseIDArray[verseIDArray.length - 1]}` : verseIDArray[0],
       };
-      // console.log('VERSE ID TO FETCH: ', verseID);
+
       fetchVerse(fetchArgs)
         .then((verseData) => {
+          console.log('NETWORK REQUEST FOR VERSE MADE');
           // console.log('Map verse data: ', verseData);
+
+          localStorage.setItem('verseString', verseData.passages[0]);
+          localStorage.setItem('verseIDArray', JSON.parse(`${[verseData.parsed[0][0]]}`));
           setVerse(verseData.passages[0]);
         })
         .catch((error) => {

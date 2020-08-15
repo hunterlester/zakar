@@ -1,6 +1,6 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import SearchResult from 'components/Search/SearchResult';
-import { ESV_PREFIX } from 'utils/const';
+import { ESV_PREFIX, defaultParams } from 'utils/const';
 import './Search.css';
 import axios, { AxiosResponse } from 'axios';
 
@@ -18,21 +18,13 @@ const Search = (): ReactElement => {
     setError('');
     if (!!searchValue) {
       const isPassageEndpoint = /([a-z])+(\s*\d)/.test(searchValue);
-      const params = {
-        'include-headings': false,
-        'include-copyright': false,
-        'include-short-copyright': false,
-        'include-audio-link': false,
-        'include-passage-references': true,
-        'include-footnotes': false,
-      };
 
       axios
         .get(`${ESV_PREFIX}/${isPassageEndpoint ? 'html' : 'search'}/?q=${searchValue}`, {
           headers: {
             Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
           },
-          params,
+          params: defaultParams,
         })
         .then((response: AxiosResponse) => {
           let results;

@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import LearningBoard from 'pages/LearningBoard';
 import About from 'pages/About';
 import { ESV_COPYRIGHT } from 'utils/const';
+import Login from 'pages/Login';
 
 function App(): ReactElement {
   return (
@@ -20,6 +21,9 @@ function App(): ReactElement {
             </Route>
             <Route path="/about">
               <About />
+            </Route>
+            <Route path="/login">
+              <Login />
             </Route>
           </Switch>
         </div>

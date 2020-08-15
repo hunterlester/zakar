@@ -56,7 +56,7 @@ const Read = (props: ActivityProps): ReactElement => {
 
   return (
     <>
-      <h2 className="ReadingH2">{localStorage.getItem('verseID')}</h2>
+      <h2 className="ReadingH2">{localStorage.getItem('verseCanonical')}</h2>
       <div className="ReadingContainer">
         {verseText.split(' ').map((word, i) => {
           return (

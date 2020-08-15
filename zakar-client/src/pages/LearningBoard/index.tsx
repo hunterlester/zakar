@@ -60,9 +60,9 @@ const LearningBoard = (): ReactElement => {
   };
 
   useEffect(() => {
-    const verses = localStorage.getItem('verseID');
+    const verses = JSON.parse(`${localStorage.getItem('verseIDArray')}`);
 
-    if (!verses) {
+    if (!verses || !verses.length) {
       history.replace('/');
     }
   }, []);

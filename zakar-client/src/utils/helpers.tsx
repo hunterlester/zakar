@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
-import { ESV_PREFIX, RequestFormat } from 'utils/const';
+import { ESV_PREFIX, RequestFormat, defaultParams } from 'utils/const';
 
 interface Args {
-  verseID: string;
-  format: RequestFormat;
+  verseCanonical: string;
+  format?: RequestFormat;
   params?: {
     'include-headings'?: boolean;
     'include-copyright'?: boolean;
@@ -16,23 +16,23 @@ interface Args {
 
 interface PassageResponse {
   passages: string[];
+  parsed: number[][];
 }
 
 export const fetchVerse = (args: Args): Promise<PassageResponse> => {
-  // console.log('FETCH VERSE ID: ', args.verseID);
+  // console.log('FETCH VERSE ID: ', args.verseCanonical);
+  const verseFormat = args.format ? args.format : RequestFormat.HTML;
   return axios
-    .get(`${ESV_PREFIX}/${args.format}/?q=${args.verseID}`, {
-      params: args.params,
+    .get(`${ESV_PREFIX}/${verseFormat}/?q=${args.verseCanonical}`, {
+      params: { ...defaultParams, ...args.params },
       headers: {
         Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
       },
     })
     .then((response: AxiosResponse) => {
-      // console.log(' -- -- Verse data: ', response.data);
+      console.log(' -- -- Verse data: ', response.data);
       const verseData = response.data;
-      localStorage.setItem('verse_start', verseData.parsed[0][0]);
-      localStorage.setItem('verse_end', verseData.parsed[0][verseData.parsed[0].length - 1]);
-      localStorage.setItem('verseID', verseData.canonical);
+      localStorage.setItem('verseCanonical', verseData.canonical);
       localStorage.setItem('next_verse', verseData.passage_meta[0].next_verse);
       localStorage.setItem('prev_verse', verseData.passage_meta[0].prev_verse);
       // console.log('LOCAL STORAGE: ', localStorage);

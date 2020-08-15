@@ -3,7 +3,6 @@ import { fetchVerse } from 'utils/helpers';
 import './Build.css';
 import Verse from 'components/Verse';
 import { ActivityProps } from 'react-app-env';
-import { RequestFormat } from 'utils/const';
 import { useHistory } from 'react-router-dom';
 
 interface Props {
@@ -15,8 +14,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
   const history = useHistory();
   const prevVerseId = localStorage.getItem('prev_verse');
   const nextVerseId = localStorage.getItem('next_verse');
-  const verseStart = localStorage.getItem('verse_start');
-  const verseEnd = localStorage.getItem('verse_end');
+  const verseIDArray = JSON.parse(`${localStorage.getItem('verseIDArray')}`);
 
   return (
     <>
@@ -24,23 +22,17 @@ const Build = (props: ActivityProps & Props): ReactElement => {
 
       <button
         className="LearningBoardButton"
-        disabled={Number(verseEnd) - Number(verseStart) < 1}
+        disabled={verseIDArray.length < 2}
         onClick={async () => {
           try {
             const fetchArgs = {
-              verseID: `${Number(verseStart) + 1}-${verseEnd}`,
-              format: RequestFormat.HTML,
-              params: {
-                'include-headings': false,
-                'include-copyright': false,
-                'include-short-copyright': false,
-                'include-audio-link': false,
-                'include-passage-references': true,
-                'include-footnotes': false,
-              },
+              verseCanonical: `${verseIDArray[1]}-${verseIDArray[verseIDArray.length - 1]}`,
             };
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
+              verseIDArray.shift();
+              localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
+              localStorage.setItem('verseString', verseData.passages[0]);
               setVerse(verseData.passages[0]);
             }
           } catch (error) {
@@ -57,19 +49,13 @@ const Build = (props: ActivityProps & Props): ReactElement => {
         onClick={async () => {
           try {
             const fetchArgs = {
-              verseID: `${prevVerseId}-${verseEnd}`,
-              format: RequestFormat.HTML,
-              params: {
-                'include-headings': false,
-                'include-copyright': false,
-                'include-short-copyright': false,
-                'include-audio-link': false,
-                'include-passage-references': true,
-                'include-footnotes': false,
-              },
+              verseCanonical: `${prevVerseId}-${verseIDArray[verseIDArray.length - 1]}`,
             };
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
+              verseIDArray.splice(0, 0, prevVerseId);
+              localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
+              localStorage.setItem('verseString', verseData.passages[0]);
               setVerse(verseData.passages[0]);
             }
           } catch (error) {
@@ -86,19 +72,13 @@ const Build = (props: ActivityProps & Props): ReactElement => {
         onClick={async () => {
           try {
             const fetchArgs = {
-              verseID: `${verseStart}-${nextVerseId}`,
-              format: RequestFormat.HTML,
-              params: {
-                'include-headings': false,
-                'include-copyright': false,
-                'include-short-copyright': false,
-                'include-audio-link': false,
-                'include-passage-references': true,
-                'include-footnotes': false,
-              },
+              verseCanonical: `${verseIDArray[0]}-${nextVerseId}`,
             };
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
+              verseIDArray.push(nextVerseId);
+              localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
+              localStorage.setItem('verseString', verseData.passages[0]);
               setVerse(verseData.passages[0]);
             }
           } catch (error) {
@@ -112,23 +92,19 @@ const Build = (props: ActivityProps & Props): ReactElement => {
 
       <button
         className="LearningBoardButton"
-        disabled={Number(verseEnd) - Number(verseStart) < 1}
+        disabled={verseIDArray.length < 2}
         onClick={async () => {
           try {
             const fetchArgs = {
-              verseID: `${verseStart}-${Number(verseEnd) - 1}`,
-              format: RequestFormat.HTML,
-              params: {
-                'include-headings': false,
-                'include-copyright': false,
-                'include-short-copyright': false,
-                'include-audio-link': false,
-                'include-passage-references': true,
-                'include-footnotes': false,
-              },
+              verseCanonical: `${verseIDArray[0]}-${verseIDArray[verseIDArray.length - 2]}`,
             };
+            console.log('fetchArgs: ', fetchArgs);
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
+              console.log(verseData);
+              verseIDArray.pop();
+              localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
+              localStorage.setItem('verseString', verseData.passages[0]);
               setVerse(verseData.passages[0]);
             }
           } catch (error) {

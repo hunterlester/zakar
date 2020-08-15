@@ -21,7 +21,7 @@ const Listen = (props: ActivityProps): ReactElement => {
         onEnded={audioEndedHandler}
         className="VerseAudio"
         controls
-        src={`https://audio.esv.org/hw/mq/${localStorage.getItem('verseID')}.mp3`}
+        src={`https://audio.esv.org/hw/mq/${localStorage.getItem('verseCanonical')}.mp3`}
       >
         Your browser does not support the
         <code>audio</code> element.
