@@ -4,29 +4,27 @@
     display: block;
     border: none;
     border-bottom: 1px solid #777;
-    width: 95vw;
+    width: 80vw;
     height: 32px;
     font-size: 28px;
     margin-bottom: 40px;
 }
 
 .SearchInput::placeholder {
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .SearchInput:focus {
     outline: none;
 }
 
-@media (min-width: 415px) {
-    .SearchInput {
-        width: 80vw;
-    }
-}
-
 @media (min-width: 500px) {
     .SearchInput {
         max-width: 500px;
+    }
+
+    .SearchInput::placeholder {
+      font-size: 18px;
     }
 }
 

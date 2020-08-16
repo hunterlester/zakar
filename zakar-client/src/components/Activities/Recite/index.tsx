@@ -125,10 +125,10 @@ class Recite extends React.PureComponent<ActivityProps, State> {
         )}
         {window.webkitSpeechRecognition && (
           <>
-            <Verse verseString={verseString} />
             <button disabled={this.state.isRecording} className="RecordingButton" onClick={() => this.startHandler()}>
               Start
             </button>
+            {!this.state.isRecording && <Verse verseString={verseString} />}
             {this.state.transcriptWords && (
               <p
                 className={`TranscriptWord ${this.state.inaccurateRecite ? 'InaccurateRecite' : ''} ${

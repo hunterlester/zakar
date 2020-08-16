@@ -1,5 +1,5 @@
 .AboutContainer {
-    width: 50vw;
+    width: 80vw;
     margin: auto;
 }
 
@@ -14,4 +14,8 @@
 .TextHighlight {
     text-decoration: underline;
     font-weight: 600;
+}
+
+.SupLink {
+    font-size: 14px;
 }

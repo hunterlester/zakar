@@ -6,10 +6,11 @@ import { fetchVerse } from 'utils/helpers';
 interface Props {
   content: string;
   reference: string;
+  isPassageEndpoint: boolean;
 }
 
 const SearchResult = (props: Props): ReactElement => {
-  const { content, reference } = props;
+  const { content, reference, isPassageEndpoint } = props;
   const history = useHistory();
 
   const verseHandler = (verseId: string) => {
@@ -24,9 +25,9 @@ const SearchResult = (props: Props): ReactElement => {
 
   return (
     <div className="SearchResult">
-      <h5>{reference}</h5>
+      {!isPassageEndpoint && <h5>{reference}</h5>}
       <button className="SearchResultButton" onClick={() => verseHandler(reference)}>
-        {content}
+        <div dangerouslySetInnerHTML={{ __html: content }} />
       </button>
     </div>
   );

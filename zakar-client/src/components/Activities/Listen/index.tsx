@@ -16,7 +16,6 @@ const Listen = (props: ActivityProps): ReactElement => {
 
   return (
     <div>
-      <Verse verseString={verseString} />
       <audio
         onEnded={audioEndedHandler}
         className="VerseAudio"
@@ -26,6 +25,8 @@ const Listen = (props: ActivityProps): ReactElement => {
         Your browser does not support the
         <code>audio</code> element.
       </audio>
+
+      <Verse verseString={verseString} />
 
       <Doodle />
     </div>

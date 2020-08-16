@@ -56,6 +56,10 @@ const Read = (props: ActivityProps): ReactElement => {
 
   return (
     <>
+      <div className="LeftRightButtonBlock">
+        <button onClick={handleLeftScroll}>&#8592;</button>
+        <button onClick={handleRightScroll}>&#8594;</button>
+      </div>
       <h2 className="ReadingH2">{localStorage.getItem('verseCanonical')}</h2>
       <div className="ReadingContainer">
         {verseText.split(' ').map((word, i) => {
@@ -65,10 +69,6 @@ const Read = (props: ActivityProps): ReactElement => {
             </span>
           );
         })}
-      </div>
-      <div className="LeftRightButtonBlock">
-        <button onClick={handleLeftScroll}>&#8592;</button>
-        <button onClick={handleRightScroll}>&#8594;</button>
       </div>
     </>
   );

@@ -13,6 +13,7 @@ const Search = (): ReactElement => {
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [error, setError] = useState('');
+  const [isPassageEndpoint, setIsPassageEndpoint] = useState(false);
 
   useEffect(() => {
     setError('');
@@ -29,6 +30,7 @@ const Search = (): ReactElement => {
         .then((response: AxiosResponse) => {
           let results;
           if (isPassageEndpoint) {
+            setIsPassageEndpoint(true);
             results = [
               {
                 reference: response.data.canonical,
@@ -36,6 +38,7 @@ const Search = (): ReactElement => {
               },
             ];
           } else {
+            setIsPassageEndpoint(false);
             results = response.data.results;
           }
           setSearchResult(results);
@@ -62,7 +65,12 @@ const Search = (): ReactElement => {
       <div className="SearchResultContainer">
         {searchResult.map((result, i) => {
           return (
-            <SearchResult key={`${result.reference}-${i}`} content={result.content} reference={result.reference} />
+            <SearchResult
+              key={`${result.reference}-${i}`}
+              isPassageEndpoint={isPassageEndpoint}
+              content={result.content}
+              reference={result.reference}
+            />
           );
         })}
       </div>
