@@ -47,7 +47,7 @@ const About = (): ReactElement => {
       <h4>Reporting bugs and feature requests:</h4>
       <p>
         Please file any issues or requests{' '}
-        <a target="_blank" rel="noopener noreferrer" href="https://github.com/hunterlester/zakar/issues">
+        <a target="_blank" rel="noopener noreferrer" href="https://github.com/hunterlester/zakar/issues/new/choose">
           here
         </a>
         , with the knowledge that development happens in spare time and by one developer.
