@@ -100,10 +100,17 @@ class Recite extends React.PureComponent<ActivityProps, State> {
       }
     });
     if (!!text) {
-      const uriEncoded = encodeURI(text);
+      let uriEncoded = encodeURI(text);
       // Replaces non-breaking space with normal space
-      const nonBreakSpaceReplaced = uriEncoded.replace(/%C2%A0/g, '%20');
-      let decodedURIEncoded = decodeURI(nonBreakSpaceReplaced);
+      uriEncoded = uriEncoded.replace(/%C2%A0/g, '%20');
+      uriEncoded = uriEncoded.replace(/%E2%80%9C/g, '');
+      uriEncoded = uriEncoded.replace(/%E2%80%9D/g, '');
+      uriEncoded = uriEncoded.replace(/%E2%80%99/g, "'");
+      uriEncoded = uriEncoded.replace(/%E2%80%98/g, "'");
+      uriEncoded = uriEncoded.replace(/\!/g, '');
+      uriEncoded = uriEncoded.replace(/\?/g, '');
+      uriEncoded = uriEncoded.replace(/\;/g, '');
+      let decodedURIEncoded = decodeURI(uriEncoded);
       decodedURIEncoded = decodedURIEncoded
         .replace(/,|\.|\u201c|\u201d|\!/g, '')
         .toLowerCase()

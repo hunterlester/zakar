@@ -45,7 +45,7 @@ const LearningBoard = (): ReactElement => {
   const activitySwitch = (activityState: Activities) => {
     switch (activityState) {
       case Activities.Build:
-        return <Build verseString={verseString} setVerse={setVerse} />;
+        return <Build verseString={verseString} setVerse={setVerse} setActivitiesStates={setActivitiesStates} />;
       case Activities.Recite:
         return <Recite verseString={verseString} setActivitiesStates={setActivitiesStates} />;
       case Activities.Read:

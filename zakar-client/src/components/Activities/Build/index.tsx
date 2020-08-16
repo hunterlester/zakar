@@ -1,21 +1,39 @@
-import React, { ReactElement, Dispatch, useState } from 'react';
+import React, { ReactElement, Dispatch, useState, useEffect, useRef } from 'react';
 import { fetchVerse } from 'utils/helpers';
 import './Build.css';
 import Verse from 'components/Verse';
 import { ActivityProps } from 'react-app-env';
 import { useHistory } from 'react-router-dom';
+import { Activities } from 'utils/const';
 
 interface Props {
   setVerse: Dispatch<React.SetStateAction<string>>;
 }
 
 const Build = (props: ActivityProps & Props): ReactElement => {
-  const { verseString, setVerse } = props;
+  const { verseString, setVerse, setActivitiesStates } = props;
   const [isFetching, setIsFetching] = useState(false);
+  const isInitialMount = useRef(true);
   const history = useHistory();
   const prevVerseId = localStorage.getItem('prev_verse');
   const nextVerseId = localStorage.getItem('next_verse');
   const verseIDArray = JSON.parse(`${localStorage.getItem('verseIDArray')}`);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      let activities = {};
+      Object.keys(Activities).forEach((activity: string) => {
+        if (!Number.isInteger(Number(activity)) && activity) {
+          activities = { ...activities, [activity]: activity === 'Build' ? true : false };
+        }
+      });
+
+      localStorage.setItem('activities', JSON.stringify(activities));
+      setActivitiesStates(activities);
+    }
+  }, [verseString]);
 
   return (
     <>

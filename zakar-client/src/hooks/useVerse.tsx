@@ -5,9 +5,13 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
   const [verse, setVerse] = useState<string>(state);
 
   const gatherText = () => {
-    const text = document.querySelector('.VerseContainer p');
-    if (text && text.textContent) {
-      localStorage.setItem('verseText', text.textContent);
+    let text = '';
+    const textNodes = document.querySelectorAll('.VerseContainer p');
+    textNodes.forEach((node) => {
+      text += ` ${node.textContent}`;
+    });
+    if (text) {
+      localStorage.setItem('verseText', text.trim());
     }
   };
 
