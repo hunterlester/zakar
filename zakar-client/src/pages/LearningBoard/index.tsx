@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { Activities } from 'utils/const';
+import { Activities, ActivityInstructions } from 'utils/const';
 import { useHistory } from 'react-router-dom';
 import ActivitiesBar from 'components/ActivitiesBar';
 import './LearningBoard.css';
@@ -11,6 +11,7 @@ import useVerse from 'hooks/useVerse';
 import Listen from 'components/Activities/Listen';
 import { useSwipeable, EventData } from 'react-swipeable';
 import { ActivitiesStates } from 'react-app-env';
+import ActivityInstruction from 'components/ActivityInstruction';
 
 const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`);
 const initState = initActivities || { Build: false, Read: false, Recite: false, Type: false, Listen: false };
@@ -90,6 +91,7 @@ const LearningBoard = (): ReactElement => {
         activityState={activityState}
         setActivityState={setActivityState}
       />
+      <ActivityInstruction instruction={ActivityInstructions[activityState]} />
       <div className="ActivityBlock">{activitySwitch(activityState)}</div>
     </div>
   );

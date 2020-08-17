@@ -23,12 +23,14 @@ const Build = (props: ActivityProps & Props): ReactElement => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
     } else {
-      let activities = {};
-      Object.keys(Activities).forEach((activity: string) => {
-        if (!Number.isInteger(Number(activity)) && activity) {
-          activities = { ...activities, [activity]: activity === 'Build' ? true : false };
-        }
-      });
+      let activities = JSON.parse(`${localStorage.getItem('activities')}`);
+      if (!activities) {
+        Object.keys(Activities).forEach((activity: string) => {
+          if (!Number.isInteger(Number(activity)) && activity) {
+            activities = { ...activities, [activity]: activity === 'Build' ? true : false };
+          }
+        });
+      }
 
       localStorage.setItem('activities', JSON.stringify(activities));
       setActivitiesStates(activities);
@@ -61,7 +63,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
           }
         }}
       >
-        Remove First Verse
+        Remove first verse
       </button>
 
       <button
@@ -88,7 +90,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
           }
         }}
       >
-        Add Previous Verse
+        Add preceding verse
       </button>
 
       <button
@@ -115,7 +117,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
           }
         }}
       >
-        Add Next Verse
+        Add next verse
       </button>
 
       <button
@@ -142,7 +144,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
           }
         }}
       >
-        Remove Last Verse
+        Remove last verse
       </button>
 
       <Verse verseString={verseString} />
@@ -156,7 +158,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
         }}
         className="ClearVerseButton"
       >
-        Clear Verse
+        Clear verse
       </button>
     </>
   );

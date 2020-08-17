@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import './About.css';
+import { PSALM_119_10_11 } from 'utils/const';
 
 const About = (): ReactElement => {
   return (
@@ -20,11 +21,14 @@ const About = (): ReactElement => {
       </h2>
 
       <p>
-        May this application be a helpful tool for scriptural memorization, but most importantly for developing our
-        relationship with Jesus Christ.
+        May this application be an effective tool for scriptural memorization, never forgetting the purpose of which is
+        to develop our relationship with Jesus Christ.
       </p>
       <p>May the Holy Spirit guide its development.</p>
       <p>Amen.</p>
+      <br />
+
+      <div dangerouslySetInnerHTML={{ __html: PSALM_119_10_11 }} />
       <br />
 
       <h4>Terms:</h4>

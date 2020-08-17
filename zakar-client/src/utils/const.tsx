@@ -6,9 +6,9 @@ export const BIBLE_ID = 'de4e12af7f28f599-02'; // KJV minus apocrypha
 export enum Activities {
   Build,
   Read,
-  Recite,
   Type,
   Listen,
+  Recite,
 }
 
 export const ESV_COPYRIGHT = `Scripture quotations are from the ESV® Bible
@@ -31,4 +31,20 @@ export const defaultParams = {
   'include-audio-link': false,
   'include-passage-references': true,
   'include-footnotes': false,
+};
+
+export const PSALM_119_10_11 =
+  '<h2 class="extra_text">Psalm 119:10–11</h2><p class="block-indent"><span class="begin-line-group"></span><span id="p19119010_01-1" class="line"><b class="verse-num inline" id="v19119010-1">10&nbsp;</b>&nbsp;&nbsp;With my whole heart I seek you;</span><br /><span id="p19119010_01-1" class="indent line">&nbsp;&nbsp;&nbsp;&nbsp;let me not wander from your commandments!</span><br /><span id="p19119011_01-1" class="line"><b class="verse-num inline" id="v19119011-1">11&nbsp;</b>&nbsp;&nbsp;I have stored up your word in my heart,</span><br /><span id="p19119011_01-1" class="indent line">&nbsp;&nbsp;&nbsp;&nbsp;that I might not sin against you.</span><br /></p><span class="end-line-group"></span>';
+
+export const ActivityInstructions = {
+  [Activities.Build]:
+    "<h4>Build the verse that you'd like to memorize</h4><ul><li>Add or remove preceding verse.</li><li>Add or remove next verse.</li></ul>",
+  [Activities.Read]:
+    '<h4>Focused reading</h4><ul><li>Use your left/right keyboard arrow keys or buttons to highlight each word.</li><li>Tap the key rythmically while reading out loud.</li></ul>',
+  [Activities.Type]:
+    "<h4>Practice typing your verse</h4><ul><li>Include verse numbers and punctuation.</li><li>If box for this activity does not turn green when you're done typing, look closely at what you typed, in comparison to your verse; it's part of the exercise. &#x1F609;</li></ul>",
+  [Activities.Listen]:
+    '<h4>Listen to your verse</h4><ul><li>Close your eyes and listen closely.</li><li>Use the doodling pad below if this is something that helps you focus on what you hear.</li></ul>',
+  [Activities.Recite]:
+    '<h4>Recite your verse out loud</h4><ul><li>Speak clearly into your microphone.</li><li>Take your time and breathe as you speak, as there is no need to quickly recite.</li></ul>',
 };

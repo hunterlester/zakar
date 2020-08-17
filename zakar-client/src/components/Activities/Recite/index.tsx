@@ -55,12 +55,13 @@ class Recite extends React.PureComponent<ActivityProps, State> {
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       // console.log(event);
-      const speechResult = event.results[this.state.transcriptWords.length][0].transcript.toLowerCase();
+      let speechResult = event.results[this.state.transcriptWords.length][0].transcript.toLowerCase();
       // console.log('Speech result', encodeURI(speechResult));
       // console.log('Target text', encodeURI(targetText));
 
       // console.log('Confidence: ' + event.results[0][0].confidence);
 
+      speechResult = speechResult.replace(/worshipped/g, 'worshiped');
       this.setState({ ...this.state, transcriptWords: [...this.state.transcriptWords, speechResult.trim()] });
       // console.log(this.state.transcriptWords.join(" "));
 

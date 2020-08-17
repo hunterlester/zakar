@@ -32,7 +32,7 @@ const ActivitiesBar = (props: Props): ReactElement => {
     setActivityState(Activities.Listen);
   };
 
-  const activityArray = [setActivityBuild, setActivityRead, setActivityRecite, setActivityType, setActivityListen];
+  const activityArray = [setActivityBuild, setActivityRead, setActivityType, setActivityListen, setActivityRecite];
 
   return (
     <div className="ActivitiesBar">

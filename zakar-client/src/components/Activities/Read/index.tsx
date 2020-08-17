@@ -16,27 +16,35 @@ const Read = (props: ActivityProps): ReactElement => {
 
   const handleKeyDown = (e: KeyboardEvent): void => {
     const verseTextLength = verseText.split(' ').length;
-    if (e.key === 'ArrowLeft') {
-      if (verseIndex > 0) {
-        setVerseIndex(verseIndex - 1);
-      }
-    }
+    // if (e.key === 'ArrowLeft') {
+    //   if (verseIndex > 0) {
+    //     setVerseIndex(verseIndex - 1);
+    //   }
+    // }
 
     if (e.key === 'ArrowRight') {
-      if (verseIndex < verseTextLength - 1) setVerseIndex(verseIndex + 1);
+      if (verseIndex < verseTextLength - 1) {
+        setVerseIndex(verseIndex + 1);
+      } else {
+        setVerseIndex(0);
+      }
     }
   };
 
-  const handleLeftScroll = (): void => {
-    if (verseIndex > 0) {
-      setVerseIndex(verseIndex - 1);
-    }
-  };
+  // const handleLeftScroll = (): void => {
+  //   if (verseIndex > 0) {
+  //     setVerseIndex(verseIndex - 1);
+  //   }
+  // };
 
   const handleRightScroll = (): void => {
     // console.log('SCROOL RIGHT');
     const verseTextLength = verseText.split(' ').length;
-    if (verseIndex < verseTextLength - 1) setVerseIndex(verseIndex + 1);
+    if (verseIndex < verseTextLength - 1) {
+      setVerseIndex(verseIndex + 1);
+    } else {
+      setVerseIndex(0);
+    }
   };
 
   useEffect(() => {
@@ -57,7 +65,7 @@ const Read = (props: ActivityProps): ReactElement => {
   return (
     <>
       <div className="LeftRightButtonBlock">
-        <button onClick={handleLeftScroll}>&#8592;</button>
+        {/* <button onClick={handleLeftScroll}>&#8592;</button> */}
         <button onClick={handleRightScroll}>&#8594;</button>
       </div>
       <h2 className="ReadingH2">{localStorage.getItem('verseCanonical')}</h2>
