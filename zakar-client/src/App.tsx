@@ -6,6 +6,7 @@ import LearningBoard from 'pages/LearningBoard';
 import About from 'pages/About';
 import { ESV_COPYRIGHT } from 'utils/const';
 import Login from 'pages/Login';
+import Global from 'pages/Global';
 
 function App(): ReactElement {
   return (
@@ -25,6 +26,9 @@ function App(): ReactElement {
             <Route path="/login">
               <Login />
             </Route>
+            <Route path="/global">
+              <Global />
+            </Route>
           </Switch>
         </div>
         <div className="Footer">
@@ -38,6 +42,11 @@ function App(): ReactElement {
             <div className="ButtonContainer">
               <Link to="/about">
                 <button className="NavButton">About</button>
+              </Link>
+            </div>
+            <div className="ButtonContainer">
+              <Link to="/global">
+                <button className="NavButton">Global</button>
               </Link>
             </div>
             <div className="ButtonContainer">
