@@ -114,6 +114,7 @@ class Recite extends React.PureComponent<ActivityProps, State> {
       let decodedURIEncoded = decodeURI(uriEncoded);
       decodedURIEncoded = decodedURIEncoded
         .replace(/,|\.|\u201c|\u201d|\!/g, '')
+        .replace(/\s\s+/g, ' ')
         .toLowerCase()
         .trim();
       // console.log(decodedURIEncoded);

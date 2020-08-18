@@ -22,7 +22,7 @@ const Type = (props: ActivityProps): ReactElement => {
       uriEncoded = uriEncoded.replace(/%E2%80%9D/g, '%22');
       uriEncoded = uriEncoded.replace(/%E2%80%99/g, "'");
       uriEncoded = uriEncoded.replace(/%E2%80%98/g, "'");
-      setTargetText(decodeURI(uriEncoded).trim());
+      setTargetText(decodeURI(uriEncoded).replace(/\s\s+/g, ' ').trim());
     }
   }, []);
 
