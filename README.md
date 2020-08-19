@@ -13,3 +13,8 @@
 
 - `cd zakar-client`
 - `cargo run`
+
+### Deploy
+
+#### Heroku
+- `git subtree push --prefix zakar-client heroku master`
