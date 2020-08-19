@@ -21,7 +21,7 @@ const Search = (): ReactElement => {
       const isPassageEndpoint = /([a-z])+(\s*\d)/.test(searchValue);
 
       axios
-        .get(`${ESV_PREFIX}/${isPassageEndpoint ? 'html' : 'search'}/?q=${searchValue}`, {
+        .get(`/${isPassageEndpoint ? 'html' : 'search'}/?q=${searchValue}`, {
           headers: {
             Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
           },
