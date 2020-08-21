@@ -1,7 +1,8 @@
 use actix_files as fs;
-use actix_web::{web, App, Error, HttpServer};
+use actix_web::{web, App, Error, HttpServer, http};
 use listenfd::ListenFd;
 use std::path::PathBuf;
+use actix_cors::Cors;
 
 // https://www.steadylearner.com/blog/read/How-to-use-React-with-Rust-Actix
 
@@ -15,6 +16,14 @@ async fn main() -> std::io::Result<()> {
     let mut listenfd = ListenFd::from_env();
     let mut server = HttpServer::new(|| {
         App::new()
+            .wrap(
+                Cors::new()
+                    .allowed_origin("https://api.esv.org")
+                    // .allowed_methods(vec!["GET"])
+                    // .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+                    // .allowed_header(http::header::CONTENT_TYPE)
+                    .finish()
+            )
             .route("/", web::get().to(index))
             .route("/login", web::get().to(index))
             .route("/learning-board", web::get().to(index))
