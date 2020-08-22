@@ -1,8 +1,10 @@
+use actix_cors::Cors;
 use actix_files as fs;
 use actix_web::{web, App, Error, HttpServer};
 use listenfd::ListenFd;
+use std::env;
+use std::net::SocketAddr;
 use std::path::PathBuf;
-use actix_cors::Cors;
 
 // https://www.steadylearner.com/blog/read/How-to-use-React-with-Rust-Actix
 
@@ -11,9 +13,17 @@ async fn index() -> Result<fs::NamedFile, Error> {
     Ok(fs::NamedFile::open(path)?)
 }
 
+fn get_server_port() -> u16 {
+    env::var("PORT")
+        .ok()
+        .and_then(|p| p.parse().ok())
+        .unwrap_or(8000)
+}
+
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     let mut listenfd = ListenFd::from_env();
+    let addr = SocketAddr::from(([0, 0, 0, 0], get_server_port()));
     let mut server = HttpServer::new(|| {
         App::new()
             .wrap(
@@ -22,7 +32,7 @@ async fn main() -> std::io::Result<()> {
                     // .allowed_methods(vec!["GET"])
                     // .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     // .allowed_header(http::header::CONTENT_TYPE)
-                    .finish()
+                    .finish(),
             )
             .route("/", web::get().to(index))
             .route("/login", web::get().to(index))
@@ -35,7 +45,7 @@ async fn main() -> std::io::Result<()> {
     server = if let Some(listener) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen(listener)?
     } else {
-        server.bind("0.0.0.0:8000")?
+        server.bind(addr)?
     };
 
     server.run().await
