@@ -1,5 +1,5 @@
 use actix_files as fs;
-use actix_web::{web, App, Error, HttpServer, http};
+use actix_web::{web, App, Error, HttpServer};
 use listenfd::ListenFd;
 use std::path::PathBuf;
 use actix_cors::Cors;
@@ -18,7 +18,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(
                 Cors::new()
-                    .allowed_origin("https://api.esv.org")
+                    // .allowed_origin("http://localhost:8000")
                     // .allowed_methods(vec!["GET"])
                     // .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     // .allowed_header(http::header::CONTENT_TYPE)
@@ -35,7 +35,7 @@ async fn main() -> std::io::Result<()> {
     server = if let Some(listener) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen(listener)?
     } else {
-        server.bind("127.0.0.1:8000")?
+        server.bind("0.0.0.0:8000")?
     };
 
     server.run().await
