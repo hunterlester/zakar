@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { ESV_PREFIX, RequestFormat, defaultParams } from 'utils/const';
+import { SERVER_ORIGIN, RequestFormat, defaultParams } from 'utils/const';
 
 interface Args {
   verseCanonical: string;
@@ -23,7 +23,7 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
   // console.log('FETCH VERSE ID: ', args.verseCanonical);
   const verseFormat = args.format ? args.format : RequestFormat.HTML;
   return axios
-    .get(`${ESV_PREFIX}/${verseFormat}/?q=${args.verseCanonical}`, {
+    .get(`${SERVER_ORIGIN}/proxy/${verseFormat}/?q=${args.verseCanonical}`, {
       params: { ...defaultParams, ...args.params },
       headers: {
         Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
