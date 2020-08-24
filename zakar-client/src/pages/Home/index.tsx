@@ -11,7 +11,8 @@ const Home = (): ReactElement => {
     if (verses && verses.length) {
       history.replace('/learning-board');
     }
-  });
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="HomeContainer">

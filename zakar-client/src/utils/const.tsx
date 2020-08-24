@@ -1,5 +1,6 @@
 export const ESV_PREFIX = 'https://api.esv.org/v3/passage';
 export const SERVER_ORIGIN = window.location.origin;
+export const IS_NODE_DEV = process.env.NODE_ENV === "development";
 
 export const BIBLE_ID = 'de4e12af7f28f599-02'; // KJV minus apocrypha
 

@@ -1,8 +1,12 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import './About.css';
 import { PSALM_119_10_11 } from 'utils/const';
 
 const About = (): ReactElement => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="AboutContainer">
       <h2>

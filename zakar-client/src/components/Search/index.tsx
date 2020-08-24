@@ -1,6 +1,6 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import SearchResult from 'components/Search/SearchResult';
-import { SERVER_ORIGIN, defaultParams } from 'utils/const';
+import { SERVER_ORIGIN, defaultParams, IS_NODE_DEV, ESV_PREFIX } from 'utils/const';
 import './Search.css';
 import axios, { AxiosResponse } from 'axios';
 
@@ -19,9 +19,10 @@ const Search = (): ReactElement => {
     setError('');
     if (!!searchValue) {
       const isPassageEndpoint = /([a-z])+(\s*\d)/.test(searchValue);
+      const requestHref = IS_NODE_DEV ? ESV_PREFIX : `${SERVER_ORIGIN}/proxy`;
 
       axios
-        .get(`${SERVER_ORIGIN}/proxy/${isPassageEndpoint ? 'html' : 'search'}/?q=${searchValue}`, {
+        .get(`${requestHref}/${isPassageEndpoint ? 'html' : 'search'}/?q=${searchValue}`, {
           headers: {
             Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
           },

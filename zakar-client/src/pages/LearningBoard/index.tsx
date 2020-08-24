@@ -66,6 +66,8 @@ const LearningBoard = (): ReactElement => {
     if (!verses || !verses.length) {
       history.replace('/');
     }
+
+    window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
