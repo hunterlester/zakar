@@ -45,11 +45,6 @@ const About = (): ReactElement => {
           to recover a lost account. If collected, this data will be stored in an encrypted format.
         </li>
         <li>Your data, or metadata, will not be collected and/or sold for any monetary purpose.</li>
-        <li>
-          Although you have the option of creating an account, it&apos;s only purpose is for storing your scriptural
-          memorization progress and is <span className="TextHighlight">not</span> necessary for utilizing the
-          memorization activities.
-        </li>
       </ul>
 
       <h4>Reporting bugs and feature requests:</h4>

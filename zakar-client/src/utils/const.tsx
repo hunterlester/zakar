@@ -41,7 +41,7 @@ export const ActivityInstructions = {
   [Activities.Build]:
     "<h4>Build the verse that you'd like to memorize</h4><ul><li>Add or remove preceding verse.</li><li>Add or remove next verse.</li></ul>",
   [Activities.Read]:
-    '<h4>Focused reading</h4><ul><li>Use your right keyboard arrow key or button to highlight each word.</li><li>Tap the key rhythmically while reading out loud.</li></ul>',
+    '<h4>Focused reading</h4><ul><li>Use your right keyboard arrow key or the "Tap me" button to highlight each word.</li><li>Tap rhythmically while reading out loud.</li></ul>',
   [Activities.Type]:
     "<h4>Practice typing your verse</h4><ul><li>Include verse numbers and punctuation.</li><li>If box for this activity does not turn green when you're done typing, look closely at what you typed, in comparison to your verse; it's part of the exercise. &#x1F609;</li></ul>",
   [Activities.Listen]:

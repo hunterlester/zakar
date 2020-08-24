@@ -28,7 +28,7 @@ const ActivityInstruction = (props: Props): ReactElement => {
   return (
     <div>
       <button className="ToolTip" onClick={() => setIsOpen(!isOpen)}>
-        ?
+        &#9432; 
       </button>
       {isOpen && (
         <div ref={toolTipRef} className="ActivityInstruction" dangerouslySetInnerHTML={{ __html: instruction }} />

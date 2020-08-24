@@ -106,8 +106,8 @@ class Recite extends React.PureComponent<ActivityProps, State> {
       uriEncoded = uriEncoded.replace(/%C2%A0/g, '%20');
       uriEncoded = uriEncoded.replace(/%E2%80%9C/g, '');
       uriEncoded = uriEncoded.replace(/%E2%80%9D/g, '');
-      uriEncoded = uriEncoded.replace(/%E2%80%99/g, "'");
-      uriEncoded = uriEncoded.replace(/%E2%80%98/g, "'");
+      uriEncoded = uriEncoded.replace(/%E2%80%99/g, "%27");
+      uriEncoded = uriEncoded.replace(/%E2%80%98/g, "%27");
       uriEncoded = uriEncoded.replace(/\!/g, '');
       uriEncoded = uriEncoded.replace(/\?/g, '');
       uriEncoded = uriEncoded.replace(/\;/g, '');
@@ -117,7 +117,7 @@ class Recite extends React.PureComponent<ActivityProps, State> {
         .replace(/\s\s+/g, ' ')
         .toLowerCase()
         .trim();
-      // console.log(decodedURIEncoded);
+      console.log(encodeURI(decodedURIEncoded));
       this.setState({ ...this.state, targetText: decodedURIEncoded });
     }
   }
