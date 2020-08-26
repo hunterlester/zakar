@@ -53,9 +53,30 @@ class Recite extends React.PureComponent<ActivityProps, State> {
 
     recognition.start();
 
+    recognition.onend = (event: SpeechRecognitionEvent) => {
+      if (!this.state.targetText.includes(this.state.transcriptWords.join(' '))) {
+        this.setState({ ...this.state, isRecording: false, inaccurateRecite: true });
+        recognition.stop();
+        return;
+      }
+
+      if (this.state.transcriptWords.join(' ') === this.state.targetText) {
+        this.setState({ ...this.state, isRecording: false, accurateRecite: true });
+        recognition.stop();
+        const activities = JSON.parse(`${localStorage.getItem('activities')}`);
+        activities['Recite'] = true;
+        localStorage.setItem('activities', JSON.stringify(activities));
+        setActivitiesStates(activities);
+        return;
+      }
+      // console.log('restarting speech recognition');
+      recognition.start();
+    };
+
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       // console.log(event);
-      let speechResult = event.results[this.state.transcriptWords.length][0].transcript.toLowerCase();
+      // console.log('this.state.transcriptWords.length: ', this.state.transcriptWords);
+      let speechResult = event.results[event.resultIndex][0].transcript.toLowerCase();
       // console.log('Speech result', encodeURI(speechResult));
       // console.log('Target text', encodeURI(targetText));
 
@@ -117,7 +138,7 @@ class Recite extends React.PureComponent<ActivityProps, State> {
         .replace(/\s\s+/g, ' ')
         .toLowerCase()
         .trim();
-      console.log(encodeURI(decodedURIEncoded));
+      // console.log(encodeURI(decodedURIEncoded));
       this.setState({ ...this.state, targetText: decodedURIEncoded });
     }
   }
@@ -135,7 +156,7 @@ class Recite extends React.PureComponent<ActivityProps, State> {
         {window.webkitSpeechRecognition && (
           <>
             <button disabled={this.state.isRecording} className="RecordingButton" onClick={() => this.startHandler()}>
-              Start
+              {this.state.isRecording ? 'Recording...' : 'Start'}
             </button>
             {!this.state.isRecording && <Verse verseString={verseString} />}
             {this.state.transcriptWords && (
