@@ -12,6 +12,7 @@ import Listen from 'components/Activities/Listen';
 import { useSwipeable, EventData } from 'react-swipeable';
 import { ActivitiesStates } from 'react-app-env';
 import ActivityInstruction from 'components/ActivityInstruction';
+import Complete from 'components/Activities/Complete';
 
 const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`);
 const initState = initActivities || { Build: false, Read: false, Recite: false, Type: false, Listen: false };
@@ -47,14 +48,16 @@ const LearningBoard = (): ReactElement => {
     switch (activityState) {
       case Activities.Build:
         return <Build verseString={verseString} setVerse={setVerse} setActivitiesStates={setActivitiesStates} />;
-      case Activities.Recite:
-        return <Recite verseString={verseString} setActivitiesStates={setActivitiesStates} />;
       case Activities.Read:
         return <Read setActivitiesStates={setActivitiesStates} />;
       case Activities.Type:
         return <Type verseString={verseString} setActivitiesStates={setActivitiesStates} />;
       case Activities.Listen:
         return <Listen verseString={verseString} setActivitiesStates={setActivitiesStates} />;
+      case Activities.Complete:
+        return <Complete verseString={verseString} setActivitiesStates={setActivitiesStates} />;
+      case Activities.Recite:
+        return <Recite verseString={verseString} setActivitiesStates={setActivitiesStates} />;
       default:
         return;
     }

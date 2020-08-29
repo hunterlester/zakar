@@ -1,0 +1,18 @@
+.CompleteContainer .VerseContainer {
+  display: none;
+}
+
+.CompleteContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 90vw;
+  margin: auto;
+}
+
+.CompleteContainer input {
+  border: none;
+  border-bottom: 1px solid black;
+  font-size: inherit;
+  outline: none;
+}

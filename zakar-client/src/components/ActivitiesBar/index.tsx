@@ -20,10 +20,6 @@ const ActivitiesBar = (props: Props): ReactElement => {
     setActivityState(Activities.Read);
   };
 
-  const setActivityRecite = (): void => {
-    setActivityState(Activities.Recite);
-  };
-
   const setActivityType = (): void => {
     setActivityState(Activities.Type);
   };
@@ -32,7 +28,15 @@ const ActivitiesBar = (props: Props): ReactElement => {
     setActivityState(Activities.Listen);
   };
 
-  const activityArray = [setActivityBuild, setActivityRead, setActivityType, setActivityListen, setActivityRecite];
+  const setActivityComplete = (): void => {
+    setActivityState(Activities.Complete);
+  };
+
+  const setActivityRecite = (): void => {
+    setActivityState(Activities.Recite);
+  };
+
+  const activityArray = [setActivityBuild, setActivityRead, setActivityType, setActivityListen, setActivityComplete, setActivityRecite];
 
   return (
     <div className="ActivitiesBar">
