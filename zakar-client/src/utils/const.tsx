@@ -1,6 +1,6 @@
 export const ESV_PREFIX = 'https://api.esv.org/v3/passage';
 export const SERVER_ORIGIN = window.location.origin;
-export const IS_NODE_DEV = process.env.NODE_ENV === "development";
+export const IS_NODE_DEV = process.env.NODE_ENV === 'development';
 
 export const BIBLE_ID = 'de4e12af7f28f599-02'; // KJV minus apocrypha
 
@@ -45,8 +45,7 @@ export const ActivityInstructions = {
     '<h4>Focused reading</h4><ul><li>Use your right keyboard arrow key or the "Tap me" button to highlight each word.</li><li>Tap rhythmically while reading out loud.</li></ul>',
   [Activities.Type]:
     "<h4>Practice typing your verse</h4><ul><li>Include verse numbers and punctuation.</li><li>If box for this activity does not turn green when you're done typing, look closely at what you typed, in comparison to your verse; it's part of the exercise. &#x1F609;</li></ul>",
-  [Activities.Complete]:
-    "<h4>Complete the missing words</h4>",
+  [Activities.Complete]: '<h4>Complete the missing words</h4>',
   [Activities.Listen]:
     '<h4>Listen to your verse</h4><ul><li>Close your eyes and listen closely.</li><li>Use the doodling pad below if this is something that helps you focus on what you hear.</li></ul>',
   [Activities.Recite]:

@@ -36,7 +36,14 @@ const ActivitiesBar = (props: Props): ReactElement => {
     setActivityState(Activities.Recite);
   };
 
-  const activityArray = [setActivityBuild, setActivityRead, setActivityType, setActivityListen, setActivityComplete, setActivityRecite];
+  const activityArray = [
+    setActivityBuild,
+    setActivityRead,
+    setActivityType,
+    setActivityListen,
+    setActivityComplete,
+    setActivityRecite,
+  ];
 
   return (
     <div className="ActivitiesBar">
