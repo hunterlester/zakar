@@ -45,7 +45,7 @@ const Complete = (props: ActivityProps): ReactElement => {
 
   const changeHandler = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     e.currentTarget.style.borderBottom = '1px solid red';
-    if (targetTextArray[index] === e.currentTarget.value) {
+    if (targetTextArray[index].toLowerCase() === e.currentTarget.value.toLowerCase()) {
       e.currentTarget.disabled = true;
       e.currentTarget.style.borderBottom = '1px solid green';
       e.currentTarget.className = '';
@@ -76,6 +76,7 @@ const Complete = (props: ActivityProps): ReactElement => {
           return <p key={i}>&nbsp;{text}&nbsp;</p>;
         }
       })}
+      <p>&nbsp;</p>
     </div>
   );
 };
