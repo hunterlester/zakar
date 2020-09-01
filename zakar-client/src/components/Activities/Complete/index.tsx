@@ -37,7 +37,7 @@ const Complete = (props: ActivityProps): ReactElement => {
   }, []);
 
   useEffect(() => {
-    const nextInput = document.querySelector('input[class="Incomplete"]') as HTMLInputElement;
+    const nextInput = document.querySelector('.CompleteContainer input[class="Incomplete"]') as HTMLInputElement;
     if (nextInput) {
       nextInput.focus();
     }
@@ -50,12 +50,13 @@ const Complete = (props: ActivityProps): ReactElement => {
       e.currentTarget.style.borderBottom = '1px solid green';
       e.currentTarget.className = '';
     }
-    const nextInput = document.querySelector('input[class="Incomplete"]') as HTMLInputElement;
+    const nextInput = document.querySelector('.CompleteContainer input[class="Incomplete"]') as HTMLInputElement;
     if (nextInput) {
       nextInput.focus();
     }
 
-    const allCompleted = Array.from(document.querySelectorAll('input')).every((input) => input.disabled === true);
+    const incompleteInputs = Array.from(document.querySelectorAll('.CompleteContainer input')) as HTMLInputElement[];
+    const allCompleted = incompleteInputs.every((input) => input.disabled === true);
 
     if (allCompleted && !!e.currentTarget.value && targetTextArray[index] === e.currentTarget.value) {
       const activities = JSON.parse(`${localStorage.getItem('activities')}`);

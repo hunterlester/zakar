@@ -1,9 +1,9 @@
 canvas {
     width: 95vw;
-    height: 100vh;
     border: 1px solid silver;
     margin: auto;
     display: block;
+    height: 75vh;
 }
 
 .pickr button {

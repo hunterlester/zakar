@@ -44,7 +44,7 @@ function App(): ReactElement {
                 <button className="NavButton">About</button>
               </Link>
             </div>
-            <div className="ButtonContainer">
+            {/* <div className="ButtonContainer">
               <Link to="/global">
                 <button className="NavButton">Global</button>
               </Link>
@@ -53,7 +53,7 @@ function App(): ReactElement {
               <Link to="/login">
                 <button className="NavButton">Login</button>
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
