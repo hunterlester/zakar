@@ -1,13 +1,12 @@
 use actix_files as fs;
-use actix_web::{self, client, web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{self, web, App, Error, HttpServer};
 use listenfd::ListenFd;
 use std::env;
 use std::net::SocketAddr;
 use std::path::PathBuf;
 
 mod user_api;
-
-static ESV_PREFIX: &str = "https://api.esv.org/v3/passage";
+mod proxy;
 
 // https://www.steadylearner.com/blog/read/How-to-use-React-with-Rust-Actix
 
@@ -16,49 +15,6 @@ async fn index() -> Result<fs::NamedFile, Error> {
     Ok(fs::NamedFile::open(path)?)
 }
 
-async fn forward_request(req: HttpRequest) -> Result<HttpResponse, Error> {
-    let client = client::Client::default();
-    let request_path = String::from(req.path());
-    let mut path = request_path.split("/").collect::<Vec<&str>>();
-    // println!("path: {:?}", path);
-    path.remove(0);
-    path.remove(0);
-    path.pop();
-    // println!("after path: {:?}", path);
-
-    let bearer_token = match env::var("ESV_API_KEY") {
-        Ok(token) => token,
-        Err(e) => {
-            // TODO: fix incorrect error handling
-            return HttpResponse::Forbidden().await;
-        }
-    };
-    // println!("{}/{}/?{}", ESV_PREFIX, path.join("/"), req.query_string());
-    let mut response = client
-        .get(format!(
-            "{}/{}/?{}",
-            ESV_PREFIX,
-            path.join("/"),
-            req.query_string()
-        ))
-        .header("Authorization", format!("Token {}", bearer_token))
-        .send()
-        .await
-        .map_err(Error::from)?;
-
-    let mut client_resp = HttpResponse::build(response.status());
-    // Remove `Connection` as per
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection#Directives
-    for (header_name, header_value) in response
-        .headers()
-        .iter()
-        .filter(|(h, _)| *h != "connection")
-    {
-        client_resp.header(header_name.clone(), header_value.clone());
-    }
-
-    Ok(client_resp.body(response.body().await?))
-}
 
 fn get_server_port() -> u16 {
     env::var("PORT")
@@ -75,10 +31,10 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(
                 web::scope("/proxy/")
-                    .service(web::resource("/search/").route(web::get().to(forward_request)))
-                    .service(web::resource("/html/").route(web::get().to(forward_request)))
-                    .service(web::resource("/text/").route(web::get().to(forward_request)))
-                    .service(web::resource("/audio/").route(web::get().to(forward_request))),
+                    .service(web::resource("/search/").route(web::get().to(proxy::forward_request)))
+                    .service(web::resource("/html/").route(web::get().to(proxy::forward_request)))
+                    .service(web::resource("/text/").route(web::get().to(proxy::forward_request)))
+                    .service(web::resource("/audio/").route(web::get().to(proxy::forward_request))),
             )
             .service(
                 web::scope("/users")
