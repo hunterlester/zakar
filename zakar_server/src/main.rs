@@ -5,6 +5,8 @@ use std::env;
 use std::net::SocketAddr;
 use std::path::PathBuf;
 
+mod user_api;
+
 static ESV_PREFIX: &str = "https://api.esv.org/v3/passage";
 
 // https://www.steadylearner.com/blog/read/How-to-use-React-with-Rust-Actix
@@ -77,6 +79,19 @@ async fn main() -> std::io::Result<()> {
                     .service(web::resource("/html/").route(web::get().to(forward_request)))
                     .service(web::resource("/text/").route(web::get().to(forward_request)))
                     .service(web::resource("/audio/").route(web::get().to(forward_request))),
+            )
+            .service(
+                web::scope("/users")
+                    .service(
+                        web::resource("")
+                        .route(web::get().to(user_api::get_users))
+                        .route(web::post().to(user_api::create_user))
+                    )
+                    .service(
+                        web::resource("/{id}")
+                        .route(web::get().to(user_api::get_user))
+                        .route(web::delete().to(user_api::delete_user))
+                    )
             )
             .route("/", web::get().to(index))
             .route("/login", web::get().to(index))
