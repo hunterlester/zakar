@@ -15,7 +15,8 @@ use std::path::PathBuf;
 mod user_api;
 mod proxy;
 mod schema;
-mod model;
+mod models;
+mod errors;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 

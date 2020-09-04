@@ -1805,6 +1805,7 @@ dependencies = [
  "actix-rt",
  "actix-web",
  "chrono",
+ "derive_more",
  "diesel",
  "dotenv",
  "listenfd",
