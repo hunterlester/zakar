@@ -3,20 +3,22 @@ extern crate diesel;
 
 extern crate dotenv;
 
+use actix_files as fs;
+use actix_web::{self, web, App, Error, HttpServer};
+use actix_web_httpauth::middleware::HttpAuthentication;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
-use actix_files as fs;
-use actix_web::{self, web, App, Error, HttpServer, dev::ServiceRequest};
 use listenfd::ListenFd;
 use std::env;
 use std::net::SocketAddr;
 use std::path::PathBuf;
 
-mod user_api;
+mod auth;
+mod errors;
+mod models;
 mod proxy;
 mod schema;
-mod models;
-mod errors;
+mod user_api;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
@@ -26,7 +28,6 @@ async fn index() -> Result<fs::NamedFile, Error> {
     let path: PathBuf = PathBuf::from("../zakar-client/build/index.html");
     Ok(fs::NamedFile::open(path)?)
 }
-
 
 fn get_server_port() -> u16 {
     env::var("PORT")
@@ -43,13 +44,14 @@ async fn main() -> std::io::Result<()> {
 
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     let pool: Pool = r2d2::Pool::builder()
-      .build(manager)
-      .expect("Failed to create connection pool");
-
+        .build(manager)
+        .expect("Failed to create connection pool");
 
     let mut listenfd = ListenFd::from_env();
     let addr = SocketAddr::from(([0, 0, 0, 0], get_server_port()));
-    let mut server = HttpServer::new( move || {
+
+    let mut server = HttpServer::new(move || {
+        let auth = HttpAuthentication::bearer(auth::validator);
         App::new()
             .data(pool.clone())
             .service(
@@ -61,16 +63,17 @@ async fn main() -> std::io::Result<()> {
             )
             .service(
                 web::scope("/users")
+                    .wrap(auth)
                     .service(
                         web::resource("")
-                        .route(web::get().to(user_api::get_users))
-                        .route(web::post().to(user_api::create_user))
+                            .route(web::get().to(user_api::get_users))
+                            .route(web::post().to(user_api::create_user)),
                     )
                     .service(
                         web::resource("/{id}")
-                        .route(web::get().to(user_api::get_user))
-                        .route(web::delete().to(user_api::delete_user))
-                    )
+                            .route(web::get().to(user_api::get_user))
+                            .route(web::delete().to(user_api::delete_user)),
+                    ),
             )
             .route("/", web::get().to(index))
             .route("/login", web::get().to(index))
