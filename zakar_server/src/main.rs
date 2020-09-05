@@ -6,12 +6,17 @@ extern crate dotenv;
 use actix_files as fs;
 use actix_web::{self, web, App, Error, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
+use actix_session::CookieSession;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use listenfd::ListenFd;
 use std::env;
 use std::net::SocketAddr;
 use std::path::PathBuf;
+use oauth2::basic::BasicClient;
+use oauth2::{
+    AuthUrl, ClientId, ClientSecret, RedirectUrl, TokenUrl,
+};
 
 mod auth;
 mod errors;
@@ -21,6 +26,10 @@ mod schema;
 mod user_api;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
+
+pub struct AppState {
+    pub oauth: BasicClient,
+}
 
 // https://www.steadylearner.com/blog/read/How-to-use-React-with-Rust-Actix
 
@@ -52,8 +61,35 @@ async fn main() -> std::io::Result<()> {
 
     let mut server = HttpServer::new(move || {
         let auth = HttpAuthentication::bearer(auth::validator);
+
+        let google_client_id = ClientId::new(
+            env::var("GOOGLE_CLIENT_ID")
+                .expect("Missing GOOGLE_CLIENT_ID"),
+        );
+        let google_client_secret = ClientSecret::new(
+            env::var("GOOGLE_CLIENT_SECRET")
+                .expect("Missing GOOGLE_CLIENT_SECRET"),
+        );
+        let auth_url = AuthUrl::new("https://accounts.google.com/o/oauth2/v2/auth".to_string())
+            .expect("Invalid authorization endpoint");
+        let token_url = TokenUrl::new("https://www.googleapis.com/oauth2/v3/token".to_string())
+            .expect("Invalid token endpoint URL");
+
+        let client = BasicClient::new(
+            google_client_id,
+            Some(google_client_secret),
+            auth_url,
+            Some(token_url),
+        )
+        .set_redirect_url(
+            RedirectUrl::new("https://www.zkr.app/redirect".to_string())
+                .expect("Invalid redirect URL"),
+        );
+
         App::new()
             .data(pool.clone())
+            .data(AppState { oauth: client})
+            .wrap(CookieSession::signed(&[0; 32]).secure(true))
             .service(
                 web::scope("/proxy/")
                     .service(web::resource("/search/").route(web::get().to(proxy::forward_request)))
@@ -76,7 +112,9 @@ async fn main() -> std::io::Result<()> {
                     ),
             )
             .route("/", web::get().to(index))
-            .route("/login", web::get().to(index))
+            .route("/login", web::get().to(auth::login))
+            .route("/logout", web::get().to(auth::logout))
+            .route("/redirect", web::get().to(auth::auth))
             .route("/learning-board", web::get().to(index))
             .route("/about", web::get().to(index))
             .route("/global", web::get().to(index))

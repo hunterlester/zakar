@@ -1,17 +1,29 @@
-use actix_web::{dev::ServiceRequest, Error};
+use actix_web::{dev::ServiceRequest, Error, HttpResponse, web};
+use actix_web::http::header;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
+use actix_session::Session;
 use alcoholic_jwt::{token_kid, validate, Validation, JWKS};
 use reqwest;
 use serde::{Deserialize, Serialize};
-
 use crate::errors::ServiceError;
+use oauth2::{
+    AuthorizationCode, CsrfToken, PkceCodeChallenge,
+};
+use super::AppState;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
     sub: String,
     company: String,
     exp: usize,
+}
+
+#[derive(Deserialize)]
+pub struct AuthRequest {
+    code: String,
+    state: String,
+    scope: String,
 }
 
 fn fetch_jwks(uri: &str) -> Result<JWKS, Box<dyn std::error::Error>> {
@@ -52,4 +64,42 @@ pub async fn validator(
         }
         Err(_) => Err(AuthenticationError::from(config).into()),
     }
+}
+
+pub async fn login (data: web::Data<AppState>) -> HttpResponse {
+    let (pkce_code_challenge, _pkce_code_verifier) = PkceCodeChallenge::new_random_sha256();
+
+    let (authorize_url, _csrf_state) = &data
+        .oauth
+        .authorize_url(CsrfToken::new_random)
+        .set_pkce_challenge(pkce_code_challenge)
+        .url();
+
+
+    HttpResponse::Found()
+        .header(header::LOCATION, authorize_url.to_string())
+        .finish()
+}
+
+pub async fn logout(session: Session) -> HttpResponse {
+    session.remove("login");
+    HttpResponse::Found()
+        .header(header::LOCATION, "/".to_string())
+        .finish()
+}
+
+pub async fn auth(
+    session: Session,
+    data: web::Data<AppState>,
+    params: web::Query<AuthRequest>,
+) -> HttpResponse {
+    let code = AuthorizationCode::new(params.code.clone());
+    let state = CsrfToken::new(params.state.clone());
+    let _scope = params.scope.clone();
+
+    let token = &data.oauth.exchange_code(code);
+
+    session.set("login", true).unwrap();
+
+    HttpResponse::Ok().body(format!("State: {}, Token: {:?}", state.secret(), token))
 }
