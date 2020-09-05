@@ -6,7 +6,7 @@ extern crate dotenv;
 use actix_files as fs;
 use actix_web::{self, web, App, Error, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
-use actix_session::CookieSession;
+use actix_session::{CookieSession, Session};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use listenfd::ListenFd;
@@ -82,14 +82,14 @@ async fn main() -> std::io::Result<()> {
             Some(token_url),
         )
         .set_redirect_url(
-            RedirectUrl::new("https://www.zkr.app/redirect".to_string())
+            RedirectUrl::new("http://localhost:8000/redirect".to_string())
                 .expect("Invalid redirect URL"),
         );
 
         App::new()
             .data(pool.clone())
             .data(AppState { oauth: client})
-            .wrap(CookieSession::signed(&[0; 32]).secure(true))
+            .wrap(CookieSession::signed(&[0; 32]))
             .service(
                 web::scope("/proxy/")
                     .service(web::resource("/search/").route(web::get().to(proxy::forward_request)))

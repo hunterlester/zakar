@@ -23,9 +23,6 @@ function App(): ReactElement {
             <Route path="/about">
               <About />
             </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
             <Route path="/global">
               <Global />
             </Route>
@@ -48,12 +45,12 @@ function App(): ReactElement {
               <Link to="/global">
                 <button className="NavButton">Global</button>
               </Link>
-            </div>
+                </div> */}
             <div className="ButtonContainer">
-              <Link to="/login">
+              <a href="/login">
                 <button className="NavButton">Login</button>
-              </Link>
-            </div> */}
+              </a>
+            </div>
           </div>
         </div>
       </div>
