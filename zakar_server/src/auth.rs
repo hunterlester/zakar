@@ -1,22 +1,17 @@
-use actix_web::{dev::ServiceRequest, Error, HttpResponse, web};
+use super::AppState;
+use crate::errors::ServiceError;
+use actix_session::Session;
 use actix_web::http::{header, Cookie};
+use actix_web::{dev::ServiceRequest, web, Error, HttpResponse};
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
-use actix_session::Session;
 use alcoholic_jwt::{token_kid, validate, Validation, JWKS};
 use reqwest;
 use serde::{Deserialize, Serialize};
-use crate::errors::ServiceError;
-use super::AppState;
 
-use openidconnect::core::{
-    CoreResponseType,
-};
+use openidconnect::core::CoreResponseType;
 use openidconnect::reqwest::http_client;
-use openidconnect::{
-    AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce,
-    Scope,
-};
+use openidconnect::{AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce, Scope};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
@@ -41,7 +36,10 @@ fn fetch_jwks(uri: &str) -> Result<JWKS, Box<dyn std::error::Error>> {
 fn validate_token(token: &str) -> Result<bool, ServiceError> {
     let authority = std::env::var("AUTHORITY").expect("AUTHORITY must be set");
     let jwks = fetch_jwks(&format!("{}", authority.as_str())).expect("failed to fetch jwks");
-    let validations = vec![Validation::Issuer("https://accounts.google.com".to_string()), Validation::SubjectPresent];
+    let validations = vec![
+        Validation::Issuer("https://accounts.google.com".to_string()),
+        Validation::SubjectPresent,
+    ];
     let kid = match token_kid(&token) {
         Ok(res) => res.expect("failed to decode kid"),
         Err(_) => return Err(ServiceError::JWKSFetchError),
@@ -72,7 +70,7 @@ pub async fn validator(
     }
 }
 
-pub async fn login (data: web::Data<AppState>) -> HttpResponse {
+pub async fn login(data: web::Data<AppState>) -> HttpResponse {
     let (authorize_url, _csrf_state, _nonce) = &data
         .oauth
         .authorize_url(
@@ -80,14 +78,9 @@ pub async fn login (data: web::Data<AppState>) -> HttpResponse {
             CsrfToken::new_random,
             Nonce::new_random,
         )
-        .add_scope(Scope::new(
-            "openid".to_string(),
-        ))
-        .add_scope(Scope::new(
-            "email".to_string(),
-        ))
+        .add_scope(Scope::new("openid".to_string()))
+        .add_scope(Scope::new("email".to_string()))
         .url();
-
 
     HttpResponse::Found()
         .header(header::LOCATION, authorize_url.to_string())
@@ -110,12 +103,13 @@ pub async fn auth(
     let _state = CsrfToken::new(params.state.clone());
     let _scope = params.scope.clone();
 
-
     let token = &data.oauth.exchange_code(code).request(http_client).unwrap();
     if let Some(token) = token.extra_fields().id_token() {
-      println!("token: {:?}", token);
-      println!("token: {:?}", token.to_string());
-      session.set("bearer", format!("{}", token.to_string())).unwrap();
+        println!("token: {:?}", token);
+        println!("token: {:?}", token.to_string());
+        session
+            .set("bearer", format!("{}", token.to_string()))
+            .unwrap();
     }
 
     session.set("login", true).unwrap();
@@ -123,7 +117,11 @@ pub async fn auth(
     HttpResponse::Found()
         .header(header::LOCATION, "/".to_string())
         .cookie(
-            Cookie::build("bearer", token.extra_fields().id_token().unwrap().to_string()).finish()
+            Cookie::build(
+                "bearer",
+                token.extra_fields().id_token().unwrap().to_string(),
+            )
+            .finish(),
         )
         .finish()
 }

@@ -4,9 +4,9 @@ extern crate diesel;
 extern crate dotenv;
 
 use actix_files as fs;
+use actix_session::CookieSession;
 use actix_web::{self, web, App, Error, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
-use actix_session::CookieSession;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use listenfd::ListenFd;
@@ -14,14 +14,9 @@ use std::env;
 use std::net::SocketAddr;
 use std::path::PathBuf;
 
-use openidconnect::core::{
-    CoreClient, CoreProviderMetadata,
-};
+use openidconnect::core::{CoreClient, CoreProviderMetadata};
 use openidconnect::reqwest::http_client;
-use openidconnect::{
-    ClientId, ClientSecret, IssuerUrl,
-    RedirectUrl,
-};
+use openidconnect::{ClientId, ClientSecret, IssuerUrl, RedirectUrl};
 
 mod auth;
 mod errors;
@@ -67,19 +62,17 @@ async fn main() -> std::io::Result<()> {
     let mut server = HttpServer::new(move || {
         let auth = HttpAuthentication::bearer(auth::validator);
 
-        let google_client_id = ClientId::new(
-            env::var("GOOGLE_CLIENT_ID")
-                .expect("Missing GOOGLE_CLIENT_ID"),
-        );
+        let google_client_id =
+            ClientId::new(env::var("GOOGLE_CLIENT_ID").expect("Missing GOOGLE_CLIENT_ID"));
         let google_client_secret = ClientSecret::new(
-            env::var("GOOGLE_CLIENT_SECRET")
-                .expect("Missing GOOGLE_CLIENT_SECRET"),
+            env::var("GOOGLE_CLIENT_SECRET").expect("Missing GOOGLE_CLIENT_SECRET"),
         );
-        
+
         let issuer_url =
             IssuerUrl::new("https://accounts.google.com".to_string()).expect("Invalid issuer URL");
 
-        let provider_metadata = CoreProviderMetadata::discover(&issuer_url, http_client).expect("Failed to discover OpenID provider");
+        let provider_metadata = CoreProviderMetadata::discover(&issuer_url, http_client)
+            .expect("Failed to discover OpenID provider");
 
         let client = CoreClient::from_provider_metadata(
             provider_metadata,
@@ -93,7 +86,7 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .data(pool.clone())
-            .data(AppState { oauth: client})
+            .data(AppState { oauth: client })
             .wrap(CookieSession::signed(&[0; 32]))
             .service(
                 web::scope("/proxy/")
