@@ -1,5 +1,5 @@
 use actix_web::{dev::ServiceRequest, Error, HttpResponse, web};
-use actix_web::http::header;
+use actix_web::http::{header, Cookie};
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 use actix_session::Session;
@@ -8,8 +8,6 @@ use reqwest;
 use serde::{Deserialize, Serialize};
 use crate::errors::ServiceError;
 use super::AppState;
-use std::path::PathBuf;
-use actix_files as fs;
 
 use openidconnect::core::{
     CoreResponseType,
@@ -107,7 +105,7 @@ pub async fn auth(
     session: Session,
     data: web::Data<AppState>,
     params: web::Query<AuthRequest>,
-) -> Result<fs::NamedFile, Error> {
+) -> HttpResponse {
     let code = AuthorizationCode::new(params.code.clone());
     let _state = CsrfToken::new(params.state.clone());
     let _scope = params.scope.clone();
@@ -122,6 +120,10 @@ pub async fn auth(
 
     session.set("login", true).unwrap();
 
-    let path: PathBuf = PathBuf::from("../zakar-client/build/index.html");
-    Ok(fs::NamedFile::open(path)?)
+    HttpResponse::Found()
+        .header(header::LOCATION, "/".to_string())
+        .cookie(
+            Cookie::build("bearer", token.extra_fields().id_token().unwrap().to_string()).finish()
+        )
+        .finish()
 }
