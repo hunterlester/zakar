@@ -6,16 +6,21 @@ extern crate dotenv;
 use actix_files as fs;
 use actix_web::{self, web, App, Error, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
-use actix_session::{CookieSession, Session};
+use actix_session::CookieSession;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use listenfd::ListenFd;
 use std::env;
 use std::net::SocketAddr;
 use std::path::PathBuf;
-use oauth2::basic::BasicClient;
-use oauth2::{
-    AuthUrl, ClientId, ClientSecret, RedirectUrl, TokenUrl,
+
+use openidconnect::core::{
+    CoreClient, CoreProviderMetadata,
+};
+use openidconnect::reqwest::http_client;
+use openidconnect::{
+    ClientId, ClientSecret, IssuerUrl,
+    RedirectUrl,
 };
 
 mod auth;
@@ -28,12 +33,12 @@ mod user_api;
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 pub struct AppState {
-    pub oauth: BasicClient,
+    pub oauth: CoreClient,
 }
 
 // https://www.steadylearner.com/blog/read/How-to-use-React-with-Rust-Actix
 
-async fn index() -> Result<fs::NamedFile, Error> {
+pub async fn index() -> Result<fs::NamedFile, Error> {
     let path: PathBuf = PathBuf::from("../zakar-client/build/index.html");
     Ok(fs::NamedFile::open(path)?)
 }
@@ -70,18 +75,18 @@ async fn main() -> std::io::Result<()> {
             env::var("GOOGLE_CLIENT_SECRET")
                 .expect("Missing GOOGLE_CLIENT_SECRET"),
         );
-        let auth_url = AuthUrl::new("https://accounts.google.com/o/oauth2/v2/auth".to_string())
-            .expect("Invalid authorization endpoint");
-        let token_url = TokenUrl::new("https://www.googleapis.com/oauth2/v3/token".to_string())
-            .expect("Invalid token endpoint URL");
+        
+        let issuer_url =
+            IssuerUrl::new("https://accounts.google.com".to_string()).expect("Invalid issuer URL");
 
-        let client = BasicClient::new(
+        let provider_metadata = CoreProviderMetadata::discover(&issuer_url, http_client).expect("Failed to discover OpenID provider");
+
+        let client = CoreClient::from_provider_metadata(
+            provider_metadata,
             google_client_id,
             Some(google_client_secret),
-            auth_url,
-            Some(token_url),
         )
-        .set_redirect_url(
+        .set_redirect_uri(
             RedirectUrl::new("http://localhost:8000/redirect".to_string())
                 .expect("Invalid redirect URL"),
         );

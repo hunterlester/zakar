@@ -24,5 +24,5 @@ derive_more = "0.99.2"
 actix-web-httpauth = { git = "https://github.com/actix/actix-extras" }
 alcoholic_jwt = "1.0.0"
 reqwest = "0.9.22"
-oauth2 = "3.0.0"
 actix-session = "0.3.0"
+openidconnect = "1.0.1"

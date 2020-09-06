@@ -7,11 +7,18 @@ use alcoholic_jwt::{token_kid, validate, Validation, JWKS};
 use reqwest;
 use serde::{Deserialize, Serialize};
 use crate::errors::ServiceError;
-use oauth2::{
-    AuthorizationCode, CsrfToken, PkceCodeChallenge, Scope, TokenResponse
-};
-use oauth2::reqwest::http_client;
 use super::AppState;
+use std::path::PathBuf;
+use actix_files as fs;
+
+use openidconnect::core::{
+    CoreResponseType,
+};
+use openidconnect::reqwest::http_client;
+use openidconnect::{
+    AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce,
+    Scope,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
@@ -34,11 +41,9 @@ fn fetch_jwks(uri: &str) -> Result<JWKS, Box<dyn std::error::Error>> {
 }
 
 fn validate_token(token: &str) -> Result<bool, ServiceError> {
-    println!("validate token token: {:?}", token);
-    // TODO: find out why secure api endpoint /users still returning 401 after using access token
     let authority = std::env::var("AUTHORITY").expect("AUTHORITY must be set");
     let jwks = fetch_jwks(&format!("{}", authority.as_str())).expect("failed to fetch jwks");
-    let validations = vec![Validation::Issuer(authority), Validation::SubjectPresent];
+    let validations = vec![Validation::Issuer("https://accounts.google.com".to_string()), Validation::SubjectPresent];
     let kid = match token_kid(&token) {
         Ok(res) => res.expect("failed to decode kid"),
         Err(_) => return Err(ServiceError::JWKSFetchError),
@@ -70,16 +75,19 @@ pub async fn validator(
 }
 
 pub async fn login (data: web::Data<AppState>) -> HttpResponse {
-    let (pkce_code_challenge, _pkce_code_verifier) = PkceCodeChallenge::new_random_sha256();
-
-    let (authorize_url, _csrf_state) = &data
+    let (authorize_url, _csrf_state, _nonce) = &data
         .oauth
-        .authorize_url(CsrfToken::new_random)
+        .authorize_url(
+            AuthenticationFlow::<CoreResponseType>::AuthorizationCode,
+            CsrfToken::new_random,
+            Nonce::new_random,
+        )
         .add_scope(Scope::new(
-            "https://www.googleapis.com/auth/userinfo.profile".to_string(),
+            "openid".to_string(),
         ))
-        // TODO: set code_verifier on session cookie, to be able to send to auth server in auth function below
-        // .set_pkce_challenge(pkce_code_challenge)
+        .add_scope(Scope::new(
+            "email".to_string(),
+        ))
         .url();
 
 
@@ -99,16 +107,21 @@ pub async fn auth(
     session: Session,
     data: web::Data<AppState>,
     params: web::Query<AuthRequest>,
-) -> HttpResponse {
+) -> Result<fs::NamedFile, Error> {
     let code = AuthorizationCode::new(params.code.clone());
-    let state = CsrfToken::new(params.state.clone());
+    let _state = CsrfToken::new(params.state.clone());
     let _scope = params.scope.clone();
 
+
     let token = &data.oauth.exchange_code(code).request(http_client).unwrap();
-    println!("token: {:?}", token.access_token().secret());
+    if let Some(token) = token.extra_fields().id_token() {
+      println!("token: {:?}", token);
+      println!("token: {:?}", token.to_string());
+      session.set("bearer", format!("{}", token.to_string())).unwrap();
+    }
 
     session.set("login", true).unwrap();
-    // session.set("bearer", format!("{}", token)).unwrap();
 
-    HttpResponse::Ok().body(format!("State: Token: "))
+    let path: PathBuf = PathBuf::from("../zakar-client/build/index.html");
+    Ok(fs::NamedFile::open(path)?)
 }
