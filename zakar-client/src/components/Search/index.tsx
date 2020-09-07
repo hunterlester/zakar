@@ -1,8 +1,9 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useState, useEffect, FormEvent } from 'react';
 import SearchResult from 'components/Search/SearchResult';
 import { SERVER_ORIGIN, defaultParams, IS_NODE_DEV, ESV_PREFIX } from 'utils/const';
 import './Search.css';
 import axios, { AxiosResponse } from 'axios';
+import { getCookie } from 'utils/helpers';
 
 interface SearchResult {
   content: string;
@@ -15,17 +16,18 @@ const Search = (): ReactElement => {
   const [error, setError] = useState('');
   const [isPassageEndpoint, setIsPassageEndpoint] = useState(false);
 
-  useEffect(() => {
+  const handleSubmit = (event: FormEvent): void => {
+    event.preventDefault();
     setError('');
     if (!!searchValue) {
       const isPassageEndpoint = /([a-z])+(\s*\d)/.test(searchValue);
       const requestHref = IS_NODE_DEV ? ESV_PREFIX : `${SERVER_ORIGIN}/proxy`;
-
+      const headers = {
+        Authorization: IS_NODE_DEV ? `Token ${process.env.REACT_APP_ESV_API_KEY}` : `Bearer ${getCookie('bearer')}`,
+      };
       axios
         .get(`${requestHref}/${isPassageEndpoint ? 'html' : 'search'}/?q=${searchValue}`, {
-          headers: {
-            Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
-          },
+          headers,
           params: defaultParams,
         })
         .then((response: AxiosResponse) => {
@@ -40,7 +42,7 @@ const Search = (): ReactElement => {
             ];
           } else {
             setIsPassageEndpoint(false);
-            results = response.data.results;
+            results = response.data.results || [];
           }
           setSearchResult(results);
         })
@@ -49,19 +51,22 @@ const Search = (): ReactElement => {
           console.error(error);
         });
     }
-  }, [searchValue]);
+  };
 
   // console.log(searchResult);
 
   return (
     <>
-      <input
-        autoFocus={true}
-        placeholder="Try: gen1, gen1.3, gen1.3, gen1.3-7, jacob, job, jesus"
-        className="SearchInput"
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-      />
+      <form onSubmit={handleSubmit}>
+        <input
+          autoFocus={true}
+          placeholder="Try: gen1, gen1.3, gen1.3, gen1.3-7, jacob, job, jesus"
+          className="SearchInput"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+        <input className="SearchButton" type="submit" value="Search" />
+      </form>
       {!!error && <div>{error}</div>}
       <div className="SearchResultContainer">
         {searchResult.map((result, i) => {

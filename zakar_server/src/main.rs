@@ -4,7 +4,7 @@ extern crate diesel;
 extern crate dotenv;
 
 use actix_files as fs;
-use actix_session::CookieSession;
+use actix_session::{CookieSession, Session};
 use actix_web::{self, web, App, Error, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
 use diesel::prelude::*;
@@ -87,9 +87,17 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .data(pool.clone())
             .data(AppState { oauth: client })
-            .wrap(CookieSession::signed(&[0; 32]))
+            .wrap(CookieSession::signed(&[0; 32]).secure(false))
+            .route("/", web::get().to(index))
+            .route("/login", web::get().to(auth::login))
+            .route("/logout", web::get().to(auth::logout))
+            .route("/redirect", web::get().to(auth::auth))
+            .route("/learning-board", web::get().to(index))
+            .route("/about", web::get().to(index))
+            .route("/global", web::get().to(index))
             .service(
                 web::scope("/proxy/")
+                    .wrap(auth.clone())
                     .service(web::resource("/search/").route(web::get().to(proxy::forward_request)))
                     .service(web::resource("/html/").route(web::get().to(proxy::forward_request)))
                     .service(web::resource("/text/").route(web::get().to(proxy::forward_request)))
@@ -97,7 +105,7 @@ async fn main() -> std::io::Result<()> {
             )
             .service(
                 web::scope("/users")
-                    .wrap(auth)
+                    .wrap(auth.clone())
                     .service(
                         web::resource("")
                             .route(web::get().to(user_api::get_users))
@@ -109,13 +117,6 @@ async fn main() -> std::io::Result<()> {
                             .route(web::delete().to(user_api::delete_user)),
                     ),
             )
-            .route("/", web::get().to(index))
-            .route("/login", web::get().to(auth::login))
-            .route("/logout", web::get().to(auth::logout))
-            .route("/redirect", web::get().to(auth::auth))
-            .route("/learning-board", web::get().to(index))
-            .route("/about", web::get().to(index))
-            .route("/global", web::get().to(index))
             .service(fs::Files::new("/", "../zakar-client/build").index_file("index.html"))
     });
 

@@ -1,3 +1,13 @@
+.SearchButton {
+  margin: auto;
+  margin-bottom: 10px;
+  display: block;
+  background-color: white;
+  border: 1px solid silver;
+  cursor: pointer;
+  padding: 10px;
+}
+
 .SearchInput {
     color: black;
     margin: auto;

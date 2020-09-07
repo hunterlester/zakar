@@ -1,9 +1,25 @@
-use actix_web::{self, client, Error, HttpRequest, HttpResponse};
+use actix_session::Session;
+use actix_web::{self, client, http, Error, HttpMessage, HttpRequest, HttpResponse};
 use std::env;
 
 static ESV_PREFIX: &str = "https://api.esv.org/v3/passage";
 
-pub async fn forward_request(req: HttpRequest) -> Result<HttpResponse, Error> {
+pub async fn forward_request(session: Session, req: HttpRequest) -> Result<HttpResponse, Error> {
+    if let Some(request_count) = session.get::<i32>("proxy_request_count")? {
+        // TODO: rate limit of 3 for testing purposes, higher for production
+        if request_count < 3 {
+            session.set("proxy_request_count", request_count + 1)?;
+        } else {
+            if let None = req.cookie("bearer") {
+                // TODO: find a way to let client know that user should login
+                return Ok(HttpResponse::TemporaryRedirect()
+                    .header(http::header::LOCATION, "/?login_cta=true".to_string())
+                    .finish());
+            }
+        }
+    } else {
+        session.set("proxy_request_count", 1)?;
+    }
     let client = client::Client::default();
     let request_path = String::from(req.path());
     let mut path = request_path.split("/").collect::<Vec<&str>>();

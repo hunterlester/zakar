@@ -2,7 +2,7 @@ use super::AppState;
 use crate::errors::ServiceError;
 use actix_session::Session;
 use actix_web::http::{header, Cookie};
-use actix_web::{dev::ServiceRequest, web, Error, HttpResponse};
+use actix_web::{dev::ServiceRequest, web, Error, HttpMessage, HttpRequest, HttpResponse};
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 use alcoholic_jwt::{token_kid, validate, Validation, JWKS};
@@ -58,6 +58,10 @@ pub async fn validator(
         .map(|data| data.get_ref().clone())
         .unwrap_or_else(Default::default);
 
+    if req.path().starts_with("/proxy") {
+        return Ok(req);
+    }
+
     match validate_token(credentials.token()) {
         Ok(res) => {
             if res == true {
@@ -87,11 +91,18 @@ pub async fn login(data: web::Data<AppState>) -> HttpResponse {
         .finish()
 }
 
-pub async fn logout(session: Session) -> HttpResponse {
+pub async fn logout(session: Session, req: HttpRequest) -> HttpResponse {
     session.remove("login");
-    HttpResponse::Found()
-        .header(header::LOCATION, "/".to_string())
-        .finish()
+    session.remove("bearer");
+
+    let mut builder = HttpResponse::Found();
+    if let Some(ref cookie) = req.cookie("bearer") {
+        builder.del_cookie(cookie);
+    }
+    if let Some(ref cookie) = req.cookie("login") {
+        builder.del_cookie(cookie);
+    }
+    builder.header(header::LOCATION, "/".to_string()).finish()
 }
 
 pub async fn auth(
@@ -123,5 +134,6 @@ pub async fn auth(
             )
             .finish(),
         )
+        .cookie(Cookie::build("login", "true").finish())
         .finish()
 }

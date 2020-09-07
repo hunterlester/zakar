@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import './App.css';
 import Home from 'pages/Home';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
@@ -7,8 +7,18 @@ import About from 'pages/About';
 import { ESV_COPYRIGHT } from 'utils/const';
 import Login from 'pages/Login';
 import Global from 'pages/Global';
+import { getCookie } from 'utils/helpers';
 
 function App(): ReactElement {
+  const [loginStatus, setLoginStatus] = useState(false);
+  useEffect(() => {
+    const loginStatus = getCookie('login');
+    if (loginStatus === 'true') {
+      setLoginStatus(true);
+    } else {
+      setLoginStatus(false);
+    }
+  });
   return (
     <Router>
       <div className="App">
@@ -46,11 +56,20 @@ function App(): ReactElement {
                 <button className="NavButton">Global</button>
               </Link>
                 </div> */}
-            <div className="ButtonContainer">
-              <a href="/login">
-                <button className="NavButton">Login</button>
-              </a>
-            </div>
+            {loginStatus && (
+              <div className="ButtonContainer">
+                <a href="/logout">
+                  <button className="NavButton">Log Out</button>
+                </a>
+              </div>
+            )}
+            {!loginStatus && (
+              <div className="ButtonContainer">
+                <a href="/login">
+                  <button className="NavButton">Login</button>
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </div>
