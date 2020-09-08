@@ -6,8 +6,7 @@ static ESV_PREFIX: &str = "https://api.esv.org/v3/passage";
 
 pub async fn forward_request(session: Session, req: HttpRequest) -> Result<HttpResponse, Error> {
     if let Some(request_count) = session.get::<i32>("proxy_request_count")? {
-        // TODO: rate limit of 3 for testing purposes, higher for production
-        if request_count < 3 {
+        if request_count < 10 {
             session.set("proxy_request_count", request_count + 1)?;
         } else {
             if let None = req.cookie("bearer") {
