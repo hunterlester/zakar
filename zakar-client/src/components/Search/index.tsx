@@ -52,7 +52,7 @@ const Search = (): ReactElement => {
           setError(error.message);
           setSearchResult([]);
           if (error.response && /login_cta/.test(error.response.headers.location)) {
-            history.push("/login-cta");
+            history.push('/login-cta');
           }
           console.error(error);
         });

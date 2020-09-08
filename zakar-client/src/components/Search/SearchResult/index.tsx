@@ -22,7 +22,7 @@ const SearchResult = (props: Props): ReactElement => {
       })
       .catch((error) => {
         if (error.response && /login_cta/.test(error.response.headers.location)) {
-          return history.push("/login-cta");
+          return history.push('/login-cta');
         }
         console.error(error);
       });

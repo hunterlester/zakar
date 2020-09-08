@@ -44,7 +44,7 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
         })
         .catch((error) => {
           if (error.response && /login_cta/.test(error.response.headers.location)) {
-            return history.push("/login-cta");
+            return history.push('/login-cta');
           }
           console.error(error);
         });

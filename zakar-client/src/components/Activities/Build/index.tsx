@@ -59,7 +59,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
           } catch (error) {
             // TODO: log error
             if (error.response && /login_cta/.test(error.response.headers.location)) {
-              return history.push("/login-cta");
+              return history.push('/login-cta');
             }
             console.error(error);
             setIsFetching(false);
@@ -89,7 +89,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
           } catch (error) {
             // TODO: log error
             if (error.response && /login_cta/.test(error.response.headers.location)) {
-              return history.push("/login-cta");
+              return history.push('/login-cta');
             }
             console.error(error);
             setIsFetching(false);
@@ -119,7 +119,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
           } catch (error) {
             // TODO: log error
             if (error.response && /login_cta/.test(error.response.headers.location)) {
-              return history.push("/login-cta");
+              return history.push('/login-cta');
             }
             console.error(error);
             setIsFetching(false);
@@ -149,7 +149,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
           } catch (error) {
             // TODO: log error
             if (error.response && /login_cta/.test(error.response.headers.location)) {
-              return history.push("/login-cta");
+              return history.push('/login-cta');
             }
             console.error(error);
             setIsFetching(false);
