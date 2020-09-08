@@ -95,6 +95,7 @@ async fn main() -> std::io::Result<()> {
             .route("/learning-board", web::get().to(index))
             .route("/about", web::get().to(index))
             .route("/global", web::get().to(index))
+            .route("/login-cta", web::get().to(index))
             .service(
                 web::scope("/proxy/")
                     .wrap(auth.clone())

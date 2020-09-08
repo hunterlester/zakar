@@ -1,8 +1,10 @@
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { fetchVerse } from 'utils/helpers';
+import { useHistory } from 'react-router-dom';
 
 export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
   const [verse, setVerse] = useState<string>(state);
+  const history = useHistory();
 
   const gatherText = () => {
     let text = '';
@@ -41,6 +43,9 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
           setVerse(verseData.passages[0]);
         })
         .catch((error) => {
+          if (error.response && /login_cta/.test(error.response.headers.location)) {
+            return history.push("/login-cta");
+          }
           console.error(error);
         });
     }

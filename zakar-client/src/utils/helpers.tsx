@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import { SERVER_ORIGIN, RequestFormat, defaultParams, ESV_PREFIX, IS_NODE_DEV } from 'utils/const';
 
 interface Args {
@@ -52,7 +52,7 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
       // console.log('LOCAL STORAGE: ', localStorage);
       return verseData;
     })
-    .catch((error) => {
+    .catch((error: AxiosError) => {
       console.error(error);
       throw error;
     });

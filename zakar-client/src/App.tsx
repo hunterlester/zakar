@@ -5,9 +5,9 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import LearningBoard from 'pages/LearningBoard';
 import About from 'pages/About';
 import { ESV_COPYRIGHT } from 'utils/const';
-import Login from 'pages/Login';
 import Global from 'pages/Global';
 import { getCookie } from 'utils/helpers';
+import LoginCTA from 'components/LoginCTA';
 
 function App(): ReactElement {
   const [loginStatus, setLoginStatus] = useState(false);
@@ -35,6 +35,9 @@ function App(): ReactElement {
             </Route>
             <Route path="/global">
               <Global />
+            </Route>
+            <Route path="/login-cta">
+              <LoginCTA />
             </Route>
           </Switch>
         </div>

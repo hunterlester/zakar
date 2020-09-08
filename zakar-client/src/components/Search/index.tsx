@@ -4,7 +4,7 @@ import { SERVER_ORIGIN, defaultParams, IS_NODE_DEV, ESV_PREFIX } from 'utils/con
 import './Search.css';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { getCookie } from 'utils/helpers';
-import LoginModal from 'components/LoginModal';
+import { useHistory } from 'react-router-dom';
 
 interface SearchResult {
   content: string;
@@ -12,9 +12,9 @@ interface SearchResult {
 }
 
 const Search = (): ReactElement => {
+  const history = useHistory();
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
-  const [showLoginCta, setShowLoginCTA] = useState(false);
   const [error, setError] = useState('');
   const [isPassageEndpoint, setIsPassageEndpoint] = useState(false);
 
@@ -52,7 +52,7 @@ const Search = (): ReactElement => {
           setError(error.message);
           setSearchResult([]);
           if (error.response && /login_cta/.test(error.response.headers.location)) {
-            setShowLoginCTA(true);
+            history.push("/login-cta");
           }
           console.error(error);
         });
@@ -74,9 +74,6 @@ const Search = (): ReactElement => {
         <input className="SearchButton" type="submit" value="Search" />
       </form>
       {!!error && <div className="ErrorMessage">{error}</div>}
-      {showLoginCta &&
-        <LoginModal closeModal={() => setShowLoginCTA(false)} />
-      }
       <div className="SearchResultContainer">
         {searchResult.map((result, i) => {
           return (
