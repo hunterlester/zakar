@@ -1,0 +1,34 @@
+.LoginModalContainer {
+    position: absolute;
+    z-index: 99;
+    box-shadow: 5px 5px 5px silver;
+    background-color: #fff;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.LoginModalContainer p {
+  text-align: center;
+}
+
+.LoginModalContainer a {
+    text-decoration: none;
+}
+
+.ModalButtons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.ModalButtons a {
+    display: block;
+}
+
+.ModalButton {
+  display: block;
+  background-color: white;
+  border: 1px solid silver;
+  cursor: pointer;
+  padding: 10px;
+}

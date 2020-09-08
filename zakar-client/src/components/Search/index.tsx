@@ -1,9 +1,10 @@
-import React, { ReactElement, useState, useEffect, FormEvent } from 'react';
+import React, { ReactElement, useState, FormEvent } from 'react';
 import SearchResult from 'components/Search/SearchResult';
 import { SERVER_ORIGIN, defaultParams, IS_NODE_DEV, ESV_PREFIX } from 'utils/const';
 import './Search.css';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import { getCookie } from 'utils/helpers';
+import LoginModal from 'components/LoginModal';
 
 interface SearchResult {
   content: string;
@@ -13,6 +14,7 @@ interface SearchResult {
 const Search = (): ReactElement => {
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
+  const [showLoginCta, setShowLoginCTA] = useState(false);
   const [error, setError] = useState('');
   const [isPassageEndpoint, setIsPassageEndpoint] = useState(false);
 
@@ -46,8 +48,12 @@ const Search = (): ReactElement => {
           }
           setSearchResult(results);
         })
-        .catch((error) => {
-          setError(error);
+        .catch((error: AxiosError) => {
+          setError(error.message);
+          setSearchResult([]);
+          if (error.response && /login_cta/.test(error.response.headers.location)) {
+            setShowLoginCTA(true);
+          }
           console.error(error);
         });
     }
@@ -67,7 +73,10 @@ const Search = (): ReactElement => {
         />
         <input className="SearchButton" type="submit" value="Search" />
       </form>
-      {!!error && <div>{error}</div>}
+      {!!error && <div className="ErrorMessage">{error}</div>}
+      {showLoginCta &&
+        <LoginModal closeModal={() => setShowLoginCTA(false)} />
+      }
       <div className="SearchResultContainer">
         {searchResult.map((result, i) => {
           return (

@@ -11,8 +11,7 @@ pub async fn forward_request(session: Session, req: HttpRequest) -> Result<HttpR
             session.set("proxy_request_count", request_count + 1)?;
         } else {
             if let None = req.cookie("bearer") {
-                // TODO: find a way to let client know that user should login
-                return Ok(HttpResponse::TemporaryRedirect()
+                return Ok(HttpResponse::Unauthorized()
                     .header(http::header::LOCATION, "/?login_cta=true".to_string())
                     .finish());
             }
