@@ -116,8 +116,8 @@ pub async fn auth(
 
     let token = &data.oauth.exchange_code(code).request(http_client).unwrap();
     if let Some(token) = token.extra_fields().id_token() {
-        println!("token: {:?}", token);
-        println!("token: {:?}", token.to_string());
+        // println!("token: {:?}", token);
+        // println!("token: {:?}", token.to_string());
         session
             .set("bearer", format!("{}", token.to_string()))
             .unwrap();
