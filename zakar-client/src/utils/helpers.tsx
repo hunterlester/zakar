@@ -37,7 +37,6 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
   const headers = {
     Authorization: IS_NODE_DEV ? `Token ${process.env.REACT_APP_ESV_API_KEY}` : `Bearer ${getCookie('bearer')}`,
   };
-  debugger;
   return axios
     .get(`${requestHref}/${verseFormat}/?q=${args.verseCanonical}`, {
       params: { ...defaultParams, ...args.params },
