@@ -12,12 +12,8 @@ import LoginCTA from 'components/LoginCTA';
 function App(): ReactElement {
   const [loginStatus, setLoginStatus] = useState(false);
   useEffect(() => {
-    const loginStatus = getCookie('login');
-    if (loginStatus === 'true') {
-      setLoginStatus(true);
-    } else {
-      setLoginStatus(false);
-    }
+    const loginStatus = getCookie('bearer');
+    setLoginStatus(!!loginStatus);
   });
   return (
     <Router>

@@ -92,14 +92,10 @@ pub async fn login(data: web::Data<AppState>) -> HttpResponse {
 }
 
 pub async fn logout(session: Session, req: HttpRequest) -> HttpResponse {
-    session.remove("login");
     session.remove("bearer");
 
     let mut builder = HttpResponse::Found();
     if let Some(ref cookie) = req.cookie("bearer") {
-        builder.del_cookie(cookie);
-    }
-    if let Some(ref cookie) = req.cookie("login") {
         builder.del_cookie(cookie);
     }
     builder.header(header::LOCATION, "/".to_string()).finish()
@@ -134,6 +130,5 @@ pub async fn auth(
             )
             .finish(),
         )
-        .cookie(Cookie::build("login", "true").finish())
         .finish()
 }
