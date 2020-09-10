@@ -1,0 +1,24 @@
+.LoginCTAContainer p {
+  text-align: center;
+}
+
+.LoginCTAContainer a {
+    text-decoration: none;
+}
+
+.CTAButtons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.CTAButtons a {
+  display: block;
+}
+
+.CTAButton {
+  display: block;
+  background-color: white;
+  border: 1px solid silver;
+  cursor: pointer;
+  padding: 10px;
+}

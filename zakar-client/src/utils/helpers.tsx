@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import { SERVER_ORIGIN, RequestFormat, defaultParams, ESV_PREFIX, IS_NODE_DEV } from 'utils/const';
 
 interface Args {
@@ -19,16 +19,29 @@ interface PassageResponse {
   parsed: number[][];
 }
 
+export const getCookie = (name: string): string | null => {
+  const cookies = Array.from(document.cookie.split(';'));
+  const cookie = cookies.find((cookie) => new RegExp(`^(${name})`).test(cookie.trim()));
+  if (cookie) {
+    const cookieValue = cookie.split('=')[1];
+    return cookieValue;
+  } else {
+    return null;
+  }
+};
+
 export const fetchVerse = (args: Args): Promise<PassageResponse> => {
   // console.log('FETCH VERSE ID: ', args.verseCanonical);
   const verseFormat = args.format ? args.format : RequestFormat.HTML;
   const requestHref = IS_NODE_DEV ? ESV_PREFIX : `${SERVER_ORIGIN}/proxy`;
+  const headers = {
+    Authorization: IS_NODE_DEV ? `Token ${process.env.REACT_APP_ESV_API_KEY}` : `Bearer ${getCookie('bearer')}`,
+  };
+  debugger;
   return axios
     .get(`${requestHref}/${verseFormat}/?q=${args.verseCanonical}`, {
       params: { ...defaultParams, ...args.params },
-      headers: {
-        Authorization: `Token ${process.env.REACT_APP_ESV_API_KEY}`,
-      },
+      headers,
     })
     .then((response: AxiosResponse) => {
       // console.log(' -- -- Verse data: ', response.data);
@@ -39,7 +52,7 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
       // console.log('LOCAL STORAGE: ', localStorage);
       return verseData;
     })
-    .catch((error) => {
+    .catch((error: AxiosError) => {
       console.error(error);
       throw error;
     });

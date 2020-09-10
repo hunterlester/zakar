@@ -1,14 +1,20 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import './App.css';
 import Home from 'pages/Home';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import LearningBoard from 'pages/LearningBoard';
 import About from 'pages/About';
 import { ESV_COPYRIGHT } from 'utils/const';
-import Login from 'pages/Login';
 import Global from 'pages/Global';
+import { getCookie } from 'utils/helpers';
+import LoginCTA from 'components/LoginCTA';
 
 function App(): ReactElement {
+  const [loginStatus, setLoginStatus] = useState(false);
+  useEffect(() => {
+    const loginStatus = getCookie('bearer');
+    setLoginStatus(!!loginStatus);
+  });
   return (
     <Router>
       <div className="App">
@@ -23,11 +29,11 @@ function App(): ReactElement {
             <Route path="/about">
               <About />
             </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
             <Route path="/global">
               <Global />
+            </Route>
+            <Route path="/login-cta">
+              <LoginCTA />
             </Route>
           </Switch>
         </div>
@@ -48,12 +54,21 @@ function App(): ReactElement {
               <Link to="/global">
                 <button className="NavButton">Global</button>
               </Link>
-            </div>
-            <div className="ButtonContainer">
-              <Link to="/login">
-                <button className="NavButton">Login</button>
-              </Link>
-            </div> */}
+                </div> */}
+            {loginStatus && (
+              <div className="ButtonContainer">
+                <a href="/logout">
+                  <button className="NavButton">Log Out</button>
+                </a>
+              </div>
+            )}
+            {!loginStatus && (
+              <div className="ButtonContainer">
+                <a href="/login">
+                  <button className="NavButton">Login</button>
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </div>

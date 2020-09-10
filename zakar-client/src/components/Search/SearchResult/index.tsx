@@ -20,7 +20,12 @@ const SearchResult = (props: Props): ReactElement => {
         localStorage.setItem('verseIDArray', JSON.stringify([verseData.parsed[0][0]]));
         history.push('/learning-board');
       })
-      .catch(console.error);
+      .catch((error) => {
+        if (error.response && /login_cta/.test(error.response.headers.location)) {
+          return history.push('/login-cta');
+        }
+        console.error(error);
+      });
   };
 
   return (
