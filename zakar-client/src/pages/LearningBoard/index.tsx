@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useState, useEffect, useContext } from 'react';
 import { Activities, ActivityInstructions } from 'utils/const';
 import { useHistory } from 'react-router-dom';
 import ActivitiesBar from 'components/ActivitiesBar';
@@ -10,15 +10,12 @@ import Build from 'components/Activities/Build';
 import useVerse from 'hooks/useVerse';
 import Listen from 'components/Activities/Listen';
 import { useSwipeable, EventData } from 'react-swipeable';
-import { ActivitiesStates } from 'react-app-env';
 import ActivityInstruction from 'components/ActivityInstruction';
 import Complete from 'components/Activities/Complete';
-
-const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`);
-const initState = initActivities || { Build: false, Read: false, Recite: false, Type: false, Listen: false };
+import { StateContext } from 'StateProvider';
 
 const LearningBoard = (): ReactElement => {
-  const [activitiesStates, setActivitiesStates] = useState<ActivitiesStates>(initState);
+  const {activities, setActivities} = useContext(StateContext);
   const [activityState, setActivityState] = useState<Activities>(Activities.Build);
   const history = useHistory();
   const [verseString, setVerse] = useVerse('');
@@ -47,17 +44,17 @@ const LearningBoard = (): ReactElement => {
   const activitySwitch = (activityState: Activities) => {
     switch (activityState) {
       case Activities.Build:
-        return <Build verseString={verseString} setVerse={setVerse} setActivitiesStates={setActivitiesStates} />;
+        return <Build verseString={verseString} setVerse={setVerse} setActivitiesStates={setActivities} />;
       case Activities.Read:
-        return <Read setActivitiesStates={setActivitiesStates} />;
+        return <Read setActivitiesStates={setActivities} />;
       case Activities.Type:
-        return <Type verseString={verseString} setActivitiesStates={setActivitiesStates} />;
+        return <Type verseString={verseString} setActivitiesStates={setActivities} />;
       case Activities.Listen:
-        return <Listen verseString={verseString} setActivitiesStates={setActivitiesStates} />;
+        return <Listen verseString={verseString} setActivitiesStates={setActivities} />;
       case Activities.Complete:
-        return <Complete verseString={verseString} setActivitiesStates={setActivitiesStates} />;
+        return <Complete verseString={verseString} setActivitiesStates={setActivities} />;
       case Activities.Recite:
-        return <Recite verseString={verseString} setActivitiesStates={setActivitiesStates} />;
+        return <Recite verseString={verseString} setActivitiesStates={setActivities} />;
       default:
         return;
     }
@@ -84,7 +81,7 @@ const LearningBoard = (): ReactElement => {
 
       localStorage.setItem('activities', JSON.stringify(activities));
     }
-    setActivitiesStates(activities);
+    setActivities(activities);
   }, []);
 
   // console.log('ACTIVITY STATE: ', activityState);
@@ -92,7 +89,7 @@ const LearningBoard = (): ReactElement => {
   return (
     <div {...handlers}>
       <ActivitiesBar
-        activitiesStates={activitiesStates}
+        activitiesStates={activities}
         activityState={activityState}
         setActivityState={setActivityState}
       />

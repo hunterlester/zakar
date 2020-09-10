@@ -16,14 +16,10 @@ interface State {
     prev_verse: string;
 }
 
+const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`) || { Build: false, Read: false, Recite: false, Type: false, Listen: false };
+
 const defaultState = {
-    activities: {
-      Build: false,
-      Read: false,
-      Recite: false,
-      Type: false,
-      Listen: false,
-    } as ActivitiesStates,
+    activities: initActivities,
     verseIDArray: [] as string[],
     verseString: '',
     doodle: [] as IPointGroup[],
