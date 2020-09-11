@@ -15,10 +15,10 @@ import Complete from 'components/Activities/Complete';
 import { StateContext } from 'StateProvider';
 
 const LearningBoard = (): ReactElement => {
-  const {activities, setActivities} = useContext(StateContext);
+  const { activities, setActivities, verseIDArray } = useContext(StateContext);
   const [activityState, setActivityState] = useState<Activities>(Activities.Build);
   const history = useHistory();
-  const [verseString, setVerse] = useVerse('');
+  useVerse();
 
   const swipeEventHandler = (eventData: EventData) => {
     // console.log('SWIPE EVENT: ', eventData);
@@ -44,26 +44,24 @@ const LearningBoard = (): ReactElement => {
   const activitySwitch = (activityState: Activities) => {
     switch (activityState) {
       case Activities.Build:
-        return <Build verseString={verseString} setVerse={setVerse} setActivitiesStates={setActivities} />;
+        return <Build />;
       case Activities.Read:
-        return <Read setActivitiesStates={setActivities} />;
+        return <Read />;
       case Activities.Type:
-        return <Type verseString={verseString} setActivitiesStates={setActivities} />;
+        return <Type />;
       case Activities.Listen:
-        return <Listen verseString={verseString} setActivitiesStates={setActivities} />;
+        return <Listen />;
       case Activities.Complete:
-        return <Complete verseString={verseString} setActivitiesStates={setActivities} />;
+        return <Complete />;
       case Activities.Recite:
-        return <Recite verseString={verseString} setActivitiesStates={setActivities} />;
+        return <Recite />;
       default:
         return;
     }
   };
 
   useEffect(() => {
-    const verses = JSON.parse(`${localStorage.getItem('verseIDArray')}`);
-
-    if (!verses || !verses.length) {
+    if (!verseIDArray || !verseIDArray.length) {
       history.replace('/');
     }
 
@@ -71,28 +69,14 @@ const LearningBoard = (): ReactElement => {
   }, []);
 
   useEffect(() => {
-    let activities = JSON.parse(`${localStorage.getItem('activities')}`);
-    if (!activities) {
-      Object.keys(Activities).forEach((activity: string) => {
-        if (!Number.isInteger(Number(activity)) && activity) {
-          activities = { ...activities, [activity]: activity === 'Build' ? true : false };
-        }
-      });
-
-      localStorage.setItem('activities', JSON.stringify(activities));
-    }
-    setActivities(activities);
+    setActivities({ ...activities, Build: true });
   }, []);
 
   // console.log('ACTIVITY STATE: ', activityState);
 
   return (
     <div {...handlers}>
-      <ActivitiesBar
-        activitiesStates={activities}
-        activityState={activityState}
-        setActivityState={setActivityState}
-      />
+      <ActivitiesBar activitiesStates={activities} activityState={activityState} setActivityState={setActivityState} />
       <ActivityInstruction instruction={ActivityInstructions[activityState]} />
       <div className="ActivityBlock">{activitySwitch(activityState)}</div>
     </div>

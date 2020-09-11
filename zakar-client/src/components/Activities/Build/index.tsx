@@ -1,39 +1,34 @@
-import React, { ReactElement, Dispatch, useState, useEffect, useRef } from 'react';
+import React, { ReactElement, useState, useEffect, useRef, useContext } from 'react';
 import { fetchVerse } from 'utils/helpers';
 import './Build.css';
 import Verse from 'components/Verse';
-import { ActivityProps } from 'react-app-env';
 import { useHistory } from 'react-router-dom';
-import { Activities } from 'utils/const';
+import { StateContext } from 'StateProvider';
 
-interface Props {
-  setVerse: Dispatch<React.SetStateAction<string>>;
-}
-
-const Build = (props: ActivityProps & Props): ReactElement => {
-  const { verseString, setVerse, setActivitiesStates } = props;
+const Build = (): ReactElement => {
+  const {
+    prev_verse,
+    next_verse,
+    verseIDArray,
+    activities,
+    verseString,
+    setActivities,
+    setVerseString,
+    setVerseArray,
+    clearState,
+    setStandardFetchState,
+  } = useContext(StateContext);
   const [isFetching, setIsFetching] = useState(false);
   const isInitialMount = useRef(true);
   const history = useHistory();
-  const prevVerseId = localStorage.getItem('prev_verse');
-  const nextVerseId = localStorage.getItem('next_verse');
-  const verseIDArray = JSON.parse(`${localStorage.getItem('verseIDArray')}`);
+  const prevVerseId = prev_verse;
+  const nextVerseId = next_verse;
 
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
     } else {
-      let activities = JSON.parse(`${localStorage.getItem('activities')}`);
-      if (!activities) {
-        Object.keys(Activities).forEach((activity: string) => {
-          if (!Number.isInteger(Number(activity)) && activity) {
-            activities = { ...activities, [activity]: activity === 'Build' ? true : false };
-          }
-        });
-      }
-
-      localStorage.setItem('activities', JSON.stringify(activities));
-      setActivitiesStates(activities);
+      setActivities({ ...activities, Build: true });
     }
   }, [verseString]);
 
@@ -50,10 +45,10 @@ const Build = (props: ActivityProps & Props): ReactElement => {
             setIsFetching(true);
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
+              setStandardFetchState(verseData);
               verseIDArray.shift();
-              localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
-              localStorage.setItem('verseString', verseData.passages[0]);
-              setVerse(verseData.passages[0]);
+              setVerseArray(verseIDArray);
+              setVerseString(verseData.passages[0]);
               setIsFetching(false);
             }
           } catch (error) {
@@ -80,10 +75,10 @@ const Build = (props: ActivityProps & Props): ReactElement => {
             setIsFetching(true);
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
+              setStandardFetchState(verseData);
               verseIDArray.splice(0, 0, prevVerseId);
-              localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
-              localStorage.setItem('verseString', verseData.passages[0]);
-              setVerse(verseData.passages[0]);
+              setVerseArray(verseIDArray);
+              setVerseString(verseData.passages[0]);
               setIsFetching(false);
             }
           } catch (error) {
@@ -110,10 +105,10 @@ const Build = (props: ActivityProps & Props): ReactElement => {
             setIsFetching(true);
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
+              setStandardFetchState(verseData);
               verseIDArray.push(nextVerseId);
-              localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
-              localStorage.setItem('verseString', verseData.passages[0]);
-              setVerse(verseData.passages[0]);
+              setVerseArray(verseIDArray);
+              setVerseString(verseData.passages[0]);
               setIsFetching(false);
             }
           } catch (error) {
@@ -140,10 +135,10 @@ const Build = (props: ActivityProps & Props): ReactElement => {
             setIsFetching(true);
             const verseData = await fetchVerse(fetchArgs);
             if (verseData) {
+              setStandardFetchState(verseData);
               verseIDArray.pop();
-              localStorage.setItem('verseIDArray', JSON.stringify(verseIDArray));
-              localStorage.setItem('verseString', verseData.passages[0]);
-              setVerse(verseData.passages[0]);
+              setVerseArray(verseIDArray);
+              setVerseString(verseData.passages[0]);
               setIsFetching(false);
             }
           } catch (error) {
@@ -165,7 +160,7 @@ const Build = (props: ActivityProps & Props): ReactElement => {
         disabled={isFetching}
         key="clear-verse"
         onClick={() => {
-          localStorage.clear();
+          clearState();
           history.push('/');
         }}
         className="ClearVerseButton"

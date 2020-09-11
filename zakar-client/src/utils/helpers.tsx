@@ -31,7 +31,6 @@ export const getCookie = (name: string): string | null => {
 };
 
 export const fetchVerse = (args: Args): Promise<PassageResponse> => {
-  // console.log('FETCH VERSE ID: ', args.verseCanonical);
   const verseFormat = args.format ? args.format : RequestFormat.HTML;
   const requestHref = IS_NODE_DEV ? ESV_PREFIX : `${SERVER_ORIGIN}/proxy`;
   const headers = {
@@ -43,13 +42,7 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
       headers,
     })
     .then((response: AxiosResponse) => {
-      // console.log(' -- -- Verse data: ', response.data);
-      const verseData = response.data;
-      localStorage.setItem('verseCanonical', verseData.canonical);
-      localStorage.setItem('next_verse', verseData.passage_meta[0].next_verse);
-      localStorage.setItem('prev_verse', verseData.passage_meta[0].prev_verse);
-      // console.log('LOCAL STORAGE: ', localStorage);
-      return verseData;
+      return response.data;
     })
     .catch((error: AxiosError) => {
       console.error(error);

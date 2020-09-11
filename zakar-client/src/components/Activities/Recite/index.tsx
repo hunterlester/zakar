@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import './Recite.css';
-import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
+import { StateContext } from 'StateProvider';
 
 // Reference: https://developers.google.com/web/fundamentals/media/recording-audio
 
@@ -13,8 +13,8 @@ interface State {
   accurateRecite: boolean;
 }
 
-class Recite extends React.PureComponent<ActivityProps, State> {
-  constructor(props: ActivityProps) {
+class Recite extends React.PureComponent<any, State> {
+  constructor(props: any) {
     super(props);
     this.state = {
       isRecording: false,
@@ -26,7 +26,7 @@ class Recite extends React.PureComponent<ActivityProps, State> {
   }
 
   startHandler = (): void => {
-    const { setActivitiesStates } = this.props;
+    const { setActivities, activities } = this.context;
 
     this.setState({
       ...this.state,
@@ -63,10 +63,7 @@ class Recite extends React.PureComponent<ActivityProps, State> {
       if (this.state.transcriptWords.join(' ') === this.state.targetText) {
         this.setState({ ...this.state, isRecording: false, accurateRecite: true });
         recognition.stop();
-        const activities = JSON.parse(`${localStorage.getItem('activities')}`);
-        activities['Recite'] = true;
-        localStorage.setItem('activities', JSON.stringify(activities));
-        setActivitiesStates(activities);
+        setActivities({ ...activities, Recite: true });
         return;
       }
       // console.log('restarting speech recognition');
@@ -95,10 +92,7 @@ class Recite extends React.PureComponent<ActivityProps, State> {
         // console.log('they are equal!!!!!!!!!!!!!!!!!!');
         this.setState({ ...this.state, isRecording: false, accurateRecite: true });
         recognition.stop();
-        const activities = JSON.parse(`${localStorage.getItem('activities')}`);
-        activities['Recite'] = true;
-        localStorage.setItem('activities', JSON.stringify(activities));
-        setActivitiesStates(activities);
+        setActivities({ ...activities, Recite: true });
       }
     };
 
@@ -144,7 +138,7 @@ class Recite extends React.PureComponent<ActivityProps, State> {
   }
 
   render(): ReactElement {
-    const { verseString } = this.props;
+    const { verseString } = this.context;
     return (
       <div>
         {!window.webkitSpeechRecognition && (
@@ -174,5 +168,6 @@ class Recite extends React.PureComponent<ActivityProps, State> {
     );
   }
 }
+Recite.contextType = StateContext;
 
 export default Recite;

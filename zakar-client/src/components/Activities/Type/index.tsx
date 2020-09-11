@@ -1,12 +1,12 @@
-import React, { ReactElement, useState, ChangeEvent, useEffect } from 'react';
+import React, { ReactElement, useState, ChangeEvent, useEffect, useContext } from 'react';
 import './Type.css';
-import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
+import { StateContext } from 'StateProvider';
 
-const Type = (props: ActivityProps): ReactElement => {
+const Type = (): ReactElement => {
+  const { setActivities, activities, verseString } = useContext(StateContext);
   const [targetText, setTargetText] = useState('');
   const [textInputValue, setTextInputValue] = useState('');
-  const { verseString, setActivitiesStates } = props;
 
   useEffect(() => {
     let text = '';
@@ -37,10 +37,7 @@ const Type = (props: ActivityProps): ReactElement => {
     const value = e.target.value;
     setTextInputValue(value);
     if (value === targetText) {
-      const activities = JSON.parse(`${localStorage.getItem('activities')}`);
-      activities['Type'] = true;
-      localStorage.setItem('activities', JSON.stringify(activities));
-      setActivitiesStates(activities);
+      setActivities({ ...activities, Type: true });
       setTextInputValue('');
     }
   };

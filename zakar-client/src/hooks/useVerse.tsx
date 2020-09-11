@@ -1,9 +1,12 @@
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useEffect, useContext } from 'react';
 import { fetchVerse } from 'utils/helpers';
 import { useHistory } from 'react-router-dom';
+import { StateContext } from 'StateProvider';
 
-export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
-  const [verse, setVerse] = useState<string>(state);
+export default (): void => {
+  const { setVerseString, verseString, setVerseText, verseIDArray, setVerseArray, setStandardFetchState } = useContext(
+    StateContext,
+  );
   const history = useHistory();
 
   const gatherText = () => {
@@ -13,17 +16,13 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
       text += ` ${node.textContent}`;
     });
     if (text) {
-      localStorage.setItem('verseText', text.trim());
+      setVerseText(text.trim());
     }
   };
 
   useEffect(() => {
-    const verseIDArray = JSON.parse(`${localStorage.getItem('verseIDArray')}`);
-    const verseString = localStorage.getItem('verseString');
-
     if (!!verseString) {
       console.log('VERSE ALREADY STORED, SO RETURNING');
-      setVerse(verseString);
       return;
     }
 
@@ -38,9 +37,9 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
           console.log('NETWORK REQUEST FOR VERSE MADE');
           // console.log('Map verse data: ', verseData);
 
-          localStorage.setItem('verseString', verseData.passages[0]);
-          localStorage.setItem('verseIDArray', JSON.parse(`${[verseData.parsed[0][0]]}`));
-          setVerse(verseData.passages[0]);
+          setStandardFetchState(verseData);
+          setVerseString(verseData.passages[0]);
+          setVerseArray(JSON.parse(`${[verseData.parsed[0][0]]}`));
         })
         .catch((error) => {
           if (error.response && /login_cta/.test(error.response.headers.location)) {
@@ -53,7 +52,5 @@ export default (state: string): [string, Dispatch<SetStateAction<string>>] => {
 
   useEffect(() => {
     gatherText();
-  }, [verse]);
-
-  return [verse, setVerse];
+  }, [verseString]);
 };
