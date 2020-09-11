@@ -5,8 +5,7 @@ interface Props {
   verseString: string;
 }
 
-const Verse = ({verseString}: Props): ReactElement => {
-
+const Verse = ({ verseString }: Props): ReactElement => {
   return (
     <>
       <div className="VerseContainer">{verseString && <div dangerouslySetInnerHTML={{ __html: verseString }} />}</div>

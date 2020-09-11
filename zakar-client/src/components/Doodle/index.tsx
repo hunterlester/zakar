@@ -11,6 +11,8 @@ interface State {
   penColor: string;
 }
 
+interface Props {} // eslint-disable-line @typescript-eslint/no-empty-interface
+
 const initPickr = () => {
   const pickr = Pickr.create({
     el: '.color-picker',
@@ -48,8 +50,8 @@ const initPickr = () => {
   return pickr;
 };
 
-class Doodle extends React.PureComponent<any, State> {
-  constructor(props: any) {
+class Doodle extends React.PureComponent<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       colorTarget: 'pen',

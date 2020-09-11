@@ -90,7 +90,6 @@ export const StateProvider = ({ children }: Props) => {
       verseText: verseText || '',
     };
 
-
     setState({ ...initState });
   }, []);
 

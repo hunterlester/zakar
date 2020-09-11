@@ -13,8 +13,10 @@ interface State {
   accurateRecite: boolean;
 }
 
-class Recite extends React.PureComponent<any, State> {
-  constructor(props: any) {
+interface Props {} // eslint-disable-line @typescript-eslint/no-empty-interface
+
+class Recite extends React.PureComponent<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       isRecording: false,

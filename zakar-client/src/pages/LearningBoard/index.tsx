@@ -15,7 +15,7 @@ import Complete from 'components/Activities/Complete';
 import { StateContext } from 'StateProvider';
 
 const LearningBoard = (): ReactElement => {
-  const { activities, setActivities, verseIDArray } = useContext(StateContext);
+  const { activities, verseIDArray } = useContext(StateContext);
   const [activityState, setActivityState] = useState<Activities>(Activities.Build);
   const history = useHistory();
   useVerse();
@@ -67,12 +67,6 @@ const LearningBoard = (): ReactElement => {
 
     window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    setActivities({ ...activities, Build: true });
-  }, []);
-
-  // console.log('ACTIVITY STATE: ', activityState);
 
   return (
     <div {...handlers}>

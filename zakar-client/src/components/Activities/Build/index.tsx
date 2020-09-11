@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect, useRef, useContext } from 'react';
+import React, { ReactElement, useState, useContext } from 'react';
 import { fetchVerse } from 'utils/helpers';
 import './Build.css';
 import Verse from 'components/Verse';
@@ -10,27 +10,16 @@ const Build = (): ReactElement => {
     prev_verse,
     next_verse,
     verseIDArray,
-    activities,
     verseString,
-    setActivities,
     setVerseString,
     setVerseArray,
     clearState,
     setStandardFetchState,
   } = useContext(StateContext);
   const [isFetching, setIsFetching] = useState(false);
-  const isInitialMount = useRef(true);
   const history = useHistory();
   const prevVerseId = prev_verse;
   const nextVerseId = next_verse;
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-      setActivities({ ...activities, Build: true });
-    }
-  }, [verseString]);
 
   return (
     <>
