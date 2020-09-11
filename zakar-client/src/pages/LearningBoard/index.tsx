@@ -21,7 +21,6 @@ const LearningBoard = (): ReactElement => {
   useVerse();
 
   const swipeEventHandler = (eventData: EventData) => {
-    // console.log('SWIPE EVENT: ', eventData);
     const velocity = eventData.velocity;
     if (velocity < 0.7) {
       return;

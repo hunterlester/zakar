@@ -29,7 +29,6 @@ const Type = (): ReactElement => {
       uriEncoded = uriEncoded.replace(/%E2%80%99/g, '%27'); // single quote
       uriEncoded = uriEncoded.replace(/%E2%80%98/g, '%27');
       setTargetText(decodeURI(uriEncoded).replace(/\s\s+/g, ' ').trim());
-      // console.log(encodeURI(decodeURI(uriEncoded).replace(/\s\s+/g, ' ').trim()));
     }
   }, []);
 

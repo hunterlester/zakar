@@ -89,13 +89,11 @@ class Doodle extends React.PureComponent<Props, State> {
     if (canvas) {
       this.signaturePad = new SignaturePad(canvas);
       if (doodleData) {
-        // console.log('loading doodle data: ', doodleData);
         this.signaturePad.fromData(doodleData);
       }
       this.signaturePad.on();
 
       canvas.addEventListener('mouseup', () => {
-        // console.log(this.signaturePad!.toData());
         if (this.signaturePad) {
           setDoodle(this.signaturePad.toData());
         }

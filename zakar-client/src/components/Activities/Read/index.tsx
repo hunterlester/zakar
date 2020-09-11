@@ -19,7 +19,6 @@ const Read = (): ReactElement => {
   };
 
   const handleRightScroll = (): void => {
-    // console.log('SCROOL RIGHT');
     const verseTextLength = verseText.split(' ').length;
     if (verseIndex < verseTextLength - 1) {
       setVerseIndex(verseIndex + 1);

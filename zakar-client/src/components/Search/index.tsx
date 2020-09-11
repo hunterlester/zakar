@@ -59,8 +59,6 @@ const Search = (): ReactElement => {
     }
   };
 
-  // console.log(searchResult);
-
   return (
     <>
       <form onSubmit={handleSubmit}>

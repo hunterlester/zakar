@@ -35,7 +35,6 @@ export default (): void => {
       fetchVerse(fetchArgs)
         .then((verseData) => {
           console.log('NETWORK REQUEST FOR VERSE MADE');
-          // console.log('Map verse data: ', verseData);
 
           setStandardFetchState(verseData);
           setVerseString(verseData.passages[0]);

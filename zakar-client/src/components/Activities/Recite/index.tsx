@@ -68,22 +68,14 @@ class Recite extends React.PureComponent<Props, State> {
         setActivities({ ...activities, Recite: true });
         return;
       }
-      // console.log('restarting speech recognition');
       recognition.start();
     };
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      // console.log(event);
-      // console.log('this.state.transcriptWords.length: ', this.state.transcriptWords);
       let speechResult = event.results[event.resultIndex][0].transcript.toLowerCase();
-      // console.log('Speech result', encodeURI(speechResult));
-      // console.log('Target text', encodeURI(targetText));
-
-      // console.log('Confidence: ' + event.results[0][0].confidence);
 
       speechResult = speechResult.replace(/worshipped/g, 'worshiped');
       this.setState({ ...this.state, transcriptWords: [...this.state.transcriptWords, speechResult.trim()] });
-      // console.log(this.state.transcriptWords.join(" "));
 
       if (!this.state.targetText.includes(this.state.transcriptWords.join(' '))) {
         this.setState({ ...this.state, isRecording: false, inaccurateRecite: true });
@@ -91,7 +83,6 @@ class Recite extends React.PureComponent<Props, State> {
       }
 
       if (this.state.transcriptWords.join(' ') === this.state.targetText) {
-        // console.log('they are equal!!!!!!!!!!!!!!!!!!');
         this.setState({ ...this.state, isRecording: false, accurateRecite: true });
         recognition.stop();
         setActivities({ ...activities, Recite: true });
@@ -134,7 +125,7 @@ class Recite extends React.PureComponent<Props, State> {
         .replace(/\s\s+/g, ' ')
         .toLowerCase()
         .trim();
-      // console.log(encodeURI(decodedURIEncoded));
+
       this.setState({ ...this.state, targetText: decodedURIEncoded });
     }
   }

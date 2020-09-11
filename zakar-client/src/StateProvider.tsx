@@ -67,8 +67,6 @@ export const StateContext = createContext({
 export const StateProvider = ({ children }: Props) => {
   const [state, setState] = useState<State>(defaultState);
 
-  console.log(state);
-
   useEffect(() => {
     const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`) || defaultActivities;
     const verseIDArray = localStorage.getItem('verseIDArray');
