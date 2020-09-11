@@ -7,7 +7,6 @@ import Recite from 'components/Activities/Recite';
 import Read from 'components/Activities/Read';
 import Type from 'components/Activities/Type';
 import Build from 'components/Activities/Build';
-import useVerse from 'hooks/useVerse';
 import Listen from 'components/Activities/Listen';
 import { useSwipeable, EventData } from 'react-swipeable';
 import ActivityInstruction from 'components/ActivityInstruction';
@@ -15,10 +14,20 @@ import Complete from 'components/Activities/Complete';
 import { StateContext } from 'StateProvider';
 
 const LearningBoard = (): ReactElement => {
-  const { activities, verseIDArray } = useContext(StateContext);
+  const { activities, verseIDArray, setVerseText, verseString } = useContext(StateContext);
   const [activityState, setActivityState] = useState<Activities>(Activities.Build);
   const history = useHistory();
-  useVerse();
+
+  const gatherText = () => {
+    let text = '';
+    const textNodes = document.querySelectorAll('.VerseContainer p');
+    textNodes.forEach((node) => {
+      text += ` ${node.textContent}`;
+    });
+    if (text) {
+      setVerseText(text.trim());
+    }
+  };
 
   const swipeEventHandler = (eventData: EventData) => {
     const velocity = eventData.velocity;
@@ -66,6 +75,10 @@ const LearningBoard = (): ReactElement => {
 
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    gatherText();
+  }, [verseString]);
 
   return (
     <div {...handlers}>
