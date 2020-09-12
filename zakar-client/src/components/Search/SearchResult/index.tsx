@@ -1,7 +1,8 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import './SearchResult.css';
 import { useHistory } from 'react-router-dom';
 import { fetchVerse } from 'utils/helpers';
+import { StateContext } from 'StateProvider';
 
 interface Props {
   content: string;
@@ -10,14 +11,16 @@ interface Props {
 }
 
 const SearchResult = (props: Props): ReactElement => {
+  const { setVerseArray, setVerseString, setStandardFetchState } = useContext(StateContext);
   const { content, reference, isPassageEndpoint } = props;
   const history = useHistory();
 
   const verseHandler = (verseId: string) => {
     fetchVerse({ verseCanonical: verseId })
       .then((verseData) => {
-        localStorage.setItem('verseString', verseData.passages[0]);
-        localStorage.setItem('verseIDArray', JSON.stringify([verseData.parsed[0][0]]));
+        setStandardFetchState(verseData);
+        setVerseString(verseData.passages[0]);
+        setVerseArray([JSON.stringify(verseData.parsed[0][0])]);
         history.push('/learning-board');
       })
       .catch((error) => {

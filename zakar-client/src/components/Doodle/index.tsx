@@ -3,13 +3,15 @@ import SignaturePad from 'signature_pad';
 import Pickr from '@simonwep/pickr';
 import '@simonwep/pickr/dist/themes/classic.min.css';
 import './Doodle.css';
-import { ActivityProps } from 'react-app-env';
+import { StateContext } from 'StateProvider';
 
 interface State {
   colorTarget: string;
   backgroundColor: string;
   penColor: string;
 }
+
+interface Props {} // eslint-disable-line @typescript-eslint/no-empty-interface
 
 const initPickr = () => {
   const pickr = Pickr.create({
@@ -48,8 +50,8 @@ const initPickr = () => {
   return pickr;
 };
 
-class Doodle extends React.PureComponent<ActivityProps, State> {
-  constructor(props: ActivityProps) {
+class Doodle extends React.PureComponent<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       colorTarget: 'pen',
@@ -81,27 +83,25 @@ class Doodle extends React.PureComponent<ActivityProps, State> {
   };
 
   componentDidMount(): void {
+    const { doodle: doodleData, setDoodle } = this.context;
     this.pickr = initPickr();
     const canvas: HTMLCanvasElement | null = this.canvasEl.current;
     if (canvas) {
       this.signaturePad = new SignaturePad(canvas);
-      const doodleData = JSON.parse(`${localStorage.getItem('doodle')}`);
       if (doodleData) {
-        // console.log('loading doodle data: ', doodleData);
         this.signaturePad.fromData(doodleData);
       }
       this.signaturePad.on();
 
       canvas.addEventListener('mouseup', () => {
-        // console.log(this.signaturePad!.toData());
         if (this.signaturePad) {
-          localStorage.setItem('doodle', JSON.stringify(this.signaturePad.toData()));
+          setDoodle(this.signaturePad.toData());
         }
       });
 
       canvas.addEventListener('touchend', () => {
         if (this.signaturePad) {
-          localStorage.setItem('doodle', JSON.stringify(this.signaturePad.toData()));
+          setDoodle(this.signaturePad.toData());
         }
       });
     }
@@ -145,6 +145,7 @@ class Doodle extends React.PureComponent<ActivityProps, State> {
   }
 
   render(): ReactElement {
+    const { setDoodle } = this.context;
     return (
       <>
         <div className="ColorPickerContainer">
@@ -164,7 +165,7 @@ class Doodle extends React.PureComponent<ActivityProps, State> {
               if (this.signaturePad) {
                 this.signaturePad.clear();
               }
-              localStorage.removeItem('doodle');
+              setDoodle([]);
             }}
           >
             Clear
@@ -176,5 +177,6 @@ class Doodle extends React.PureComponent<ActivityProps, State> {
     );
   }
 }
+Doodle.contextType = StateContext;
 
 export default Doodle;

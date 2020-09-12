@@ -42,10 +42,9 @@ const About = (): ReactElement => {
         </li>
         <li>Your data, or metadata, will not be collected and/or sold for any monetary purpose.</li>
         <li>
-          If you choose to login, the only piece of personal information which will be
-          collected is your email address, to be used to identify your account, for the purpose
-          of storing verse memorization progress. However, your email address will not be
-          stored in plain text format, but rather in a cryptographically hashed format.
+          If you choose to login, the only piece of personal information which will be collected is your email address,
+          to be used to identify your account, for the purpose of storing verse memorization progress. However, your
+          email address will not be stored in plain text format, but rather in a cryptographically hashed format.
         </li>
       </ul>
 

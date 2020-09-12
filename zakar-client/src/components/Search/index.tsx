@@ -17,9 +17,11 @@ const Search = (): ReactElement => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [error, setError] = useState('');
   const [isPassageEndpoint, setIsPassageEndpoint] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   const handleSubmit = (event: FormEvent): void => {
     event.preventDefault();
+    setIsFetching(true);
     setError('');
     if (!!searchValue) {
       const isPassageEndpoint = /([a-z])+(\s*\d)/.test(searchValue);
@@ -47,8 +49,10 @@ const Search = (): ReactElement => {
             results = response.data.results || [];
           }
           setSearchResult(results);
+          setIsFetching(false);
         })
         .catch((error: AxiosError) => {
+          setIsFetching(false);
           setError(error.message);
           setSearchResult([]);
           if (error.response && /login_cta/.test(error.response.headers.location)) {
@@ -59,19 +63,18 @@ const Search = (): ReactElement => {
     }
   };
 
-  // console.log(searchResult);
-
   return (
     <>
       <form onSubmit={handleSubmit}>
         <input
+          disabled={isFetching}
           autoFocus={true}
           placeholder="Try: gen1, gen1.3, gen1.3, gen1.3-7, jacob, job, jesus"
           className="SearchInput"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
-        <input className="SearchButton" type="submit" value="Search" />
+        <input disabled={isFetching} className="SearchButton" type="submit" value="Search" />
       </form>
       {!!error && <div className="ErrorMessage">{error}</div>}
       <div className="SearchResultContainer">

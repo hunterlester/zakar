@@ -1,17 +1,14 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import './Listen.css';
-import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
 import Doodle from 'components/Doodle';
+import { StateContext } from 'StateProvider';
 
-const Listen = (props: ActivityProps): ReactElement => {
-  const { verseString, setActivitiesStates } = props;
+const Listen = (): ReactElement => {
+  const { verseString, setActivities, activities, verseCanonical } = useContext(StateContext);
 
   const audioEndedHandler = () => {
-    const activities = JSON.parse(`${localStorage.getItem('activities')}`);
-    activities['Listen'] = true;
-    localStorage.setItem('activities', JSON.stringify(activities));
-    setActivitiesStates(activities);
+    setActivities({ ...activities, Listen: true });
   };
 
   return (
@@ -20,7 +17,7 @@ const Listen = (props: ActivityProps): ReactElement => {
         onEnded={audioEndedHandler}
         className="VerseAudio"
         controls
-        src={`https://audio.esv.org/hw/mq/${localStorage.getItem('verseCanonical')}.mp3`}
+        src={`https://audio.esv.org/hw/mq/${verseCanonical}.mp3`}
       >
         Your browser does not support the
         <code>audio</code> element.

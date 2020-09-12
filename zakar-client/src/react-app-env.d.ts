@@ -9,15 +9,11 @@ declare global {
   }
 }
 
-export interface ActivityProps {
-  verseString?: string;
-  setActivitiesStates?: Dispatch<SetStateAction<ActivitiesStates>>;
-}
-
 export interface ActivitiesStates {
   Build: boolean;
   Read: boolean;
   Recite: boolean;
   Type: boolean;
   Listen: boolean;
+  Complete: boolean;
 }

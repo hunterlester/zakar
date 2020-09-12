@@ -1,12 +1,12 @@
-import React, { ReactElement, useState, ChangeEvent, useEffect } from 'react';
+import React, { ReactElement, useState, ChangeEvent, useEffect, useContext } from 'react';
 import './Complete.css';
-import { ActivityProps } from 'react-app-env';
 import Verse from 'components/Verse';
+import { StateContext } from 'StateProvider';
 
-const Complete = (props: ActivityProps): ReactElement => {
+const Complete = (): ReactElement => {
+  const { activities, verseString, setActivities } = useContext(StateContext);
   const [targetText, setTargetText] = useState('');
   const [targetTextArray, setTargetTextArray] = useState<string[]>([]);
-  const { verseString, setActivitiesStates } = props;
 
   useEffect(() => {
     let text = '';
@@ -59,10 +59,7 @@ const Complete = (props: ActivityProps): ReactElement => {
     const allCompleted = incompleteInputs.every((input) => input.disabled === true);
 
     if (allCompleted && !!e.currentTarget.value && targetTextArray[index] === e.currentTarget.value) {
-      const activities = JSON.parse(`${localStorage.getItem('activities')}`);
-      activities['Complete'] = true;
-      localStorage.setItem('activities', JSON.stringify(activities));
-      setActivitiesStates(activities);
+      setActivities({ ...activities, Complete: true });
       return;
     }
   };
