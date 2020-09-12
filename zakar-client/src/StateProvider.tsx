@@ -1,6 +1,7 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { ActivitiesStates } from 'react-app-env';
 import { IPointGroup } from 'signature_pad';
+import { getCookie } from 'utils/helpers';
 
 interface Props {
   children: React.ReactNode;
@@ -76,6 +77,7 @@ export const StateProvider = ({ children }: Props) => {
     const next_verse = localStorage.getItem('next_verse');
     const prev_verse = localStorage.getItem('prev_verse');
     const verseText = localStorage.getItem('verseText');
+    const bearerToken = getCookie('bearer');
 
     const initState = {
       activities: initActivities,
@@ -89,6 +91,8 @@ export const StateProvider = ({ children }: Props) => {
     };
 
     setState({ ...initState });
+
+    // then make database call if bearerToken
   }, []);
 
   // TODO: use this single space to manage localStoage and database fetching
