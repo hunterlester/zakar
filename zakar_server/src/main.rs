@@ -80,7 +80,7 @@ async fn main() -> std::io::Result<()> {
             Some(google_client_secret),
         )
         .set_redirect_uri(
-            RedirectUrl::new("http://localhost:8000/redirect".to_string())
+            RedirectUrl::new("https://www.zkr.app/redirect".to_string())
                 .expect("Invalid redirect URL"),
         );
 
