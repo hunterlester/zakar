@@ -28,7 +28,7 @@ FROM debian:buster-slim
 ARG APP=/usr/src/app
 
 RUN apt-get update \
-    && apt-get -y install postgresql \
+#    && apt-get -y install postgresql \
     && apt-get install -y ca-certificates tzdata \
     && rm -rf /var/lib/apt/lists/*
 
