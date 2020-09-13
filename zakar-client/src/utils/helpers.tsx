@@ -49,3 +49,18 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
       throw error;
     });
 };
+
+export const updateUserVerses = (userID: string, data: string) => {
+  const headers = {
+    Authorization: `Bearer ${getCookie('bearer')}`,
+  };
+  axios
+    .put(`/users/${userID}/verses`, data, {
+      headers,
+    })
+    .then((response: AxiosResponse) => {
+    })
+    .catch((error: AxiosError) => {
+      console.error(error);
+    });
+}

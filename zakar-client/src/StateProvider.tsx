@@ -1,7 +1,8 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { ActivitiesStates } from 'react-app-env';
+import { useHistory } from 'react-router-dom';
 import { IPointGroup } from 'signature_pad';
-import { getCookie } from 'utils/helpers';
+import { getCookie, updateUserVerses } from 'utils/helpers';
 
 interface Props {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ interface State {
 }
 
 const defaultActivities = {
-  Build: false,
+  Build: true,
   Read: false,
   Recite: false,
   Type: false,
@@ -67,6 +68,8 @@ export const StateContext = createContext({
 
 export const StateProvider = ({ children }: Props) => {
   const [state, setState] = useState<State>(defaultState);
+  const history = useHistory();
+  const { activities, verseIDArray } = state;
 
   useEffect(() => {
     const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`) || defaultActivities;
@@ -94,6 +97,19 @@ export const StateProvider = ({ children }: Props) => {
 
     // then make database call if bearerToken
   }, []);
+
+  useEffect(() => {
+    const allActivitiesCompleted = Object.values(activities).every(value => value === true);
+    const bearerToken = getCookie('bearer');
+    const userID = getCookie('user_id');
+    if (allActivitiesCompleted && bearerToken && userID) {
+      updateUserVerses(userID, JSON.stringify(verseIDArray));
+    }
+
+    if (allActivitiesCompleted && !bearerToken) {
+      history.push('/login-cta');
+    }
+  }, [activities]);
 
   // TODO: use this single space to manage localStoage and database fetching
   const setActivities = (activities: ActivitiesStates) => {
