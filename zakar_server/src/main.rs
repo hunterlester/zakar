@@ -7,8 +7,8 @@ use actix_files as fs;
 use actix_session::CookieSession;
 use actix_web::{self, web, App, Error, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
-// use diesel::prelude::*;
-// use diesel::r2d2::{self, ConnectionManager};
+use diesel::prelude::*;
+use diesel::r2d2::{self, ConnectionManager};
 use listenfd::ListenFd;
 use std::env;
 use std::net::SocketAddr;
@@ -23,9 +23,9 @@ mod errors;
 mod models;
 mod proxy;
 mod schema;
-// mod user_api;
+mod user_api;
 
-// pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
+pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 pub struct AppState {
     pub oauth: CoreClient,
@@ -49,12 +49,12 @@ fn get_server_port() -> u16 {
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     env::set_var("RUST_LOG", "actix_web=debug");
-    // let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    // let manager = ConnectionManager::<PgConnection>::new(database_url);
-    // let pool: Pool = r2d2::Pool::builder()
-    //     .build(manager)
-    //     .expect("Failed to create connection pool");
+    let manager = ConnectionManager::<PgConnection>::new(database_url);
+    let pool: Pool = r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create connection pool");
 
     let mut listenfd = ListenFd::from_env();
     let addr = SocketAddr::from(([0, 0, 0, 0], get_server_port()));
@@ -80,12 +80,12 @@ async fn main() -> std::io::Result<()> {
             Some(google_client_secret),
         )
         .set_redirect_uri(
-            RedirectUrl::new("https://www.zkr.app/redirect".to_string())
+            RedirectUrl::new("http://localhost:8000/redirect".to_string())
                 .expect("Invalid redirect URL"),
         );
 
         App::new()
-            //.data(pool.clone())
+            .data(pool.clone())
             .data(AppState { oauth: client })
             .wrap(CookieSession::signed(&[0; 32]).secure(false))
             .route("/", web::get().to(index))
@@ -104,20 +104,20 @@ async fn main() -> std::io::Result<()> {
                     .service(web::resource("/text/").route(web::get().to(proxy::forward_request)))
                     .service(web::resource("/audio/").route(web::get().to(proxy::forward_request))),
             )
-            // .service(
-            //     web::scope("/users")
-            //         .wrap(auth.clone())
-            //         .service(
-            //             web::resource("")
-            //                 .route(web::get().to(user_api::get_users))
-            //                 .route(web::post().to(user_api::create_user)),
-            //         )
-            //         .service(
-            //             web::resource("/{id}")
-            //                 .route(web::get().to(user_api::get_user))
-            //                 .route(web::delete().to(user_api::delete_user)),
-            //         ),
-            // )
+            .service(
+                web::scope("/users")
+                    .wrap(auth.clone())
+                    .service(
+                        web::resource("")
+                            .route(web::get().to(user_api::get_users))
+                            .route(web::post().to(user_api::create_user)),
+                    )
+                    .service(
+                        web::resource("/{user_id}")
+                            .route(web::get().to(user_api::get_user))
+                            .route(web::delete().to(user_api::delete_user)),
+                    ),
+            )
             .service(fs::Files::new("/", "../zakar-client/build").index_file("index.html"))
     });
 

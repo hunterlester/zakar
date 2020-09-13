@@ -2,16 +2,21 @@ use super::AppState;
 use crate::errors::ServiceError;
 use actix_session::Session;
 use actix_web::http::{header, Cookie};
-use actix_web::{dev::ServiceRequest, web, Error, HttpMessage, HttpRequest, HttpResponse};
+use actix_web::{dev::ServiceRequest, web, Error, HttpMessage, HttpRequest, HttpResponse, error};
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 use alcoholic_jwt::{token_kid, validate, Validation, JWKS};
 use reqwest;
 use serde::{Deserialize, Serialize};
+use crate::Pool;
+use crate::user_api::{db_create_user, InputUser};
 
 use openidconnect::core::CoreResponseType;
 use openidconnect::reqwest::http_client;
-use openidconnect::{AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce, Scope};
+use openidconnect::{AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce, Scope, PkceCodeChallenge};
+
+use tiny_keccak::{Sha3, Hasher};
+use zeros::bytes_to_hex;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Claims {
@@ -74,8 +79,10 @@ pub async fn validator(
     }
 }
 
-pub async fn login(data: web::Data<AppState>) -> HttpResponse {
-    let (authorize_url, _csrf_state, _nonce) = &data
+pub async fn login(session: Session, data: web::Data<AppState>) -> Result<HttpResponse, Error> {
+    let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
+
+    let (authorize_url, csrf_state, nonce) = &data
         .oauth
         .authorize_url(
             AuthenticationFlow::<CoreResponseType>::AuthorizationCode,
@@ -84,51 +91,93 @@ pub async fn login(data: web::Data<AppState>) -> HttpResponse {
         )
         .add_scope(Scope::new("openid".to_string()))
         .add_scope(Scope::new("email".to_string()))
+        .set_pkce_challenge(pkce_challenge)
         .url();
 
-    HttpResponse::Found()
+    session.set("csrf_state", csrf_state)?;
+    session.set("nonce", nonce)?;
+    session.set("pkce_verifier", pkce_verifier)?;
+
+    Ok(HttpResponse::Found()
         .header(header::LOCATION, authorize_url.to_string())
-        .finish()
+        .finish())
 }
 
-pub async fn logout(session: Session, req: HttpRequest) -> HttpResponse {
+pub async fn logout(session: Session, req: HttpRequest) -> Result<HttpResponse, Error> {
     session.remove("bearer");
 
     let mut builder = HttpResponse::Found();
     if let Some(ref cookie) = req.cookie("bearer") {
         builder.del_cookie(cookie);
     }
-    builder.header(header::LOCATION, "/".to_string()).finish()
+    if let Some(ref cookie) = req.cookie("user_id") {
+        builder.del_cookie(cookie);
+    }
+    Ok(builder.header(header::LOCATION, "/".to_string()).finish())
 }
 
 pub async fn auth(
     session: Session,
     data: web::Data<AppState>,
+    pool: web::Data<Pool>,
     params: web::Query<AuthRequest>,
-) -> HttpResponse {
+) -> Result<HttpResponse, Error> {
     let code = AuthorizationCode::new(params.code.clone());
-    let _state = CsrfToken::new(params.state.clone());
+    let state = CsrfToken::new(params.state.clone());
     let _scope = params.scope.clone();
 
-    let token = &data.oauth.exchange_code(code).request(http_client).unwrap();
-    if let Some(token) = token.extra_fields().id_token() {
-        // println!("token: {:?}", token);
-        // println!("token: {:?}", token.to_string());
+    let token = &data.oauth.exchange_code(code).set_pkce_verifier(session.get("pkce_verifier").unwrap().unwrap()).request(http_client).unwrap();
+    let (token_string, email_string): (String, String)  = if let Some(token) = token.extra_fields().id_token() {
+        let csrf: CsrfToken = session.get("csrf_state").unwrap().unwrap();
+
+        if state.secret() != csrf.secret() {
+          return Err(error::ErrorForbidden("Bad Csrf"));
+        }
+
+        let nonce: Nonce = if let Some(nonce) = session.get("nonce")? {
+            nonce
+        } else {
+            Nonce::new_random() 
+        };
+        let claims = token.claims(&data.oauth.id_token_verifier(), &nonce).unwrap();
         session
             .set("bearer", format!("{}", token.to_string()))
             .unwrap();
-    }
 
-    session.set("login", true).unwrap();
+        (token.to_string(), claims.email().unwrap().as_str().to_string())
+    } else { panic!("panic")};
 
-    HttpResponse::Found()
+    let mut output = [0; 32];
+    let mut sha3 = Sha3::v256();
+    sha3.update(email_string.as_bytes());
+    sha3.finalize(&mut output);
+
+    // TODO: only create new user if not exist 
+    let new_user = InputUser {
+        user_id: bytes_to_hex(&output),
+        verses: vec![],
+    };
+
+    web::block(move || db_create_user(pool, web::Json(new_user)))
+        .await
+        .map(|user| HttpResponse::Ok().json(user))
+        .map_err(|_| HttpResponse::InternalServerError())?;
+
+    Ok(HttpResponse::Found()
         .header(header::LOCATION, "/".to_string())
         .cookie(
             Cookie::build(
                 "bearer",
-                token.extra_fields().id_token().unwrap().to_string(),
+                token_string,
             )
             .finish(),
         )
-        .finish()
+        .cookie(
+            Cookie::build(
+                "user_id",
+                bytes_to_hex(&output),
+            )
+            .finish(),
+        )
+        .finish())
 }

@@ -26,3 +26,5 @@ alcoholic_jwt = "1.0.0"
 reqwest = "0.9.22"
 actix-session = "0.3.0"
 openidconnect = "1.0.1"
+tiny-keccak = { version = "2.0.2", features = ["sha3"] }
+zeros = "7.2.0"

@@ -8,7 +8,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InputUser {
-    pub email: String,
+    pub user_id: String,
+    pub verses: Vec<String>,
 }
 
 pub async fn get_users(db: web::Data<Pool>) -> Result<HttpResponse, Error> {
@@ -24,16 +25,16 @@ fn db_get_all_users(pool: web::Data<Pool>) -> Result<Vec<User>, diesel::result::
     Ok(items)
 }
 
-pub async fn get_user(db: web::Data<Pool>, user_id: web::Path<i32>) -> Result<HttpResponse, Error> {
-    Ok(web::block(move || db_get_user(db, user_id.into_inner()))
+pub async fn get_user(db: web::Data<Pool>, other_user_id: web::Path<String>) -> Result<HttpResponse, Error> {
+    Ok(web::block(move || db_get_user(db, other_user_id.into_inner()))
         .await
         .map(|user| HttpResponse::Ok().json(user))
         .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
-fn db_get_user(pool: web::Data<Pool>, user_id: i32) -> Result<User, diesel::result::Error> {
+pub fn db_get_user(pool: web::Data<Pool>, other_user_id: String) -> Result<User, diesel::result::Error> {
     let conn = pool.get().unwrap();
-    users.find(user_id).get_result::<User>(&conn)
+    users.find(other_user_id).get_result::<User>(&conn)
 }
 
 pub async fn create_user(
@@ -46,13 +47,14 @@ pub async fn create_user(
         .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
-fn db_create_user(
+pub fn db_create_user(
     db: web::Data<Pool>,
     item: web::Json<InputUser>,
 ) -> Result<User, diesel::result::Error> {
     let conn = db.get().unwrap();
     let new_user = NewUser {
-        email: &item.email,
+        user_id: &item.user_id,
+        verses: item.verses.clone(),
         created_at: chrono::Local::now().naive_local(),
     };
     let res = insert_into(users).values(&new_user).get_result(&conn)?;
@@ -61,15 +63,15 @@ fn db_create_user(
 
 pub async fn delete_user(
     db: web::Data<Pool>,
-    user_id: web::Path<i32>,
+    other_user_id: web::Path<String>,
 ) -> Result<HttpResponse, Error> {
-    Ok(web::block(move || db_delete_user(db, user_id.into_inner()))
+    Ok(web::block(move || db_delete_user(db, other_user_id.into_inner()))
         .await
         .map(|user| HttpResponse::Ok().json(user))
         .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
-fn db_delete_user(db: web::Data<Pool>, user_id: i32) -> Result<usize, diesel::result::Error> {
+fn db_delete_user(db: web::Data<Pool>, other_user_id: String) -> Result<usize, diesel::result::Error> {
     let conn = db.get().unwrap();
     let count = delete(users.find(user_id)).execute(&conn)?;
     Ok(count)
