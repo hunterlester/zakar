@@ -1,6 +1,7 @@
 {
   "short_name": "Zakar",
-  "name": "Zakar: Bible verse memorization activities",
+  "name": "Zakar | Memorize Bible Verses",
+  "description": "Search ESV Holy Bible verses, then read, listen, type, and recite your way to memorization. Memorization activities.",
   "icons": [
     {
       "src": "favicon.ico",
