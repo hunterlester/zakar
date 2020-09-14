@@ -103,7 +103,18 @@ export const StateProvider = ({ children }: Props) => {
     const bearerToken = getCookie('bearer');
     const userID = getCookie('user_id');
     if (allActivitiesCompleted && bearerToken && userID) {
-      updateUserVerses(userID, JSON.stringify(verseIDArray));
+      updateUserVerses(userID, JSON.stringify(verseIDArray))
+      .then(response => {
+        if (response.status === 200) {
+          clearState();
+          // TODO: redirect to data vizualization page for user to see verse progress
+          // as well as contribution to global verse memorization database vizualizer
+        }
+      })
+      .catch(err => {
+        // TODO: if error, try to update users verses again somehow
+        // possibly prompting client
+      });
     }
 
     if (allActivitiesCompleted && !bearerToken) {
@@ -133,16 +144,17 @@ export const StateProvider = ({ children }: Props) => {
     setState((currentState) => ({ ...currentState, verseCanonical }));
   };
   const setNextVerse = (next_verse: string) => {
-    localStorage.setItem('next_verse', next_verse);
-    setState((currentState) => ({ ...currentState, next_verse }));
+    localStorage.setItem('next_verse', JSON.stringify(next_verse));
+    setState((currentState) => ({ ...currentState, next_verse: JSON.stringify(next_verse) }));
   };
   const setPrevVerse = (prev_verse: string) => {
-    localStorage.setItem('prev_verse', prev_verse);
-    setState((currentState) => ({ ...currentState, prev_verse }));
+    localStorage.setItem('prev_verse', JSON.stringify(prev_verse));
+    setState((currentState) => ({ ...currentState, prev_verse: JSON.stringify(prev_verse) }));
   };
   const clearState = () => {
     localStorage.clear();
     setState({ ...defaultState });
+    history.push('/');
   };
   const setVerseText = (verseText: string) => {
     localStorage.setItem('verseText', verseText);
