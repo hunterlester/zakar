@@ -25,14 +25,22 @@ fn db_get_all_users(pool: web::Data<Pool>) -> Result<Vec<User>, diesel::result::
     Ok(items)
 }
 
-pub async fn get_user(db: web::Data<Pool>, other_user_id: web::Path<String>) -> Result<HttpResponse, Error> {
-    Ok(web::block(move || db_get_user(db, other_user_id.into_inner()))
-        .await
-        .map(|user| HttpResponse::Ok().json(user))
-        .map_err(|_| HttpResponse::InternalServerError())?)
+pub async fn get_user(
+    db: web::Data<Pool>,
+    other_user_id: web::Path<String>,
+) -> Result<HttpResponse, Error> {
+    Ok(
+        web::block(move || db_get_user(db, other_user_id.into_inner()))
+            .await
+            .map(|user| HttpResponse::Ok().json(user))
+            .map_err(|_| HttpResponse::InternalServerError())?,
+    )
 }
 
-pub fn db_get_user(pool: web::Data<Pool>, other_user_id: String) -> Result<User, diesel::result::Error> {
+pub fn db_get_user(
+    pool: web::Data<Pool>,
+    other_user_id: String,
+) -> Result<User, diesel::result::Error> {
     let conn = pool.get().unwrap();
     users.find(other_user_id).get_result::<User>(&conn)
 }
@@ -65,14 +73,19 @@ pub async fn delete_user(
     db: web::Data<Pool>,
     other_user_id: web::Path<String>,
 ) -> Result<HttpResponse, Error> {
-    Ok(web::block(move || db_delete_user(db, other_user_id.into_inner()))
-        .await
-        .map(|user| HttpResponse::Ok().json(user))
-        .map_err(|_| HttpResponse::InternalServerError())?)
+    Ok(
+        web::block(move || db_delete_user(db, other_user_id.into_inner()))
+            .await
+            .map(|user| HttpResponse::Ok().json(user))
+            .map_err(|_| HttpResponse::InternalServerError())?,
+    )
 }
 
-fn db_delete_user(db: web::Data<Pool>, other_user_id: String) -> Result<usize, diesel::result::Error> {
+fn db_delete_user(
+    db: web::Data<Pool>,
+    other_user_id: String,
+) -> Result<usize, diesel::result::Error> {
     let conn = db.get().unwrap();
-    let count = delete(users.find(user_id)).execute(&conn)?;
+    let count = delete(users.find(other_user_id)).execute(&conn)?;
     Ok(count)
 }

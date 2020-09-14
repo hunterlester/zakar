@@ -1,6 +1,6 @@
 use crate::schema::*;
-use serde::{Deserialize, Serialize};
 use diesel::Identifiable;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Identifiable)]
 #[primary_key(user_id)]

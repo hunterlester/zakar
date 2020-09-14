@@ -1,21 +1,23 @@
 use super::AppState;
 use crate::errors::ServiceError;
+use crate::user_api::{db_create_user, db_get_user, InputUser};
+use crate::Pool;
 use actix_session::Session;
 use actix_web::http::{header, Cookie};
-use actix_web::{dev::ServiceRequest, web, Error, HttpMessage, HttpRequest, HttpResponse, error};
+use actix_web::{dev::ServiceRequest, error, web, Error, HttpMessage, HttpRequest, HttpResponse};
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use actix_web_httpauth::extractors::AuthenticationError;
 use alcoholic_jwt::{token_kid, validate, Validation, JWKS};
 use reqwest;
 use serde::{Deserialize, Serialize};
-use crate::Pool;
-use crate::user_api::{db_create_user, InputUser};
 
 use openidconnect::core::CoreResponseType;
 use openidconnect::reqwest::http_client;
-use openidconnect::{AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce, Scope, PkceCodeChallenge};
+use openidconnect::{
+    AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce, PkceCodeChallenge, Scope,
+};
 
-use tiny_keccak::{Sha3, Hasher};
+use tiny_keccak::{Hasher, Sha3};
 use zeros::bytes_to_hex;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -122,62 +124,78 @@ pub async fn auth(
     pool: web::Data<Pool>,
     params: web::Query<AuthRequest>,
 ) -> Result<HttpResponse, Error> {
+    // TODO: actually handle errors instead of merely unwrapping
     let code = AuthorizationCode::new(params.code.clone());
     let state = CsrfToken::new(params.state.clone());
     let _scope = params.scope.clone();
 
-    let token = &data.oauth.exchange_code(code).set_pkce_verifier(session.get("pkce_verifier").unwrap().unwrap()).request(http_client).unwrap();
-    let (token_string, email_string): (String, String)  = if let Some(token) = token.extra_fields().id_token() {
-        let csrf: CsrfToken = session.get("csrf_state").unwrap().unwrap();
+    let token = &data
+        .oauth
+        .exchange_code(code)
+        .set_pkce_verifier(session.get("pkce_verifier").unwrap().unwrap())
+        .request(http_client)
+        .unwrap();
+    let (token_string, email_string): (String, String) =
+        if let Some(token) = token.extra_fields().id_token() {
+            let csrf: CsrfToken = session.get("csrf_state").unwrap().unwrap();
 
-        if state.secret() != csrf.secret() {
-          return Err(error::ErrorForbidden("Bad Csrf"));
-        }
+            if state.secret() != csrf.secret() {
+                return Err(error::ErrorForbidden("Bad Csrf"));
+            }
 
-        let nonce: Nonce = if let Some(nonce) = session.get("nonce")? {
-            nonce
+            let nonce: Nonce = if let Some(nonce) = session.get("nonce")? {
+                nonce
+            } else {
+                Nonce::new_random()
+            };
+            let claims = token
+                .claims(&data.oauth.id_token_verifier(), &nonce)
+                .unwrap();
+            session
+                .set("bearer", format!("{}", token.to_string()))
+                .unwrap();
+
+            (
+                token.to_string(),
+                claims.email().unwrap().as_str().to_string(),
+            )
         } else {
-            Nonce::new_random() 
+            panic!("panic")
         };
-        let claims = token.claims(&data.oauth.id_token_verifier(), &nonce).unwrap();
-        session
-            .set("bearer", format!("{}", token.to_string()))
-            .unwrap();
-
-        (token.to_string(), claims.email().unwrap().as_str().to_string())
-    } else { panic!("panic")};
 
     let mut output = [0; 32];
     let mut sha3 = Sha3::v256();
     sha3.update(email_string.as_bytes());
     sha3.finalize(&mut output);
 
-    // TODO: only create new user if not exist 
-    let new_user = InputUser {
-        user_id: bytes_to_hex(&output),
-        verses: vec![],
-    };
+    let mut output3 = [0; 32];
+    let mut sha3_3 = Sha3::v256();
+    sha3_3.update(email_string.as_bytes());
+    sha3_3.finalize(&mut output3);
 
-    web::block(move || db_create_user(pool, web::Json(new_user)))
-        .await
-        .map(|user| HttpResponse::Ok().json(user))
-        .map_err(|_| HttpResponse::InternalServerError())?;
+    let pool2 = pool.clone();
+
+    let user = web::block(move || db_get_user(pool, bytes_to_hex(&output))).await;
+
+    if let Err(_) = user {
+        println!("SHOULD ONLY BE SEEING THIS IF THERE IS NO USER");
+        // Create user if does not exist
+        let mut output2 = [0; 32];
+        let mut sha3_2 = Sha3::v256();
+        sha3_2.update(email_string.as_bytes());
+        sha3_2.finalize(&mut output2);
+
+        let new_user = InputUser {
+            user_id: bytes_to_hex(&output2),
+            verses: vec![],
+        };
+
+        web::block(move || db_create_user(pool2, web::Json(new_user))).await?;
+    }
 
     Ok(HttpResponse::Found()
         .header(header::LOCATION, "/".to_string())
-        .cookie(
-            Cookie::build(
-                "bearer",
-                token_string,
-            )
-            .finish(),
-        )
-        .cookie(
-            Cookie::build(
-                "user_id",
-                bytes_to_hex(&output),
-            )
-            .finish(),
-        )
+        .cookie(Cookie::build("bearer", token_string).finish())
+        .cookie(Cookie::build("user_id", bytes_to_hex(&output3)).finish())
         .finish())
 }
