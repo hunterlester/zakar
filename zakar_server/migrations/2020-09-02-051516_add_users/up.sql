@@ -1,5 +1,0 @@
-CREATE TABLE users (
-    id SERIAL NOT NULL PRIMARY KEY,
-    email TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL
-);

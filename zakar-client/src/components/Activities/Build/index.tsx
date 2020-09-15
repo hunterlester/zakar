@@ -150,7 +150,6 @@ const Build = (): ReactElement => {
         key="clear-verse"
         onClick={() => {
           clearState();
-          history.push('/');
         }}
         className="ClearVerseButton"
       >

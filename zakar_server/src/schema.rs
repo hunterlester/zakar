@@ -1,7 +1,8 @@
 table! {
-    users (id) {
+    users (user_id) {
         id -> Int4,
-        email -> Text,
+        user_id -> Text,
+        verses -> Array<Text>,
         created_at -> Timestamp,
     }
 }

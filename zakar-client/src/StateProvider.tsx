@@ -1,7 +1,8 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { ActivitiesStates } from 'react-app-env';
+import { useHistory } from 'react-router-dom';
 import { IPointGroup } from 'signature_pad';
-import { getCookie } from 'utils/helpers';
+import { getCookie, updateUserVerses } from 'utils/helpers';
 
 interface Props {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ interface State {
 }
 
 const defaultActivities = {
-  Build: false,
+  Build: true,
   Read: false,
   Recite: false,
   Type: false,
@@ -67,6 +68,8 @@ export const StateContext = createContext({
 
 export const StateProvider = ({ children }: Props) => {
   const [state, setState] = useState<State>(defaultState);
+  const history = useHistory();
+  const { activities, verseIDArray } = state;
 
   useEffect(() => {
     const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`) || defaultActivities;
@@ -95,6 +98,30 @@ export const StateProvider = ({ children }: Props) => {
     // then make database call if bearerToken
   }, []);
 
+  useEffect(() => {
+    const allActivitiesCompleted = Object.values(activities).every(value => value === true);
+    const bearerToken = getCookie('bearer');
+    const userID = getCookie('user_id');
+    if (allActivitiesCompleted && bearerToken && userID) {
+      updateUserVerses(userID, JSON.stringify(verseIDArray))
+      .then(response => {
+        if (response.status === 200) {
+          clearState();
+          // TODO: redirect to data vizualization page for user to see verse progress
+          // as well as contribution to global verse memorization database vizualizer
+        }
+      })
+      .catch(err => {
+        // TODO: if error, try to update users verses again somehow
+        // possibly prompting client
+      });
+    }
+
+    if (allActivitiesCompleted && !bearerToken) {
+      history.push('/login-cta');
+    }
+  }, [activities]);
+
   // TODO: use this single space to manage localStoage and database fetching
   const setActivities = (activities: ActivitiesStates) => {
     localStorage.setItem('activities', JSON.stringify(activities));
@@ -117,16 +144,17 @@ export const StateProvider = ({ children }: Props) => {
     setState((currentState) => ({ ...currentState, verseCanonical }));
   };
   const setNextVerse = (next_verse: string) => {
-    localStorage.setItem('next_verse', next_verse);
-    setState((currentState) => ({ ...currentState, next_verse }));
+    localStorage.setItem('next_verse', JSON.stringify(next_verse));
+    setState((currentState) => ({ ...currentState, next_verse: JSON.stringify(next_verse) }));
   };
   const setPrevVerse = (prev_verse: string) => {
-    localStorage.setItem('prev_verse', prev_verse);
-    setState((currentState) => ({ ...currentState, prev_verse }));
+    localStorage.setItem('prev_verse', JSON.stringify(prev_verse));
+    setState((currentState) => ({ ...currentState, prev_verse: JSON.stringify(prev_verse) }));
   };
   const clearState = () => {
     localStorage.clear();
     setState({ ...defaultState });
+    history.push('/');
   };
   const setVerseText = (verseText: string) => {
     localStorage.setItem('verseText', verseText);
