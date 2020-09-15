@@ -80,7 +80,7 @@ async fn main() -> std::io::Result<()> {
             Some(google_client_secret),
         )
         .set_redirect_uri(
-            RedirectUrl::new("http://localhost:8000/redirect".to_string())
+            RedirectUrl::new("https://www.zkr.app/redirect".to_string())
                 .expect("Invalid redirect URL"),
         );
 
@@ -106,21 +106,21 @@ async fn main() -> std::io::Result<()> {
             )
             .service(
                 web::scope("/users")
-                    // .wrap(auth.clone())
-                    .service(
-                        web::resource("")
-                            .route(web::get().to(user_api::get_users))
-                            .route(web::post().to(user_api::create_user)),
-                    )
+                    .wrap(auth.clone())
+                    // .service(
+                    //     web::resource("")
+                    //         .route(web::get().to(user_api::get_users))
+                    //         .route(web::post().to(user_api::create_user)),
+                    // )
                     .service(
                         web::resource("/{user_id}")
                             .route(web::get().to(user_api::get_user))
                             .route(web::delete().to(user_api::delete_user)),
-                    )
-                    .service(
-                        web::resource("/{user_id}/verses")
-                            .route(web::put().to(user_api::update_user_verses)),
                     ),
+                    // .service(
+                    //     web::resource("/{user_id}/verses")
+                    //         .route(web::put().to(user_api::update_user_verses)),
+                    // ),
             )
             .service(fs::Files::new("/", "../zakar-client/build").index_file("index.html"))
     });
