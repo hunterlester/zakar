@@ -4,6 +4,10 @@ RUN USER=root cargo new --bin zakar_server
 WORKDIR /zakar_server
 COPY ./zakar_server/Cargo.toml ./Cargo.toml
 COPY ./zakar_server/Cargo.lock ./Cargo.lock
+COPY ./zakar_server/diesel.toml ./diesel.toml
+COPY ./zakar_server/migrations ./migrations
+RUN cargo install diesel_cli --no-default-features --features postgres
+RUN mkdir -p /out && cp /usr/local/cargo/bin/diesel /out/
 RUN cargo build --release
 RUN rm src/*.rs
 
@@ -28,7 +32,7 @@ FROM debian:buster-slim
 ARG APP=/usr/src/app
 
 RUN apt-get update \
-#    && apt-get -y install postgresql \
+    && apt-get -y install libpq-dev \
     && apt-get install -y ca-certificates tzdata \
     && rm -rf /var/lib/apt/lists/*
 
@@ -44,6 +48,10 @@ RUN groupadd $APP_USER \
 
 COPY --from=client-builder /app/build /usr/src/zakar-client/build/
 COPY --from=server-builder /zakar_server/target/release/zakar_server ${APP}/zakar_server
+COPY --from=server-builder /zakar_server/diesel.toml ${APP}/
+COPY --from=server-builder /zakar_server/migrations ${APP}/migrations/
+COPY --from=server-builder /out/diesel /bin/
+COPY ./deployment-tasks.sh ${APP}/
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
