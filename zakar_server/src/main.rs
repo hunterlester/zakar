@@ -50,6 +50,13 @@ async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     env::set_var("RUST_LOG", "actix_web=debug");
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let environment_var = env::var("ENVIRONMENT").expect("DATABASE_URL must be set");
+    let redirect_uri = match environment_var.as_str() {
+        "PRODUCTION" => String::from("https://www.zkr.app/redirect"),
+        "STAGING" => String::from("https://immense-retreat-59958.herokuapp.com/redirect"),
+        "LOCAL" => String::from("http://localhost:8000/redirect"),
+        _ => String::from("http://localhost:8000/redirect"),
+    };
 
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     let pool: Pool = r2d2::Pool::builder()
@@ -80,7 +87,7 @@ async fn main() -> std::io::Result<()> {
             Some(google_client_secret),
         )
         .set_redirect_uri(
-            RedirectUrl::new("https://www.zkr.app/redirect".to_string())
+            RedirectUrl::new(redirect_uri.clone())
                 .expect("Invalid redirect URL"),
         );
 
