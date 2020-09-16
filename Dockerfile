@@ -49,13 +49,17 @@ RUN groupadd $APP_USER \
 COPY --from=client-builder /app/build /usr/src/zakar-client/build/
 COPY --from=server-builder /zakar_server/target/release/zakar_server ${APP}/zakar_server
 COPY --from=server-builder /zakar_server/diesel.toml ${APP}/
+COPY --from=server-builder /zakar_server/Cargo.toml ${APP}/
+COPY --from=server-builder /zakar_server/Cargo.lock ${APP}/
 COPY --from=server-builder /zakar_server/migrations ${APP}/migrations/
 COPY --from=server-builder /out/diesel /bin/
 COPY ./deployment-tasks.sh ${APP}/
+COPY ./Dockerfile ${APP}/
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
-USER $APP_USER
 WORKDIR ${APP}
+RUN chmod +x ./deployment-tasks.sh 
+USER $APP_USER
 
-CMD ["./zakar_server"]
+CMD ["./deployment-tasks.sh"]

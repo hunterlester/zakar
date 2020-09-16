@@ -1,4 +1,4 @@
 #!/bin/sh
 
-diesel setup
-diesel migration run
+/bin/diesel migration run
+./zakar_server

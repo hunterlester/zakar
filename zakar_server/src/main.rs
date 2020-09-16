@@ -53,7 +53,7 @@ async fn main() -> std::io::Result<()> {
     let environment_var = env::var("ENVIRONMENT").expect("DATABASE_URL must be set");
     let redirect_uri = match environment_var.as_str() {
         "PRODUCTION" => String::from("https://www.zkr.app/redirect"),
-        "STAGING" => String::from("https://immense-retreat-59958.herokuapp.com/redirect"),
+        "STAGING" => String::from("https://secret-garden-33411.herokuapp.com/redirect"),
         "LOCAL" => String::from("http://localhost:8000/redirect"),
         _ => String::from("http://localhost:8000/redirect"),
     };
