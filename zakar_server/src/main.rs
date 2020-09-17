@@ -121,13 +121,13 @@ async fn main() -> std::io::Result<()> {
                     // )
                     .service(
                         web::resource("/{user_id}")
-                            .route(web::get().to(user_api::get_user))
-                            .route(web::delete().to(user_api::delete_user)),
+                            .route(web::get().to(user_api::get_user)),
+                            // .route(web::delete().to(user_api::delete_user)),
+                    )
+                    .service(
+                        web::resource("/{user_id}/verses")
+                            .route(web::put().to(user_api::update_user_verses)),
                     ),
-                    // .service(
-                    //     web::resource("/{user_id}/verses")
-                    //         .route(web::put().to(user_api::update_user_verses)),
-                    // ),
             )
             .service(fs::Files::new("/", "../zakar-client/build").index_file("index.html"))
     });
