@@ -1,8 +1,9 @@
-import React, { useState, createContext, useEffect } from 'react';
+import { AxiosResponse } from 'axios';
+import React, { useState, createContext, useEffect, useRef } from 'react';
 import { ActivitiesStates } from 'react-app-env';
 import { useHistory } from 'react-router-dom';
 import { IPointGroup } from 'signature_pad';
-import { getCookie, updateUserVerses } from 'utils/helpers';
+import { fetchVerse, getCookie, getUserVerses, updateUserVerses } from 'utils/helpers';
 
 interface Props {
   children: React.ReactNode;
@@ -18,6 +19,14 @@ interface State {
   prev_verse: string;
   verseText: string;
 }
+
+interface DashboardState {
+  completedVerses: string[];
+}
+
+const defaultDashboardState = {
+  completedVerses: [] as string[],
+};
 
 const defaultActivities = {
   Build: true,
@@ -50,10 +59,13 @@ const setPrevVerse = (prev_verse: string) => {};
 const clearState = () => {};
 const setVerseText = (verseText: string) => {};
 const setStandardFetchState = (verseData: any) => {};
+const setCompletedVerses = (verseStringArray: string[]) => {};
+const fetchCompletedVerses = () => {};
 /* eslint-enable */
 
 export const StateContext = createContext({
   ...defaultState,
+  ...defaultDashboardState,
   setActivities,
   setVerseArray,
   setVerseString,
@@ -64,65 +76,16 @@ export const StateContext = createContext({
   clearState,
   setVerseText,
   setStandardFetchState,
+  setCompletedVerses,
+  fetchCompletedVerses,
 });
 
 export const StateProvider = ({ children }: Props) => {
   const [state, setState] = useState<State>(defaultState);
+  const [dashboardState, setDashboardState] = useState<DashboardState>(defaultDashboardState);
   const history = useHistory();
-  const { activities, verseIDArray } = state;
+  const isFetching = useRef(false);
 
-  useEffect(() => {
-    const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`) || defaultActivities;
-    const verseIDArray = localStorage.getItem('verseIDArray');
-    const verseString = localStorage.getItem('verseString');
-    const doodle = localStorage.getItem('doodle');
-    const verseCanonical = localStorage.getItem('verseCanonical');
-    const next_verse = localStorage.getItem('next_verse');
-    const prev_verse = localStorage.getItem('prev_verse');
-    const verseText = localStorage.getItem('verseText');
-    const bearerToken = getCookie('bearer');
-
-    const initState = {
-      activities: initActivities,
-      verseIDArray: verseIDArray ? JSON.parse(verseIDArray) : ([] as string[]),
-      verseString: verseString || '',
-      doodle: doodle ? JSON.parse(doodle) : ([] as IPointGroup[]),
-      verseCanonical: verseCanonical || '',
-      next_verse: next_verse || '',
-      prev_verse: prev_verse || '',
-      verseText: verseText || '',
-    };
-
-    setState({ ...initState });
-
-    // then make database call if bearerToken
-  }, []);
-
-  useEffect(() => {
-    const allActivitiesCompleted = Object.values(activities).every(value => value === true);
-    const bearerToken = getCookie('bearer');
-    const userID = getCookie('user_id');
-    if (allActivitiesCompleted && bearerToken && userID) {
-      updateUserVerses(userID, JSON.stringify(verseIDArray))
-      .then(response => {
-        if (response.status === 200) {
-          clearState();
-          // TODO: redirect to data vizualization page for user to see verse progress
-          // as well as contribution to global verse memorization database vizualizer
-        }
-      })
-      .catch(err => {
-        // TODO: if error, try to update users verses again somehow
-        // possibly prompting client
-      });
-    }
-
-    if (allActivitiesCompleted && !bearerToken) {
-      history.push('/login-cta');
-    }
-  }, [activities]);
-
-  // TODO: use this single space to manage localStoage and database fetching
   const setActivities = (activities: ActivitiesStates) => {
     localStorage.setItem('activities', JSON.stringify(activities));
     setState((currentState) => ({ ...currentState, activities: { ...activities } }));
@@ -152,7 +115,9 @@ export const StateProvider = ({ children }: Props) => {
     setState((currentState) => ({ ...currentState, prev_verse: JSON.stringify(prev_verse) }));
   };
   const clearState = () => {
-    localStorage.clear();
+    Object.keys(defaultState).forEach((key) => {
+      localStorage.removeItem(key);
+    });
     setState({ ...defaultState });
     history.push('/');
   };
@@ -165,11 +130,111 @@ export const StateProvider = ({ children }: Props) => {
     setNextVerse(verseData.passage_meta[0].next_verse);
     setPrevVerse(verseData.passage_meta[0].prev_verse);
   };
+  const setCompletedVerses = (verseStringArray: string[]) => {
+    const completedVerses: string[] = [...verseStringArray];
+    localStorage.setItem('completedVerses', JSON.stringify(completedVerses));
+    setDashboardState((currentState) => ({ ...currentState, completedVerses }));
+  };
+  const fetchCompletedVerses = () => {
+    const userID = getCookie('user_id');
+    const completedVerses = localStorage.getItem('completedVerses');
+
+    if (!!completedVerses) {
+      const parsedCompletedVerses: string[] = JSON.parse(completedVerses);
+      setCompletedVerses(parsedCompletedVerses);
+    } else {
+      if (userID) {
+        getUserVerses(userID)
+          .then(async (response: AxiosResponse) => {
+            const verseIDs: string[] = response.data;
+
+            const verseData = await fetchVerse({ verseCanonical: verseIDs.join(',') });
+            if (verseData) {
+              setCompletedVerses(verseData.passages);
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            // TODO: if error, try to update users verses again somehow
+            // possibly prompting client
+          });
+      }
+    }
+  };
+
+  const { activities, verseIDArray } = state;
+
+  useEffect(() => {
+    const initActivities: ActivitiesStates = JSON.parse(`${localStorage.getItem('activities')}`) || defaultActivities;
+    const verseIDArray = localStorage.getItem('verseIDArray');
+    const verseString = localStorage.getItem('verseString');
+    const doodle = localStorage.getItem('doodle');
+    const verseCanonical = localStorage.getItem('verseCanonical');
+    const next_verse = localStorage.getItem('next_verse');
+    const prev_verse = localStorage.getItem('prev_verse');
+    const verseText = localStorage.getItem('verseText');
+
+    const initState = {
+      activities: initActivities,
+      verseIDArray: verseIDArray ? JSON.parse(verseIDArray) : ([] as string[]),
+      verseString: verseString || '',
+      doodle: doodle ? JSON.parse(doodle) : ([] as IPointGroup[]),
+      verseCanonical: verseCanonical || '',
+      next_verse: next_verse || '',
+      prev_verse: prev_verse || '',
+      verseText: verseText || '',
+    };
+
+    setState({ ...initState });
+    setDashboardState({ ...defaultDashboardState });
+  }, []);
+
+  useEffect(() => {
+    const allActivitiesCompleted = Object.values(activities).every((value) => value === true);
+    const bearerToken = getCookie('bearer');
+    const userID = getCookie('user_id');
+    if (allActivitiesCompleted && bearerToken && userID && !isFetching.current) {
+      isFetching.current = true;
+      updateUserVerses(userID, JSON.stringify(verseIDArray))
+        .then(async (response) => {
+          isFetching.current = false;
+          if (response.status === 200) {
+            getUserVerses(userID)
+              .then(async (response: AxiosResponse) => {
+                const verseIDs: string[] = response.data;
+
+                const verseData = await fetchVerse({ verseCanonical: verseIDs.join(',') });
+                if (verseData) {
+                  setCompletedVerses(verseData.passages);
+                  clearState();
+                  history.push('/dashboard');
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+                // TODO: if error, try to update users verses again somehow
+                // possibly prompting client
+              });
+          }
+        })
+        .catch((err) => {
+          isFetching.current = false;
+          console.error(err);
+          // TODO: if error, try to update users verses again somehow
+          // possibly prompting client
+        });
+    }
+
+    if (allActivitiesCompleted && !bearerToken) {
+      history.push('/login-cta');
+    }
+  }, [activities]);
 
   return (
     <StateContext.Provider
       value={{
         ...state,
+        ...dashboardState,
         setActivities,
         setVerseArray,
         setVerseString,
@@ -180,6 +245,8 @@ export const StateProvider = ({ children }: Props) => {
         clearState,
         setVerseText,
         setStandardFetchState,
+        setCompletedVerses,
+        fetchCompletedVerses,
       }}
     >
       {children}

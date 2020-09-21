@@ -56,7 +56,7 @@ const ActivitiesBar = (props: Props): ReactElement => {
               key={activity}
               onClick={activityArray[index]}
               className={`ActivityItem ${activity} ${activityState === index ? 'Active' : ''} ${
-                (BoolProgress && activity !== 'Build') ? 'GreenState' : ''
+                BoolProgress && activity !== 'Build' ? 'GreenState' : ''
               }`}
             >
               {activity}
