@@ -63,6 +63,7 @@ const About = (): ReactElement => {
         , with the knowledge that development happens in spare time and by one developer.
       </p>
 
+      <h2>Beta Version</h2>
       <h4 id="beta">This app is still in beta testing, so expect that:</h4>
       <ul>
         <li>Database may be wiped at any time</li>
