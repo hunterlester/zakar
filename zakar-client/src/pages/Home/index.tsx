@@ -17,6 +17,9 @@ const Home = (): ReactElement => {
 
   return (
     <div className="HomeContainer">
+      <p className="beta">
+        <a href="/about#beta"> Beta version</a>
+      </p>
       <h1>Find your verse.</h1>
       <Search />
     </div>

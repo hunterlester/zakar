@@ -8,3 +8,12 @@ h1 {
         width: 95vw;
     }
 }
+
+.HomeContainer .beta {
+    text-align: right;
+    margin-right: 10px;
+}
+
+.HomeContainer .beta a {
+    color: #000;
+}
