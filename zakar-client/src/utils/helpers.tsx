@@ -50,7 +50,7 @@ export const fetchVerse = (args: Args): Promise<PassageResponse> => {
     });
 };
 
-export const updateUserVerses = (userID: string, data: string) => {
+export const updateUserVerses = (userID: string, data: string): Promise<AxiosResponse<number>> => {
   const headers = {
     Authorization: `Bearer ${getCookie('bearer')}`,
     'Content-Type': 'application/json',
@@ -66,4 +66,22 @@ export const updateUserVerses = (userID: string, data: string) => {
       console.error(error);
       throw error;
     });
-}
+};
+
+export const getUserVerses = (userID: string): Promise<AxiosResponse<string[]>> => {
+  const headers = {
+    Authorization: `Bearer ${getCookie('bearer')}`,
+    'Content-Type': 'application/json',
+  };
+  return axios
+    .get(`/users/${userID}/verses`, {
+      headers,
+    })
+    .then((response: AxiosResponse) => {
+      return response;
+    })
+    .catch((error: AxiosError) => {
+      console.error(error);
+      throw error;
+    });
+};

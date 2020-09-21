@@ -122,3 +122,24 @@ fn db_update_user_verses(
     let count = diesel::update(users.find(other_user_id)).set(verses.eq(new_verses)).execute(&conn)?;
     Ok(count)
 }
+
+pub async fn get_user_verses(
+    db: web::Data<Pool>,
+    other_user_id: web::Path<String>,
+) -> Result<HttpResponse, Error> {
+    Ok(
+        web::block(move || db_get_user_verses(db, other_user_id.into_inner()))
+            .await
+            .map(|user_verses| HttpResponse::Ok().json(user_verses))
+            .map_err(|_| HttpResponse::InternalServerError())?,
+    )
+}
+
+fn db_get_user_verses(
+    db: web::Data<Pool>,
+    other_user_id: String,
+) -> Result<Vec<String>, diesel::result::Error> {
+    let conn = db.get().unwrap();
+    let user = users.find(other_user_id.clone()).get_result::<User>(&conn)?;
+    Ok(user.verses)
+}
