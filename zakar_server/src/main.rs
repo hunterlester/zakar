@@ -86,10 +86,7 @@ async fn main() -> std::io::Result<()> {
             google_client_id,
             Some(google_client_secret),
         )
-        .set_redirect_uri(
-            RedirectUrl::new(redirect_uri.clone())
-                .expect("Invalid redirect URL"),
-        );
+        .set_redirect_uri(RedirectUrl::new(redirect_uri.clone()).expect("Invalid redirect URL"));
 
         App::new()
             .data(pool.clone())
@@ -101,6 +98,7 @@ async fn main() -> std::io::Result<()> {
             .route("/redirect", web::get().to(auth::auth))
             .route("/learning-board", web::get().to(index))
             .route("/about", web::get().to(index))
+            .route("/terms", web::get().to(index))
             .route("/dashboard", web::get().to(index))
             .route("/login-cta", web::get().to(index))
             .service(
@@ -120,9 +118,8 @@ async fn main() -> std::io::Result<()> {
                     //         .route(web::post().to(user_api::create_user)),
                     // )
                     .service(
-                        web::resource("/{user_id}")
-                            .route(web::get().to(user_api::get_user)),
-                            // .route(web::delete().to(user_api::delete_user)),
+                        web::resource("/{user_id}").route(web::get().to(user_api::get_user)),
+                        // .route(web::delete().to(user_api::delete_user)),
                     )
                     .service(
                         web::resource("/{user_id}/verses")

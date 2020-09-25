@@ -1,14 +1,15 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import './App.css';
-import Home from 'pages/Home';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import LearningBoard from 'pages/LearningBoard';
-import About from 'pages/About';
 import { ESV_COPYRIGHT } from 'utils/const';
 import { getCookie } from 'utils/helpers';
-import LoginCTA from 'components/LoginCTA';
 import { StateProvider } from 'StateProvider';
+import Home from 'pages/Home';
+import LearningBoard from 'pages/LearningBoard';
+import About from 'pages/About';
 import Dashboard from 'pages/Dashboard';
+import Terms from 'pages/Terms';
+import LoginCTA from 'components/LoginCTA';
+import './App.css';
 
 function App(): ReactElement {
   const [loginStatus, setLoginStatus] = useState(false);
@@ -31,6 +32,9 @@ function App(): ReactElement {
               <Route path="/about">
                 <About />
               </Route>
+              <Route path="/terms">
+                <Terms />
+              </Route>
               <Route path="/login-cta">
                 <LoginCTA />
               </Route>
@@ -50,6 +54,11 @@ function App(): ReactElement {
               <div className="ButtonContainer">
                 <Link to="/about">
                   <button className="NavButton">About</button>
+                </Link>
+              </div>
+              <div className="ButtonContainer">
+                <Link to="/terms">
+                  <button className="NavButton">Terms</button>
                 </Link>
               </div>
               {loginStatus && (

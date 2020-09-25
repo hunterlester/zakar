@@ -3,7 +3,7 @@ use super::schema::users::dsl::*;
 use super::Pool;
 use actix_web::{web, Error, HttpResponse};
 use diesel::dsl::{delete, insert_into};
-use diesel::{QueryDsl, RunQueryDsl, ExpressionMethods};
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
@@ -96,12 +96,12 @@ pub async fn update_user_verses(
     other_user_id: web::Path<String>,
     incoming_verses: web::Json<Vec<String>>,
 ) -> Result<HttpResponse, Error> {
-    Ok(
-        web::block(move || db_update_user_verses(db, other_user_id.into_inner(), incoming_verses.to_vec()))
-            .await
-            .map(|count| HttpResponse::Ok().json(count))
-            .map_err(|_| HttpResponse::InternalServerError())?,
-    )
+    Ok(web::block(move || {
+        db_update_user_verses(db, other_user_id.into_inner(), incoming_verses.to_vec())
+    })
+    .await
+    .map(|count| HttpResponse::Ok().json(count))
+    .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
 fn db_update_user_verses(
@@ -110,7 +110,9 @@ fn db_update_user_verses(
     incoming_verses: Vec<String>,
 ) -> Result<usize, diesel::result::Error> {
     let conn = db.get().unwrap();
-    let user = users.find(other_user_id.clone()).get_result::<User>(&conn)?;
+    let user = users
+        .find(other_user_id.clone())
+        .get_result::<User>(&conn)?;
     let mut verse_set: HashSet<String> = HashSet::new();
     for verse in user.verses {
         verse_set.insert(verse);
@@ -119,7 +121,9 @@ fn db_update_user_verses(
         verse_set.insert(verse);
     }
     let new_verses: Vec<String> = verse_set.into_iter().collect();
-    let count = diesel::update(users.find(other_user_id)).set(verses.eq(new_verses)).execute(&conn)?;
+    let count = diesel::update(users.find(other_user_id))
+        .set(verses.eq(new_verses))
+        .execute(&conn)?;
     Ok(count)
 }
 
@@ -140,6 +144,8 @@ fn db_get_user_verses(
     other_user_id: String,
 ) -> Result<Vec<String>, diesel::result::Error> {
     let conn = db.get().unwrap();
-    let user = users.find(other_user_id.clone()).get_result::<User>(&conn)?;
+    let user = users
+        .find(other_user_id.clone())
+        .get_result::<User>(&conn)?;
     Ok(user.verses)
 }
