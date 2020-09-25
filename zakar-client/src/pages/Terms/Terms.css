@@ -1,0 +1,33 @@
+.TermsContainer {
+    width: 80vw;
+    margin: auto;
+}
+
+.TermsContainer ul li {
+    margin: 10px 0px;
+}
+
+.TermsContainer ul {
+    padding-left: 17px;
+}
+
+.TextHighlight {
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.SupLink {
+    font-size: 14px;
+}
+
+.table {
+    overflow: scroll;
+}
+
+.table table th, td {
+    text-align: center;
+}
+
+.table table th {
+    border: 1px solid black;
+}
