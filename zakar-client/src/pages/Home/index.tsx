@@ -20,7 +20,7 @@ const Home = (): ReactElement => {
       <p className="beta">
         <a href="/about#beta"> Beta version</a>
       </p>
-      <h1>Find your verse.</h1>
+      <h1>Find a verse to start memorizing.</h1>
       <Search />
     </div>
   );
