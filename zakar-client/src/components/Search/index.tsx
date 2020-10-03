@@ -69,7 +69,7 @@ const Search = (): ReactElement => {
         <input
           disabled={isFetching}
           autoFocus={true}
-          placeholder="Try: gen1, gen1.3, gen1.3, gen1.3-7, jacob, job, jesus"
+          placeholder="Try: gen1, gen1.3, gen1.3-7, jacob, job, jesus"
           className="SearchInput"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
