@@ -6,17 +6,16 @@
     text-decoration: none;
 }
 
-.CTAButtons {
-  display: flex;
-  justify-content: space-around;
-}
-
-.CTAButtons a {
+.CTAButtons a img {
   display: block;
+  margin: auto;
+  width: 20em;
+  height: auto;
 }
 
 .CTAButton {
   display: block;
+  margin: 10px auto;
   background-color: white;
   border: 1px solid silver;
   cursor: pointer;

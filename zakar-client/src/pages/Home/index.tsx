@@ -17,8 +17,9 @@ const Home = (): ReactElement => {
 
   return (
     <div className="HomeContainer">
+      <img src="/android-chrome-192x192.png" alt="zayin hebrew character" title="zayin" />
       <p className="beta">
-        <a href="/about#beta"> Beta version</a>
+        <a href="/terms#beta"> Beta version</a>
       </p>
       <h1>Find a verse to start memorizing.</h1>
       <Search />

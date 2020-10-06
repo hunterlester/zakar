@@ -77,9 +77,9 @@ function App(): ReactElement {
               )}
               {!loginStatus && (
                 <div className="ButtonContainer">
-                  <a href="/login">
+                  <Link to="/login-cta">
                     <button className="NavButton">Login</button>
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>

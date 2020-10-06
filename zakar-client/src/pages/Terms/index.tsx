@@ -1,9 +1,15 @@
 import React, { ReactElement, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Terms.css';
 
 const Terms = (): ReactElement => {
+  const location = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (location.hash === '#beta') {
+      window.scrollTo(0, document.body.scrollHeight);
+    } else {
+      window.scrollTo(0, 0);
+    }
   }, []);
 
   return (
@@ -49,6 +55,15 @@ const Terms = (): ReactElement => {
         </li>
         <li>Given previous point, your email address will never be used to send you mail.</li>
         <li>Your IP address will not be stored, or processed to determine your location.</li>
+
+        <h3>Beta Version</h3>
+        <h4 id="beta">This app is still in beta testing, so expect that:</h4>
+        <ul>
+          <li>Database may be wiped at any time</li>
+          <li>New features may be added</li>
+          <li>Current features may be removed</li>
+          <li>Bugs and unexpected errors are still being found and addressed</li>
+        </ul>
       </ul>
     </div>
   );

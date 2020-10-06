@@ -10,7 +10,7 @@ const LoginCTA = (): ReactElement => {
       <p>Please login to unlock all features.</p>
       <div className="CTAButtons">
         <a href="/login">
-          <button className="CTAButton">Login</button>
+          <img src="/btn_google_signin_dark_pressed_web@2x.png" alt="Sign in with Google" />
         </a>
         <button
           onClick={() => {

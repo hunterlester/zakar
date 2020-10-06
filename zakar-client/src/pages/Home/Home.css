@@ -10,10 +10,19 @@ h1 {
 }
 
 .HomeContainer .beta {
-    text-align: right;
-    margin-right: 10px;
+    position: absolute;
+    right: 10px;
+    top: 0px;
 }
 
 .HomeContainer .beta a {
     color: #000;
+}
+
+.HomeContainer img {
+    width: 2em;
+    height: auto;
+    display: block;
+    margin: auto;
+    margin-top: 7px;
 }
