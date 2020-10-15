@@ -1,10 +1,10 @@
-import React, { ReactElement, useState, FormEvent } from 'react';
+import React, { ReactElement, useState, FormEvent, useEffect, useRef } from 'react';
 import SearchResult from 'components/Search/SearchResult';
 import { SERVER_ORIGIN, defaultParams, IS_NODE_DEV, ESV_PREFIX } from 'utils/const';
 import './Search.css';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { getCookie } from 'utils/helpers';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 interface SearchResult {
   content: string;
@@ -13,11 +13,25 @@ interface SearchResult {
 
 const Search = (): ReactElement => {
   const history = useHistory();
+  const location = useLocation();
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [error, setError] = useState('');
   const [isPassageEndpoint, setIsPassageEndpoint] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const submitInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchParam = params.get('q');
+    if (searchParam) {
+      setSearchValue(searchParam);
+      if (submitInputRef.current && searchValue) {
+        submitInputRef.current.click();
+        history.replace('/');
+      }
+    }
+  }, [location, searchValue]);
 
   const handleSubmit = (event: FormEvent): void => {
     event.preventDefault();
@@ -74,7 +88,7 @@ const Search = (): ReactElement => {
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
-        <input disabled={isFetching} className="SearchButton" type="submit" value="Search" />
+        <input ref={submitInputRef} disabled={isFetching} className="SearchButton" type="submit" value="Search" />
       </form>
       {!!error && <div className="ErrorMessage">{error}</div>}
       <div className="SearchResultContainer">
