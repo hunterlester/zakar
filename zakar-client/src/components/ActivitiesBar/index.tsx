@@ -20,6 +20,10 @@ const ActivitiesBar = (props: Props): ReactElement => {
     setActivityState(Activities.Read);
   };
 
+  const setActivityStudy = (): void => {
+    setActivityState(Activities.Study);
+  };
+
   const setActivityType = (): void => {
     setActivityState(Activities.Type);
   };
@@ -39,6 +43,7 @@ const ActivitiesBar = (props: Props): ReactElement => {
   const activityArray = [
     setActivityBuild,
     setActivityRead,
+    setActivityStudy,
     setActivityType,
     setActivityListen,
     setActivityComplete,

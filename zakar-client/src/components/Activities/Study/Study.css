@@ -1,0 +1,21 @@
+.StudyButton {
+  border: 1px solid silver;
+  background-color: #fff;
+  padding: 10px;
+  display: block;
+  cursor: pointer;
+  margin: 1px;
+}
+
+.ActiveButton {
+  border: 1px solid black;
+}
+
+.IFrame iframe{
+  width: 100%;
+  height: 100vh;
+}
+
+.StudyButtonsContainer {
+  display: flex;
+}

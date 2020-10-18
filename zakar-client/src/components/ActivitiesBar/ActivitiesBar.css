@@ -14,6 +14,10 @@
     display: block;
 }
 
+.GreenState {
+    border: 1px solid #66bb6a;
+}
+
 .Active {
     border: 1px solid black;
     color: black;
@@ -24,8 +28,4 @@
     color: black;
     outline-style: solid;
     outline-width: 0px;
-}
-
-.GreenState {
-    background-color: #66bb6a;
 }

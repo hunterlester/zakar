@@ -7,6 +7,7 @@ export const BIBLE_ID = 'de4e12af7f28f599-02'; // KJV minus apocrypha
 export enum Activities {
   Build,
   Read,
+  Study,
   Type,
   Listen,
   Complete,
