@@ -12,6 +12,7 @@ declare global {
 export interface ActivitiesStates {
   Build: boolean;
   Read: boolean;
+  Study: boolean;
   Recite: boolean;
   Type: boolean;
   Listen: boolean;

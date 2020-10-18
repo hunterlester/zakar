@@ -31,6 +31,7 @@ const defaultDashboardState = {
 const defaultActivities = {
   Build: true,
   Read: false,
+  Study: false,
   Recite: false,
   Type: false,
   Listen: false,

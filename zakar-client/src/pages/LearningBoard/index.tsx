@@ -5,6 +5,7 @@ import ActivitiesBar from 'components/ActivitiesBar';
 import './LearningBoard.css';
 import Recite from 'components/Activities/Recite';
 import Read from 'components/Activities/Read';
+import Study from 'components/Activities/Study';
 import Type from 'components/Activities/Type';
 import Build from 'components/Activities/Build';
 import Listen from 'components/Activities/Listen';
@@ -55,6 +56,8 @@ const LearningBoard = (): ReactElement => {
         return <Build />;
       case Activities.Read:
         return <Read />;
+      case Activities.Study:
+        return <Study />;
       case Activities.Type:
         return <Type />;
       case Activities.Listen:
@@ -83,7 +86,7 @@ const LearningBoard = (): ReactElement => {
   return (
     <div {...handlers}>
       <ActivitiesBar activitiesStates={activities} activityState={activityState} setActivityState={setActivityState} />
-      <ActivityInstruction instruction={ActivityInstructions[activityState]} />
+      {activityState !== Activities.Study && <ActivityInstruction instruction={ActivityInstructions[activityState]} />}
       <div className="ActivityBlock">{activitySwitch(activityState)}</div>
     </div>
   );
