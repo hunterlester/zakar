@@ -12,7 +12,7 @@ actix-rt = "1.0"
 actix-files = "0.2.2"
 listenfd = "0.3"
 actix-cors = "0.2.0"
-diesel = { version = "1.4.2", features = ["postgres","uuidv07", "r2d2", "chrono"] }
+diesel = { version = "1.4.6", features = ["postgres","uuidv07", "r2d2", "chrono"] }
 dotenv = "0.15.0"
 
 chrono = { version = "0.4.10", features = ["serde"] }
